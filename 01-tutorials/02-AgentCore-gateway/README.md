@@ -1,104 +1,104 @@
 # Amazon Bedrock AgentCore Gateway
 
-## Overview
-Bedrock AgentCore Gateway provides customers a way to turn their existing APIs and Lambda functions into fully-managed MCP servers without needing to manage infra or hosting. Customers can bring OpenAPI spec or Smithy models for their existing APIs, or add Lambda functions that front their tools. Gateway will provide a uniform Model Context Protocol (MCP) interface across all these tools. Gateway employs a dual authentication model to ensure secure access control for both incoming requests and outbound connections to target resources. The framework consists of two key components: Inbound Auth, which validates and authorizes users attempting to access gateway targets, and Outbound Auth, which enables the gateway to securely connect to backend resources on behalf of authenticated users. Together, these authentication mechanisms create a secure bridge between users and their target resources, supporting both IAM credentials and OAuth-based authentication flows. Gateway supports MCP's Streamable HTTP transport connection.
+## Visão Geral
+O Bedrock AgentCore Gateway oferece aos clientes uma maneira de transformar suas APIs e funções Lambda existentes em servidores MCP totalmente gerenciados, sem a necessidade de gerenciar infraestrutura ou hospedagem. Os clientes podem trazer especificações OpenAPI ou modelos Smithy para suas APIs existentes, ou adicionar funções Lambda que servem como front-end para suas ferramentas. O Gateway fornece uma interface uniforme do Model Context Protocol (MCP) para todas essas ferramentas. O Gateway emprega um modelo de autenticação dupla para garantir o controle de acesso seguro tanto para requisições de entrada quanto para conexões de saída aos recursos de destino. O framework consiste em dois componentes principais: Autenticação de Entrada (Inbound Auth), que valida e autoriza usuários que tentam acessar os alvos do gateway, e Autenticação de Saída (Outbound Auth), que permite ao gateway conectar-se de forma segura aos recursos de backend em nome dos usuários autenticados. Juntos, esses mecanismos de autenticação criam uma ponte segura entre os usuários e seus recursos de destino, suportando tanto credenciais IAM quanto fluxos de autenticação baseados em OAuth. O Gateway suporta conexão de transporte Streamable HTTP do MCP.
 
-![How does it work](images/gateway-end-end-overview.png)
+![Como funciona](images/gateway-end-end-overview.png)
 
-## Defining concepts
+## Definição de conceitos
 
-Before starting, let us define a couple of important concepts for getting started with Amazon Bedrock AgentCore Gateway:
+Antes de começar, vamos definir alguns conceitos importantes para iniciar com o Amazon Bedrock AgentCore Gateway:
 
-* **Amazon Bedrock AgentCore Gateway**: HTTP endpoint that customers can call with an MCP client for executing the standard MCP operations (i.e. listTools and invokeTool). Customers can also invoke this AmazonCore Gateway using an AWS SDK such as boto3.
-* **Bedrock AgentCore Gateway Target**: a resource that customer uses to attach targets to their AmazonCore Gateway. Currently the following types are supported as targets for AgentCore Gateway:
-    * Lambda ARNs
-    * API specifications → OpenAPI, Smithy
-* **MCP Transport**: mechanism that defines how messages move between clients (applications using LLMs) and the MCP servers. Currently AgentCore Gateway supports only `Streamable HTTP connections` as transport.
+* **Amazon Bedrock AgentCore Gateway**: endpoint HTTP que os clientes podem chamar com um cliente MCP para executar as operações padrão do MCP (ou seja, listTools e invokeTool). Os clientes também podem invocar este AgentCore Gateway usando um SDK da AWS como o boto3.
+* **Bedrock AgentCore Gateway Target**: um recurso que o cliente usa para anexar alvos ao seu AgentCore Gateway. Atualmente, os seguintes tipos são suportados como alvos para o AgentCore Gateway:
+    * ARNs de Lambda
+    * Especificações de API → OpenAPI, Smithy
+* **MCP Transport**: mecanismo que define como as mensagens se movem entre clientes (aplicações que usam LLMs) e os servidores MCP. Atualmente, o AgentCore Gateway suporta apenas `conexões Streamable HTTP` como transporte.
 
-## How it works
+## Como funciona
 
-![How does it work](images/gateway_how_does_it_work.png)
+![Como funciona](images/gateway_how_does_it_work.png)
 
-## Inbound and outbound authorization 
-Bedrock AgentCore Gateway provides secure connections via inbound and outbound authentication. For the inbound authentication, the AgentCore Gateway analyzes the OAuth token passed during invocation to decide allow or deny the access to a tool in the gateway. If a tool needs access to external resources, the AgentCore Gateway can use outbound authentication via API Key, IAM or OAuth Token to allow or deny the access to the external resource.
+## Autorização de entrada e saída
+O Bedrock AgentCore Gateway fornece conexões seguras via autenticação de entrada e saída. Para a autenticação de entrada, o AgentCore Gateway analisa o token OAuth passado durante a invocação para decidir permitir ou negar o acesso a uma ferramenta no gateway. Se uma ferramenta precisa acessar recursos externos, o AgentCore Gateway pode usar autenticação de saída via Chave de API, IAM ou Token OAuth para permitir ou negar o acesso ao recurso externo.
 
-During the inbound authorization flow, an agent or the MCP client calls an MCP tool in the AgentCore Gateway adding an OAuth access token (generated from the user’s IdP). AgentCore Gateway then validates the OAuth access token and performs inbound authorization.
+Durante o fluxo de autorização de entrada, um agente ou o cliente MCP chama uma ferramenta MCP no AgentCore Gateway adicionando um token de acesso OAuth (gerado a partir do IdP do usuário). O AgentCore Gateway então valida o token de acesso OAuth e realiza a autorização de entrada.
 
-If the tool running in AgentCore Gateway needs to access external resources, OAuth will retrieve credentials of downstream resources using the resource credential provider for the Gateway target. AgentCore Gateway pass the authorization credentials to the caller to get access to the downstream API. 
+Se a ferramenta executando no AgentCore Gateway precisa acessar recursos externos, o OAuth recuperará as credenciais dos recursos downstream usando o provedor de credenciais de recurso para o alvo do Gateway. O AgentCore Gateway passa as credenciais de autorização ao chamador para obter acesso à API downstream.
 
-![Secure access](images/gateway_secure_access.png)
+![Acesso seguro](images/gateway_secure_access.png)
 
-### MCP authorization and Gateway
+### Autorização MCP e Gateway
 
-Amazon Bedrock AgentCore Gateway complies with the [MCP authorization specification](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization) for the authorization of incoming MCP tool calls.
+O Amazon Bedrock AgentCore Gateway está em conformidade com a [especificação de autorização MCP](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization) para a autorização de chamadas de ferramentas MCP de entrada.
 
-![Secure access](images/oauth-flow-gateway.png)
+![Acesso seguro](images/oauth-flow-gateway.png)
 
-### AgentCore Gateway and integration with AgentCore Identity
+### AgentCore Gateway e integração com AgentCore Identity
 
-![AgentCore Identity with Gateway](images/end-end-auth-gateway.png)
+![AgentCore Identity com Gateway](images/end-end-auth-gateway.png)
 
-### Searching for Tools
-Amazon Bedrock AgentCore Gateway also includes a powerful built-in semantic search capability that helps agents and 
-developers finding the most relevant tools through natural language queries, through **reducing the context** passed to your agent for tool selection. This search functionality is implemented as a prebuilt tool that leverages vector embeddings for semantic matching.  Users can enable this feature during Gateway creation by opting in through the CreateGateway API. Once enabled, any subsequent CreateTarget operations automatically trigger the generation of vector embeddings for the target's tools. During this process, the CreateTarget response STATUS field will indicate "UPDATING" while embeddings are being generated
+### Busca de Ferramentas
+O Amazon Bedrock AgentCore Gateway também inclui uma poderosa capacidade de busca semântica integrada que ajuda agentes e
+desenvolvedores a encontrar as ferramentas mais relevantes através de consultas em linguagem natural, **reduzindo o contexto** passado ao seu agente para seleção de ferramentas. Esta funcionalidade de busca é implementada como uma ferramenta pré-construída que utiliza embeddings vetoriais para correspondência semântica. Os usuários podem habilitar este recurso durante a criação do Gateway optando pela API CreateGateway. Uma vez habilitado, quaisquer operações CreateTarget subsequentes acionam automaticamente a geração de embeddings vetoriais para as ferramentas do alvo. Durante este processo, o campo STATUS da resposta do CreateTarget indicará "UPDATING" enquanto os embeddings estão sendo gerados.
 
-![tool_search](images/gateway_tool_search.png)
+![busca_ferramentas](images/gateway_tool_search.png)
 
-### Tutorial Details
+### Detalhes do Tutorial
 
 
-| Information          | Details                                                   |
+| Informação           | Detalhes                                                  |
 |:---------------------|:----------------------------------------------------------|
-| Tutorial type        | Interactive                                               |
-| AgentCore components | AgentCore Gateway, AgentCore Identity                     |
-| Agentic Framework    | Strands Agents                                            |
-| LLM model            | Anthropic Claude Haiku 4.5, Amazon Nova Pro              |
-| Tutorial components  | Creating AgentCore Gateway and Invoking AgentCore Gateway |
-| Tutorial vertical    | Cross-vertical                                            |
-| Example complexity   | Easy                                                      |
-| SDK used             | boto3                                                     |
+| Tipo de tutorial     | Interativo                                                |
+| Componentes AgentCore| AgentCore Gateway, AgentCore Identity                     |
+| Framework de Agentes | Strands Agents                                            |
+| Modelo LLM           | Anthropic Claude Haiku 4.5, Amazon Nova Pro              |
+| Componentes do tutorial | Criação do AgentCore Gateway e Invocação do AgentCore Gateway |
+| Vertical do tutorial | Cross-vertical                                            |
+| Complexidade do exemplo | Fácil                                                  |
+| SDK utilizado        | boto3                                                     |
 
-## Tutorial Architecture
+## Arquitetura do Tutorial
 
-### Tutorial Key Features
+### Principais Funcionalidades do Tutorial
 
-#### Secure Tool Access
+#### Acesso Seguro a Ferramentas
 
-Amazon Bedrock AgentCore Gateway complies with the [MCP authorization specification](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization) 
-for the authorization of incoming MCP tool calls. 
-Amazon Bedrock AgentCore Gateway also offers 2 options to support authorization of the outgoing calls from Gateway:
-* using API key or
-* using OAuth access tokens 
-You can configure the authorization using Credentials provider API of the Amazon Bedrock AgentCore Identity and 
-attach them to the AgentCore Gateway Target. 
-Each Target (AWS Lambda, Smithy and OpenAPI) can be attached to a credentials provider.
+O Amazon Bedrock AgentCore Gateway está em conformidade com a [especificação de autorização MCP](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization)
+para a autorização de chamadas de ferramentas MCP de entrada.
+O Amazon Bedrock AgentCore Gateway também oferece 2 opções para suportar a autorização das chamadas de saída do Gateway:
+* usando chave de API ou
+* usando tokens de acesso OAuth
+Você pode configurar a autorização usando a API de provedor de credenciais do Amazon Bedrock AgentCore Identity e
+anexá-los ao Alvo do AgentCore Gateway.
+Cada Alvo (AWS Lambda, Smithy e OpenAPI) pode ser anexado a um provedor de credenciais.
 
-#### Integration
+#### Integração
 
-Bedrock AgentCore Gateway integrates with 
+O Bedrock AgentCore Gateway integra-se com
 * Bedrock AgentCore Identity
 * Bedrock AgentCore Runtime
 
-### Use cases
+### Casos de uso
 
-* Real-time interactive agents calling MCP tools
-* Inbound & outbound authorization using different IdPs
-* MCP-fying the AWS Lambda functions, Open APIs and Smithy models
-* MCP tools discovery
+* Agentes interativos em tempo real chamando ferramentas MCP
+* Autorização de entrada e saída usando diferentes IdPs
+* Transformação de funções AWS Lambda, APIs Open e modelos Smithy em MCP
+* Descoberta de ferramentas MCP
 
-### Benefits
+### Benefícios
 
-* Gateway provides several key benefits that simplify AI agent development and deployment: No infrastructure management
-* Fully managed service with no hosting concerns. Amazon Bedrock AgentCore handles all infrastructure for you automatically.
-* Unified interface: Single MCP protocol for all tools eliminates the complexity of managing multiple API formats and authentication mechanisms in your agent code.
-* Built-in authentication: OAuth and credential management handles token lifecycle, refresh, and secure storage without additional development effort.
-* Automatic scaling: Scales automatically based on demand to handle varying workloads without manual intervention or capacity planning.
-* Enterprise security: Enterprise-grade security features including encryption, access controls, and audit logging ensure secure tool access.
+* O Gateway oferece vários benefícios importantes que simplificam o desenvolvimento e a implantação de agentes de IA: Sem gerenciamento de infraestrutura
+* Serviço totalmente gerenciado sem preocupações com hospedagem. O Amazon Bedrock AgentCore cuida de toda a infraestrutura automaticamente.
+* Interface unificada: Um único protocolo MCP para todas as ferramentas elimina a complexidade de gerenciar múltiplos formatos de API e mecanismos de autenticação no código do seu agente.
+* Autenticação integrada: O gerenciamento de OAuth e credenciais cuida do ciclo de vida dos tokens, renovação e armazenamento seguro sem esforço adicional de desenvolvimento.
+* Escalabilidade automática: Escala automaticamente com base na demanda para lidar com cargas de trabalho variáveis sem intervenção manual ou planejamento de capacidade.
+* Segurança empresarial: Recursos de segurança de nível empresarial, incluindo criptografia, controles de acesso e registro de auditoria, garantem acesso seguro às ferramentas.
 
-## Tutorials Overview
+## Visão Geral dos Tutoriais
 
-In these tutorials we will cover the following functionality:
+Nestes tutoriais, cobriremos as seguintes funcionalidades:
 
-- [Transforming AWS Lambda function into MCP tools](01-transform-lambda-into-mcp-tools)
-- [Transforming APIs into MCP tools](02-transform-apis-into-mcp-tools)
-- [Discovering MCP tools](03-discover-mcp-tools)
+- [Transformando funções AWS Lambda em ferramentas MCP](01-transform-lambda-into-mcp-tools)
+- [Transformando APIs em ferramentas MCP](02-transform-apis-into-mcp-tools)
+- [Descobrindo ferramentas MCP](03-discover-mcp-tools)

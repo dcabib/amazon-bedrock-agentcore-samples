@@ -1,49 +1,48 @@
-# Integrate your API Gateway as an AgentCore Gateway Target
+# Integrar seu API Gateway como um Alvo do AgentCore Gateway
 
-## Overview
+## Visão Geral
 
-As organizations explore the possibilities of agentic applications, they continue to navigate challenges of using enterprise data as context in invocation requests to large language models (LLMs) in a manner that is secure and aligned with enterprise policies. To help standardize and secure those interactions, many organizations are using the Model Context Protocol (MCP) specification, which defines how agentic applications can securely connect to data sources and tools.
+À medida que as organizações exploram as possibilidades de aplicações agênticas, elas continuam a enfrentar desafios de usar dados empresariais como contexto em requisições de invocação para modelos de linguagem grandes (LLMs) de maneira segura e alinhada com as políticas empresariais. Para ajudar a padronizar e proteger essas interações, muitas organizações estão usando a especificação do Model Context Protocol (MCP), que define como aplicações agênticas podem se conectar de forma segura a fontes de dados e ferramentas.
 
-While MCP has been advantageous for net new use cases, organizations also navigate challenges with bringing their existing API estate into the agentic era. MCP can certainly wrap existing APIs, but it requires additional work, translating requests from MCP to RESTful APIs, making sure security is maintained through the entire request flow, and applying the standard observability required for production deployments.
+Embora o MCP tenha sido vantajoso para novos casos de uso, as organizações também enfrentam desafios ao trazer seu patrimônio de APIs existente para a era agêntica. O MCP certamente pode encapsular APIs existentes, mas requer trabalho adicional: traduzir requisições de MCP para APIs RESTful, garantir que a segurança seja mantida em todo o fluxo de requisição e aplicar a observabilidade padrão necessária para implantações em produção.
 
-[Amazon Bedrock AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html) now supports [Amazon API Gateway](https://aws.amazon.com/api-gateway/) as a target, translating MCP requests to AgentCore Gateway (ACGW) into RESTful requests to API Gateway (APIGW). You can now expose both new and existing API endpoints from APIGW to agentic applications via MCP, with built-in security and observability. This notebook covers this new capability and shows how to implement them.
+O [Amazon Bedrock AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html) agora suporta o [Amazon API Gateway](https://aws.amazon.com/api-gateway/) como alvo, traduzindo requisições MCP para o AgentCore Gateway (ACGW) em requisições RESTful para o API Gateway (APIGW). Agora você pode expor endpoints de API novos e existentes do APIGW para aplicações agênticas via MCP, com segurança e observabilidade integradas. Este notebook cobre esta nova capacidade e mostra como implementá-la.
 
-## What's new
+## O que há de novo
 
-AgentCore Gateway already supports multiple target types, e.g., Lambda functions, OpenAPI schemas, Smithy models, MCP servers, and now supports API Gateway.
+O AgentCore Gateway já suporta múltiplos tipos de alvo, por exemplo, funções Lambda, schemas OpenAPI, modelos Smithy, servidores MCP, e agora suporta API Gateway.
 
 
 ![](Images/agent-core-gateway-targets.png)
 
 
-**Our customers have successfully built extensive API ecosystems using API Gateway, connecting backends across numerous applications.** As enterprises advance toward next-generation agentic applications, the natural evolution is to expose these existing APIs and backend tools to AI-powered systems, enabling seamless integration between established infrastructure and modern intelligent agents.
+**Nossos clientes construíram com sucesso ecossistemas extensivos de APIs usando o API Gateway, conectando backends em inúmeras aplicações.** À medida que as empresas avançam em direção a aplicações agênticas de próxima geração, a evolução natural é expor essas APIs existentes e ferramentas de backend para sistemas alimentados por IA, permitindo integração perfeita entre infraestrutura estabelecida e agentes inteligentes modernos.
 
-Today, customers follow a manual workflow where they export their APIGW APIs as OpenAPI 3 specification and then add it to ACGW as an OpenAPI target. This integration aims to streamline this process by automating the connection between APIGW and ACGW.
+Hoje, os clientes seguem um fluxo de trabalho manual onde exportam suas APIs do APIGW como especificação OpenAPI 3 e depois adicionam ao ACGW como um alvo OpenAPI. Esta integração visa simplificar este processo automatizando a conexão entre APIGW e ACGW.
 
-
-With this integration, customers will no longer have to manage this export/import process themselves. A new API_GATEWAY target type will be added to ACGW. REST API owners can add their API as an ACGW target with a few console clicks or a single CLI command, thus exposing their existing REST API methods as MCP tools via ACGW. API consumers can then connect AI agents with these REST APIs through the Model Context Protocol (MCP) and power their workflows with AI integration. Your agentic applications can now connect to your new or existing APIGW API. Today, this integration between ACGW and APIGW supports IAM authorization and API key authorization.
+Com esta integração, os clientes não precisarão mais gerenciar este processo de exportação/importação por conta própria. Um novo tipo de alvo API_GATEWAY será adicionado ao ACGW. Proprietários de APIs REST podem adicionar sua API como um alvo do ACGW com alguns cliques no console ou um único comando CLI, expondo assim seus métodos de API REST existentes como ferramentas MCP via ACGW. Consumidores de API podem então conectar agentes de IA com essas APIs REST através do Model Context Protocol (MCP) e potencializar seus fluxos de trabalho com integração de IA. Suas aplicações agênticas agora podem se conectar à sua API APIGW nova ou existente. Hoje, esta integração entre ACGW e APIGW suporta autorização IAM e autorização por chave de API.
 
 ![](Images/agent-core-apigw-target.png)
 
-### Tutorial Details
+### Detalhes do Tutorial
 
 
-| Information          | Details                                                   |
+| Informação           | Detalhes                                                  |
 |:---------------------|:----------------------------------------------------------|
-| Tutorial type        | Interactive                                               |
-| AgentCore components | AgentCore Gateway, AgentCore Identity                     |
-| Agentic Framework    | Strands Agents                                            |
-| Gateway Target type  | API Gateway                                               |
-| Agent                | Strands                                                   |
-| Inbound Auth IdP     | Amazon Cognito, but can use others                        |
-| Outbound Auth        | IAM Authorization and API Key                             |
-| LLM model            | Anthropic Claude Sonnet 4                                 |
-| Tutorial components  |Invoking API Gateway via AgentCore Gateway target          |
-| Tutorial vertical    | Cross-vertical                                            |
-| Example complexity   | Easy                                                      |
-| SDK used             | boto3                                                     |
+| Tipo de tutorial     | Interativo                                                |
+| Componentes AgentCore| AgentCore Gateway, AgentCore Identity                     |
+| Framework de Agentes | Strands Agents                                            |
+| Tipo de Alvo do Gateway | API Gateway                                            |
+| Agente               | Strands                                                   |
+| IdP de Auth de Entrada | Amazon Cognito, mas pode usar outros                    |
+| Auth de Saída        | Autorização IAM e Chave de API                            |
+| Modelo LLM           | Anthropic Claude Sonnet 4                                 |
+| Componentes do tutorial | Invocando API Gateway via alvo do AgentCore Gateway    |
+| Vertical do tutorial | Cross-vertical                                            |
+| Complexidade do exemplo | Fácil                                                  |
+| SDK utilizado        | boto3                                                     |
 
-## Tutorial architecture
+## Arquitetura do tutorial
 
-This tutorial serves as a practical example of the broader enterprise challenge: **How to integrate   API Gateway API into a centralized Gateway architecture for your next generation agentic applications.**
-Start the [tutorial here](01-api-gateway-target.ipynb).
+Este tutorial serve como um exemplo prático do desafio empresarial mais amplo: **Como integrar a API do API Gateway em uma arquitetura de Gateway centralizada para suas aplicações agênticas de próxima geração.**
+Comece o [tutorial aqui](01-api-gateway-target.ipynb).

@@ -1,41 +1,40 @@
-# Fine-Grained Access Control with AgentCore Gateway Interceptors using JWT scopes.
+# Controle de Acesso Granular com Interceptores do AgentCore Gateway usando escopos JWT
 
-## Overview
-Modern enterprise agent systems often expose multiple tools—search, retrieval, order systems, analytics, document pipelines, and more. Not all users should be allowed to access every tool, and different roles (Analyst, Manager, Auditor, Contractor, etc.) may require different levels of access. Fine-Grained Access Control (FGAC) in AgentCore Gateway addresses this challenge through Gateway Interceptors, which are custom Lambda functions that process requests at two critical points: before reaching the target destination (Request Interceptor) and before returning the result to the calling agent (Response Interceptor).
+## Visão Geral
+Sistemas modernos de agentes empresariais frequentemente expõem múltiplas ferramentas — busca, recuperação, sistemas de pedidos, analytics, pipelines de documentos e mais. Nem todos os usuários devem ter permissão para acessar todas as ferramentas, e diferentes papéis (Analista, Gerente, Auditor, Contratado, etc.) podem requerer diferentes níveis de acesso. O Controle de Acesso Granular (FGAC) no AgentCore Gateway aborda este desafio através de Interceptores do Gateway, que são funções Lambda personalizadas que processam requisições em dois pontos críticos: antes de alcançar o destino alvo (Interceptor de Requisição) e antes de retornar o resultado ao agente chamador (Interceptor de Resposta).
 
-![How does it work](images/fgac.png)
+![Como funciona](images/fgac.png)
 
-### Implementing Fine-Grained Access Control for Invoking Tools
-The Gateway interceptor handles tool invocation control by utilizing JWT scopes to validate user permissions, implementing authorization checks before tool execution, and supporting both full target access and tool-specific permissions. When unauthorized access is attempted, the lambda blocks requests before they reach the target and returns structured MCP errors. This ensures secure access management across all tool interactions.
+### Implementando Controle de Acesso Granular para Invocação de Ferramentas
+O interceptor do Gateway lida com o controle de invocação de ferramentas utilizando escopos JWT para validar permissões de usuários, implementando verificações de autorização antes da execução da ferramenta e suportando tanto acesso total ao alvo quanto permissões específicas por ferramenta. Quando um acesso não autorizado é tentado, o lambda bloqueia requisições antes que alcancem o alvo e retorna erros MCP estruturados. Isso garante o gerenciamento seguro de acesso em todas as interações com ferramentas.
 
-### Dynamic Tools Filtering
-For tool discovery and filtering, the Gateway interceptor manages access through two primary methods: List Tools and Semantic Search. When processing tools/list operations, the response interceptor filters the available tools based on user JWT scopes, ensuring that only authorized tools are returned to the requesting agent. Similarly, for semantic search operations, the response interceptor processes search results before returning them to agents, removing any unauthorized tools and applying the same permission logic as list operations. This approach maintains dynamic permission updates without caching and ensures consistent access control across all discovery methods.
+### Filtragem Dinâmica de Ferramentas
+Para descoberta e filtragem de ferramentas, o interceptor do Gateway gerencia o acesso através de dois métodos principais: Listar Ferramentas e Busca Semântica. Ao processar operações tools/list, o interceptor de resposta filtra as ferramentas disponíveis com base nos escopos JWT do usuário, garantindo que apenas ferramentas autorizadas sejam retornadas ao agente solicitante. Da mesma forma, para operações de busca semântica, o interceptor de resposta processa os resultados da busca antes de retorná-los aos agentes, removendo quaisquer ferramentas não autorizadas e aplicando a mesma lógica de permissão das operações de listagem. Esta abordagem mantém atualizações dinâmicas de permissão sem cache e garante controle de acesso consistente em todos os métodos de descoberta.
 
-This comprehensive approach to access control delivers several key benefits, including secure tool access based on user roles and permissions, dynamic filtering without permission state caching, consistent authorization across all tool discovery methods, simplified integration with existing authentication systems, and reduced security risks through early request validation. The implementation ensures that users can only discover and access tools appropriate for their role while maintaining a secure and scalable enterprise environment.
+Esta abordagem abrangente de controle de acesso oferece vários benefícios chave, incluindo acesso seguro a ferramentas baseado em papéis e permissões de usuários, filtragem dinâmica sem cache de estado de permissão, autorização consistente em todos os métodos de descoberta de ferramentas, integração simplificada com sistemas de autenticação existentes e riscos de segurança reduzidos através da validação antecipada de requisições. A implementação garante que os usuários só possam descobrir e acessar ferramentas apropriadas para seu papel, mantendo um ambiente empresarial seguro e escalável.
 
-### Tutorial Details
+### Detalhes do Tutorial
 
 
-| Information          | Details                                                                         |
+| Informação           | Detalhes                                                                        |
 |:---------------------|:-----------------------------------------------------------------------         |
-| Tutorial type        | Interactive                                                                     |
-| AgentCore components | AgentCore Gateway, AgentCore Identity, AgentCore Runtime, Gateway Interceptors  |
-| Agentic Framework    | Strands Agents                                                                  |
-| Gateway Target Type  | MCP Server                                                                      |
-| Inbound Auth IdP     | Amazon Cognito, but can use others                                              |
-| Outbound Auth        | Amazon Cognito, but can use others                                              |
-| Tutorial components  | Fine-Grained Access Control through AgentCore Gateway Interceptors              |
-| Tutorial vertical    | Cross-vertical                                                                  |
-| Example complexity   | Easy-intermediate                                                               |
-| SDK used             | boto3                                                                           |
+| Tipo de tutorial     | Interativo                                                                      |
+| Componentes AgentCore| AgentCore Gateway, AgentCore Identity, AgentCore Runtime, Interceptores do Gateway |
+| Framework de Agentes | Strands Agents                                                                  |
+| Tipo de Alvo do Gateway | Servidor MCP                                                                 |
+| IdP de Auth de Entrada | Amazon Cognito, mas pode usar outros                                          |
+| Auth de Saída        | Amazon Cognito, mas pode usar outros                                            |
+| Componentes do tutorial | Controle de Acesso Granular através de Interceptores do AgentCore Gateway    |
+| Vertical do tutorial | Cross-vertical                                                                  |
+| Complexidade do exemplo | Fácil-intermediário                                                          |
+| SDK utilizado        | boto3                                                                           |
 
-## Tutorial Key Features
+## Principais Funcionalidades do Tutorial
 
-* Fine-Grained Access Control with AgentCore Gateway Interceptors using custom scopes for key MCP actions.
+* Controle de Acesso Granular com Interceptores do AgentCore Gateway usando escopos personalizados para ações MCP chave.
 
-## Tutorial Overview
+## Visão Geral do Tutorial
 
-In these tutorials we will cover the following functionality:
+Nestes tutoriais, cobriremos a seguinte funcionalidade:
 
-- [Fine-Grained Access Control with AgentCore Gateway Interceptors using custom scopes](01-fine-grained-access-control-using-custom-scopes.ipynb).
-
+- [Controle de Acesso Granular com Interceptores do AgentCore Gateway usando escopos personalizados](01-fine-grained-access-control-using-custom-scopes.ipynb).

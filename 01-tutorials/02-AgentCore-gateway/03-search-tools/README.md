@@ -1,33 +1,31 @@
-# Amazon Bedrock AgentCore Gateway - Semantic search
+# Amazon Bedrock AgentCore Gateway - Busca semântica
 
-## Tutorial Architecture
+## Arquitetura do Tutorial
 
-Amazon Bedrock AgentCore Gateway provides unified connectivity between agents and the tools and resources they need to interact with. Gateway plays multiple roles in this connectivity layer:
+O Amazon Bedrock AgentCore Gateway fornece conectividade unificada entre agentes e as ferramentas e recursos com os quais eles precisam interagir. O Gateway desempenha múltiplos papéis nesta camada de conectividade:
 
-1. **Security Guard**: Gateway manages OAuth authorization to ensure only valid users / agents access tools / resources.
-2. **Translator**: Gateway translates agent requests made using popular protocols like the Model Context Protocol (MCP) into API requests and Lambda invocations. This means developers don’t need to host servers, manage protocol integration, version support, version patching, etc.
-3. **Composer**: Gateway enables developers to seamlessly combine multiple APIs, functions, and tools into a single MCP  endpoint that an agent can use.
-4. **Keychain**: Gateway handles the injection of the right credentials to use with the right tool, ensuring that agents can seamlessly leverage tools that require different sets of credentials.
-5. **Researcher**: Gateway enables agents to search across all of their tools to find only the ones that are best for a given context or question. This allows agents to make use of 1000s of tools instead of just a handful. It also minimizes the set of tools that need to be provided in an agent’s LLM prompt, reducing latency and cost.
-6. **Infrastructure Manager**: Gateway is completely serverless, and comes with built-in observability and auditing, alleviating the need for developers to manage additional infrastructure to integrate their agents and tools.
+1. **Guarda de Segurança**: O Gateway gerencia a autorização OAuth para garantir que apenas usuários/agentes válidos acessem ferramentas/recursos.
+2. **Tradutor**: O Gateway traduz requisições de agentes feitas usando protocolos populares como o Model Context Protocol (MCP) em requisições de API e invocações Lambda. Isso significa que os desenvolvedores não precisam hospedar servidores, gerenciar integração de protocolos, suporte a versões, patches de versão, etc.
+3. **Compositor**: O Gateway permite que desenvolvedores combinem perfeitamente múltiplas APIs, funções e ferramentas em um único endpoint MCP que um agente pode usar.
+4. **Chaveiro**: O Gateway lida com a injeção das credenciais corretas para usar com a ferramenta certa, garantindo que os agentes possam utilizar ferramentas que requerem diferentes conjuntos de credenciais de forma transparente.
+5. **Pesquisador**: O Gateway permite que agentes busquem em todas as suas ferramentas para encontrar apenas aquelas que são mais adequadas para um determinado contexto ou pergunta. Isso permite que agentes utilizem milhares de ferramentas em vez de apenas algumas. Também minimiza o conjunto de ferramentas que precisa ser fornecido no prompt do LLM do agente, reduzindo latência e custo.
+6. **Gerenciador de Infraestrutura**: O Gateway é completamente serverless e vem com observabilidade e auditoria integradas, eliminando a necessidade de os desenvolvedores gerenciarem infraestrutura adicional para integrar seus agentes e ferramentas.
 
-![How does it work](images/gw-arch-overview.png)
+![Como funciona](images/gw-arch-overview.png)
 
-## AgentCore Gateway helps solve the challenge of MCP servers that have large numbers of tools
+## O AgentCore Gateway ajuda a resolver o desafio de servidores MCP com grande número de ferramentas
 
-In a typical enterprise setting, agent builders encounter MCP servers that have hundreds or even thousands
-of MCP tools. This volume of tools poses challenges for AI agents, including poor tool selection accuracy, increased cost, and higher latency driven by higher token usage from excessive tool metadata.
-This can happen when connecting your agents to third party services (e.g., Zendesk, Salesforce,
-Slack, JIRA, ...), or to existing enterprise REST services. AgentCore Gateway provides a built in semantic search across tools, which improves agent latency, cost, and accuracy, while still giving those agents the tools they need. Depending on your use case, LLM model, and agent framework, you can see up to 3x better latency by keeping an agent focused on relevant tools versus providing the full set of hundreds of tools from a typical MCP Server.
+Em um cenário empresarial típico, construtores de agentes encontram servidores MCP que possuem centenas ou até milhares de ferramentas MCP. Este volume de ferramentas apresenta desafios para agentes de IA, incluindo baixa precisão na seleção de ferramentas, aumento de custo e maior latência causada pelo maior uso de tokens devido ao excesso de metadados de ferramentas.
+Isso pode acontecer ao conectar seus agentes a serviços de terceiros (por exemplo, Zendesk, Salesforce, Slack, JIRA, ...) ou a serviços REST empresariais existentes. O AgentCore Gateway fornece uma busca semântica integrada entre ferramentas, que melhora a latência, o custo e a precisão do agente, enquanto ainda fornece aos agentes as ferramentas de que precisam. Dependendo do seu caso de uso, modelo LLM e framework de agentes, você pode obter até 3x melhor latência mantendo um agente focado em ferramentas relevantes versus fornecer o conjunto completo de centenas de ferramentas de um servidor MCP típico.
 
-![How does it work](images/gateway_tool_search.png)
+![Como funciona](images/gateway_tool_search.png)
 
-## Tutorials Overview
+## Visão Geral dos Tutoriais
 
-In these tutorials we will cover the following functionality:
+Nestes tutoriais, cobriremos as seguintes funcionalidades:
 
-- Creating Amazon Bedrock AgentCore Gateways with AWS Lambda-backed targets
-- Using AgentCore Gateway semantic search
-- Using Strands Agents to show how AgentCore Gateway search improves latency
+- Criação de Amazon Bedrock AgentCore Gateways com alvos baseados em AWS Lambda
+- Uso da busca semântica do AgentCore Gateway
+- Uso do Strands Agents para mostrar como a busca do AgentCore Gateway melhora a latência
 
-- [Amazon Bedrock AgentCore Gateway - Semantic search](./01-gateway-search.ipynb)
+- [Amazon Bedrock AgentCore Gateway - Busca semântica](./01-gateway-search.ipynb)

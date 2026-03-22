@@ -1,49 +1,49 @@
-# AgentCore Runtime and Gateway MCP Server Toolkit
+# AgentCore Runtime e Gateway MCP Server Toolkit
 
-A configurable toolkit for quickly setting up Custom MCP Server in AgentCore runtime and gateway infrastructure.
+Um toolkit configurável para configurar rapidamente um Servidor MCP Personalizado na infraestrutura do AgentCore Runtime e Gateway.
 
-Built on top of the [bedrock-agentcore-starter-toolkit](https://github.com/aws/bedrock-agentcore-starter-toolkit/) to provide a streamlined experience for deploying MCP servers.
+Construído sobre o [bedrock-agentcore-starter-toolkit](https://github.com/aws/bedrock-agentcore-starter-toolkit/) para fornecer uma experiência simplificada para implantação de servidores MCP.
 
-## Overview
+## Visão Geral
 
-- Do you want to quickly deploy your custom MCP server to AgentCore without writing any code? 
-- Do you want to consolidate your multiple custom MCP servers/tools to one URL that exposes all the tools from various MCP Servers? 
-- Do you want secured access to your MCP Servers? 
+- Você quer implantar rapidamente seu servidor MCP personalizado no AgentCore sem escrever nenhum código?
+- Você quer consolidar seus múltiplos servidores/ferramentas MCP personalizados em uma única URL que expõe todas as ferramentas de vários Servidores MCP?
+- Você quer acesso seguro aos seus Servidores MCP?
 
-This toolkit helps you to do all these with simple command line arguments. It automates the creation of:
+Este toolkit ajuda você a fazer tudo isso com simples argumentos de linha de comando. Ele automatiza a criação de:
 
-- Cognito User Pools for authentication
-- AgentCore Runtime environment for each MCP Server
-- AgentCore Gateway with MCP protocol support
-- Gateway MCP Server targets with OAuth2 authentication
+- Cognito User Pools para autenticação
+- Ambiente AgentCore Runtime para cada Servidor MCP
+- AgentCore Gateway com suporte ao protocolo MCP
+- Alvos de Servidor MCP do Gateway com autenticação OAuth2
 
-The toolkit creates a complete MCP gateway and enables multiple MCP servers (Example: calculator and helloworld) to be accessed through a single gateway endpoint with proper authentication and routing.
+O toolkit cria um gateway MCP completo e permite que múltiplos servidores MCP (Exemplo: calculator e helloworld) sejam acessados através de um único endpoint de gateway com autenticação e roteamento adequados.
 
-## Prerequisites
+## Pré-requisitos
 
-1. AWS credentials configured
-2. Python 3.8+ installed
-3. (Optional) `.env` file for Cognito user configuration
+1. Credenciais AWS configuradas
+2. Python 3.8+ instalado
+3. (Opcional) Arquivo `.env` para configuração de usuário Cognito
 
-## Installation
+## Instalação
 
-### From PyPI (when published)
+### A partir do PyPI (quando publicado)
 ```bash
 pip install agentcore-runtime-gw-mcp-toolkit
 ```
 
-### From Source
+### A partir do Código Fonte
 ```bash
 git clone <repository-url>
 cd agentcore-runtime-gw-mcp-tool-kit
 pip install -e .
 ```
 
-## Configuration
+## Configuração
 
-### Environment Variables (Optional)
+### Variáveis de Ambiente (Opcional)
 
-You can customize Cognito user credentials by creating a `.env` file in the project directory:
+Você pode personalizar as credenciais de usuário Cognito criando um arquivo `.env` no diretório do projeto:
 
 ```bash
 # .env file
@@ -52,35 +52,35 @@ COGNITO_TEMP_PASSWORD=your_temp_password
 COGNITO_PASSWORD=your_permanent_password
 ```
 
-**Default values** (used if `.env` file is not provided):
+**Valores padrão** (usados se o arquivo `.env` não for fornecido):
 - `COGNITO_USERNAME`: `testuser`
 - `COGNITO_TEMP_PASSWORD`: `Temp123!`
 - `COGNITO_PASSWORD`: `MyPassword123!`
 
-**Note**: The toolkit automatically creates Cognito users with these credentials for testing purposes.
+**Nota**: O toolkit cria automaticamente usuários Cognito com essas credenciais para fins de teste.
 
-## Usage
+## Uso
 
-### Getting Started
+### Primeiros Passos
 
-1. **Clone the Repository**
+1. **Clone o Repositório**
    ```bash
    git clone <repository-url>
    cd agentcore-runtime-gw-mcp-tool-kit
    ```
 
-2. **Install the Package**
+2. **Instale o Pacote**
    ```bash
    pip install -e .
    ```
 
-3. **Prepare Your MCP Server Code**
-   - Your MCP server files can be located anywhere on your system
-   - Ensure each server has its own `server.py` and `requirements.txt`
-   - Note the full paths to these files for the runtime configuration
+3. **Prepare o Código do Seu Servidor MCP**
+   - Os arquivos do seu servidor MCP podem estar localizados em qualquer lugar do seu sistema
+   - Certifique-se de que cada servidor tenha seu próprio `server.py` e `requirements.txt`
+   - Anote os caminhos completos desses arquivos para a configuração do runtime
 
    
-   **Example structure (can be anywhere):**
+   **Exemplo de estrutura (pode estar em qualquer lugar):**
    ```
    /path/to/my-servers/
    ├── calculator/
@@ -94,7 +94,7 @@ COGNITO_PASSWORD=your_permanent_password
        └── requirements.txt
    ```
 
-4. **Deploy with Command Line Arguments**
+4. **Implante com Argumentos de Linha de Comando**
    ```bash
    agentcore-mcp-toolkit \
      --gateway-name "my-gateway" \
@@ -107,18 +107,17 @@ COGNITO_PASSWORD=your_permanent_password
        }
      ]'
    ```
-   **Note:** The agentcore-mcp-toolkit has to be invoked from the MCP Server project root. Example: The utility has 
-   to be invoked from /path/to for the above example.
+   **Nota:** O agentcore-mcp-toolkit deve ser invocado a partir da raiz do projeto do Servidor MCP. Exemplo: O utilitário deve ser invocado a partir de /path/to para o exemplo acima.
 
-### Basic Usage
+### Uso Básico
 
 ```bash
-# Deploy with minimal arguments
+# Implante com argumentos mínimos
 agentcore-mcp-toolkit \
   --gateway-name "my-gateway" \
   --runtime-configs '[{"name":"runtime1","description":"My Runtime","entrypoint":"/path/to/myserver/server.py","requirements_file":"/path/to/myserver/requirements.txt"}]'
 
-# Deploy with all options
+# Implante com todas as opções
 agentcore-mcp-toolkit \
   --region us-east-1 \
   --gateway-name "my-gateway-mcp-server" \
@@ -133,16 +132,16 @@ agentcore-mcp-toolkit \
   ]'
 ```
 
-### Command Line Options
+### Opções de Linha de Comando
 
-- `--region`: AWS region (default: us-east-1)
-- `--gateway-name`: Gateway name (required)
-- `--gateway-description`: Gateway description (optional)
-- `--runtime-configs`: JSON array of runtime configurations (required)
+- `--region`: Região AWS (padrão: us-east-1)
+- `--gateway-name`: Nome do gateway (obrigatório)
+- `--gateway-description`: Descrição do gateway (opcional)
+- `--runtime-configs`: Array JSON de configurações de runtime (obrigatório)
 
-### Runtime Configuration Format
+### Formato de Configuração do Runtime
 
-Each runtime configuration in the `--runtime-configs` JSON array should include:
+Cada configuração de runtime no array JSON `--runtime-configs` deve incluir:
 
 ```json
 {
@@ -155,56 +154,56 @@ Each runtime configuration in the `--runtime-configs` JSON array should include:
 }
 ```
 
-**Required fields:**
-- `name`: Unique runtime name
-- `entrypoint`: Full path to MCP server Python file
-- `requirements_file`: Full path to requirements.txt file
+**Campos obrigatórios:**
+- `name`: Nome único do runtime
+- `entrypoint`: Caminho completo para o arquivo Python do servidor MCP
+- `requirements_file`: Caminho completo para o arquivo requirements.txt
 
-**Optional fields:**
-- `description`: Runtime description
-- `auto_create_execution_role`: Auto-create IAM role (default: true)
-- `auto_create_ecr`: Auto-create ECR repository (default: true)
+**Campos opcionais:**
+- `description`: Descrição do runtime
+- `auto_create_execution_role`: Criar automaticamente a role IAM (padrão: true)
+- `auto_create_ecr`: Criar automaticamente o repositório ECR (padrão: true)
 
-### Auto-Derived Names
+### Nomes Derivados Automaticamente
 
-The toolkit automatically derives resource names from the `gateway-name` and runtime `name` fields:
+O toolkit deriva automaticamente os nomes dos recursos a partir dos campos `gateway-name` e `name` do runtime:
 
-**Gateway Resources** (from `--gateway-name`):
+**Recursos do Gateway** (a partir de `--gateway-name`):
 - IAM Role: `{gateway-name}-role`
 - User Pool: `{gateway-name}-pool`
 - Resource Server ID: `{gateway-name}-id`
 - Resource Server Name: `{gateway-name}-name`
 - Client Name: `{gateway-name}-client`
 
-**Runtime Resources** (from runtime `name`):
+**Recursos do Runtime** (a partir do `name` do runtime):
 - User Pool: `{runtime-name}-pool`
 - Resource Server ID: `{runtime-name}-id`
 - Resource Server Name: `{runtime-name}-name`
 - Client Name: `{runtime-name}-client`
-- Agent Name: `{runtime-name}` (with dashes converted to underscores)
+- Agent Name: `{runtime-name}` (com hífens convertidos para underscores)
 
-**Target Resources** (auto-generated):
+**Recursos do Target** (gerados automaticamente):
 - Target Name: `{runtime-name}-target`
 - Identity Provider: `{runtime-name}-identity`
 
-## Testing the Gateway
+## Testando o Gateway
 
-Once deployed, the toolkit automatically provides all the connection information needed to test and use your MCP gateway.
+Uma vez implantado, o toolkit fornece automaticamente todas as informações de conexão necessárias para testar e usar seu gateway MCP.
 
-### Gateway Connection Information
+### Informações de Conexão do Gateway
 
-The toolkit automatically displays connection details and **securely saves credentials to a file** after successful deployment:
+O toolkit exibe automaticamente os detalhes de conexão e **salva as credenciais de forma segura em um arquivo** após a implantação bem-sucedida:
 
-#### **Secure Credential Storage**
+#### **Armazenamento Seguro de Credenciais**
 
-For security, sensitive credentials are saved to a secure file instead of being displayed in console logs:
+Por segurança, as credenciais sensíveis são salvas em um arquivo seguro em vez de serem exibidas nos logs do console:
 
-- **File Location**: `.agentcore-credentials-{gateway-name}.json`
-- **File Permissions**: Owner-only access (600)
-- **Console Output**: Shows `<redacted>` for sensitive values
-- **Access Method**: Use `cat .agentcore-credentials-{gateway-name}.json`
+- **Localização do Arquivo**: `.agentcore-credentials-{gateway-name}.json`
+- **Permissões do Arquivo**: Acesso somente pelo proprietário (600)
+- **Saída do Console**: Mostra `<redacted>` para valores sensíveis
+- **Método de Acesso**: Use `cat .agentcore-credentials-{gateway-name}.json`
 
-**Example Output:**
+**Exemplo de Saída:**
 ```
 ============================================================
 GATEWAY CONNECTION INFORMATION
@@ -224,157 +223,157 @@ Gateway ID: my-gateway-mcp-server-123456789
 Runtime 1 Agent ARN: arn:aws:bedrock-agentcore:us-east-1:123456789:runtime/my_calculator_runtime-123456789
 ```
 
-### Configuring QDev Plugin with Access Token
+### Configurando o Plugin QDev com Access Token
 
-To use the MCP gateway in QDev plugin, configure it as shown below:
+Para usar o gateway MCP no plugin QDev, configure conforme mostrado abaixo:
 
-![QDev MCP Configuration](images/qdev_mcp_config.png)
+![Configuração MCP do QDev](images/qdev_mcp_config.png)
 
-**Steps to configure QDev:**
-1. **Get credentials** from the secure file:
+**Passos para configurar o QDev:**
+1. **Obtenha as credenciais** do arquivo seguro:
    ```bash
    cat .agentcore-credentials-{gateway-name}.json
    ```
-2. Copy the **access_token** value from the JSON file
-3. In QDev plugin settings, add a new MCP server with:
-   - **Server URL**: Use the `gateway_url` from the credentials file
+2. Copie o valor do **access_token** do arquivo JSON
+3. Nas configurações do plugin QDev, adicione um novo servidor MCP com:
+   - **Server URL**: Use o `gateway_url` do arquivo de credenciais
    - **Authentication**: Bearer Token
-   - **Token**: Paste the access token from step 2
-4. Save the configuration and test the connection
+   - **Token**: Cole o access token do passo 2
+4. Salve a configuração e teste a conexão
 
-**Security Note**: Never share or commit the credentials file to version control.
+**Nota de Segurança**: Nunca compartilhe ou faça commit do arquivo de credenciais no controle de versão.
 
-### Live Demo Examples
+### Exemplos de Demonstração ao Vivo
 
-Once configured, you can use the MCP tools directly in QDev:
+Uma vez configurado, você pode usar as ferramentas MCP diretamente no QDev:
 
-**Calculator MCP Server Demo:**
-![Calculator Add Demo](images/calculator_add_demo.png)
+**Demonstração do Servidor MCP Calculator:**
+![Demonstração Calculator Add](images/calculator_add_demo.png)
 
-**Hello World MCP Server Demo:**
-![Greet Hello World Demo](images/greet_hello_world.png)
+**Demonstração do Servidor MCP Hello World:**
+![Demonstração Greet Hello World](images/greet_hello_world.png)
 
-## Architecture
+## Arquitetura
 
-![Architecture ](images/architecture.png)
+![Arquitetura](images/architecture.png)
 
-### Architecture Components
+### Componentes da Arquitetura
 
-The toolkit creates:
-1. **Single Gateway**: One AgentCore Gateway with multiple MCP Server targets that routes requests
-2. **Multiple Runtimes**: Each MCP server runs in its own AgentCore Runtime
-3. **Authentication**: Separate Cognito resources for gateway and each runtime
-4. **Targets**: Gateway MCP Server targets that connect the gateway to each runtime
+O toolkit cria:
+1. **Gateway Único**: Um AgentCore Gateway com múltiplos alvos de Servidor MCP que roteia requisições
+2. **Múltiplos Runtimes**: Cada servidor MCP executa em seu próprio AgentCore Runtime
+3. **Autenticação**: Recursos Cognito separados para o gateway e cada runtime
+4. **Targets**: Alvos de Servidor MCP do Gateway que conectam o gateway a cada runtime
 
-### Authentication Flow
+### Fluxo de Autenticação
 
-**Inbound Authorization (Client → Gateway):**
-- MCP Client (QDev) sends requests with Bearer token
-- Gateway JWT Authorizer validates token against Gateway Cognito User Pool
-- Authorized requests are routed to appropriate targets
+**Autorização de Entrada (Cliente → Gateway):**
+- O Cliente MCP (QDev) envia requisições com token Bearer
+- O JWT Authorizer do Gateway valida o token contra o Cognito User Pool do Gateway
+- Requisições autorizadas são roteadas para os alvos apropriados
 
-**Outbound Authorization (Gateway → Runtime):**
-- Each target has its own OAuth2 credential provider
-- Gateway obtains OAuth tokens from respective Runtime Cognito User Pools
-- Authenticated requests are sent to individual MCP server runtimes
+**Autorização de Saída (Gateway → Runtime):**
+- Cada alvo possui seu próprio provedor de credenciais OAuth2
+- O Gateway obtém tokens OAuth dos respectivos Cognito User Pools do Runtime
+- Requisições autenticadas são enviadas para os runtimes individuais dos servidores MCP
 
-## Authorization Support
+## Suporte à Autorização
 
-### Current Implementation
-This toolkit currently supports **Amazon Cognito OAuth2** for both inbound and outbound authorization:
-- **Inbound Authorization**: Gateway uses Cognito JWT tokens for client authentication
-- **Outbound Authorization**: Gateway authenticates to runtime using Cognito OAuth2 credentials
+### Implementação Atual
+Este toolkit atualmente suporta **Amazon Cognito OAuth2** para autorização de entrada e saída:
+- **Autorização de Entrada**: O Gateway usa tokens JWT do Cognito para autenticação de clientes
+- **Autorização de Saída**: O Gateway se autentica no runtime usando credenciais OAuth2 do Cognito
 
 ### Roadmap
-- **IAM Role-based Authorization**: Support for IAM roles and policies for both inbound and outbound authentication (TO DO - planned for next release)
+- **Autorização baseada em IAM Role**: Suporte para IAM roles e políticas para autenticação de entrada e saída (A FAZER - planejado para a próxima versão)
 
-## Security Features
+## Recursos de Segurança
 
-### **Secure Credential Management**
-- **File-based storage**: Credentials saved to secure files with restricted permissions
-- **Console masking**: Sensitive values shown as `<redacted>` in logs
-- **File permissions**: Automatic setting of owner-only access (600)
-- **Fallback protection**: Graceful handling if file operations fail
+### **Gerenciamento Seguro de Credenciais**
+- **Armazenamento em arquivo**: Credenciais salvas em arquivos seguros com permissões restritas
+- **Mascaramento no console**: Valores sensíveis exibidos como `<redacted>` nos logs
+- **Permissões de arquivo**: Configuração automática de acesso somente pelo proprietário (600)
+- **Proteção de fallback**: Tratamento gracioso se operações de arquivo falharem
 
-### **Input Validation**
-- **Path traversal protection**: Prevents `..` in file paths
-- **File extension validation**: Ensures `.py` and `.txt` extensions
-- **JSON structure validation**: Validates runtime configuration format
-- **Required field checks**: Ensures all mandatory fields are present
+### **Validação de Entrada**
+- **Proteção contra path traversal**: Previne `..` em caminhos de arquivo
+- **Validação de extensão de arquivo**: Garante extensões `.py` e `.txt`
+- **Validação de estrutura JSON**: Valida o formato de configuração do runtime
+- **Verificação de campos obrigatórios**: Garante que todos os campos obrigatórios estejam presentes
 
-### **Error Handling**
-- **Specific exception handling**: Uses appropriate exception types
-- **Sanitized error messages**: Prevents information disclosure
-- **Graceful degradation**: Continues operation when possible
-- **Proper exit codes**: Returns appropriate status for automation
+### **Tratamento de Erros**
+- **Tratamento específico de exceções**: Usa tipos de exceção apropriados
+- **Mensagens de erro sanitizadas**: Previne divulgação de informações
+- **Degradação graciosa**: Continua a operação quando possível
+- **Códigos de saída adequados**: Retorna status apropriado para automação
 
-## Cleanup
+## Limpeza
 
-### Removing Resources
+### Removendo Recursos
 
-To clean up all resources created by the toolkit, use the cleanup script:
+Para limpar todos os recursos criados pelo toolkit, use o script de limpeza:
 
 ```bash
-# Clean up specific gateway and runtimes
+# Limpar gateway e runtimes específicos
 python -m cleanup \
   --gateway-name "my-gateway" \
   --runtime-names '["runtime1", "runtime2"]' \
   --region us-east-1
 
-# Skip confirmation prompt
+# Pular prompt de confirmação
 python -m cleanup \
   --gateway-name "my-gateway" \
   --runtime-names '["runtime1", "runtime2"]' \
   --confirm
 ```
 
-### Cleanup Options
+### Opções de Limpeza
 
-- `--gateway-name`: Name of the gateway to clean up (required)
-- `--runtime-names`: JSON array of runtime names to clean up (required)
-- `--region`: AWS region (default: us-east-1)
-- `--confirm`: Skip confirmation prompt
+- `--gateway-name`: Nome do gateway a ser limpo (obrigatório)
+- `--runtime-names`: Array JSON de nomes de runtime a serem limpos (obrigatório)
+- `--region`: Região AWS (padrão: us-east-1)
+- `--confirm`: Pular prompt de confirmação
 
-### Resources Cleaned Up
+### Recursos Removidos
 
-The cleanup script removes:
-- AgentCore Gateway and all targets
-- AgentCore Runtime instances
-- Cognito User Pools and domains
-- IAM roles and policies
-- OAuth2 credential providers
+O script de limpeza remove:
+- AgentCore Gateway e todos os targets
+- Instâncias do AgentCore Runtime
+- Cognito User Pools e domínios
+- IAM roles e políticas
+- Provedores de credenciais OAuth2
 
-**Note**: The cleanup script does not remove local credential files. To remove them:
+**Nota**: O script de limpeza não remove arquivos de credenciais locais. Para removê-los:
 ```bash
-# Remove credential files manually
+# Remover arquivos de credenciais manualmente
 rm .agentcore-credentials-*.json
 ```
 
-**Warning**: This action cannot be undone. Always confirm the resources before proceeding.
+**Aviso**: Esta ação não pode ser desfeita. Sempre confirme os recursos antes de prosseguir.
 
-## Troubleshooting
+## Solução de Problemas
 
-1. Ensure AWS credentials are properly configured
-2. Verify required MCP server files exist in their respective directories
-3. Check AWS region permissions
-4. Review CloudWatch logs for detailed error information
-5. Ensure gateway URL is correctly formatted when testing
-6. Verify Cognito user pools and clients are created successfully
-7. **Access Token Issues**: If the access token expires, re-run the toolkit to get a fresh token
-8. **QDev Connection Issues**: Ensure the gateway URL ends with `/mcp` and the bearer token is correctly copied
-9. **Tool Discovery**: Use different query terms if tools are not found (try "calculator", "greet", or "tools")
-10. **Authorization Issues**: Currently only Cognito OAuth2 is supported - ensure all authentication uses Cognito tokens
-11. **Cognito User Issues**: If you encounter user creation errors, check your `.env` file configuration or use the default credentials
-12. **Cleanup Issues**: If cleanup fails, manually verify resources in AWS console and retry with specific resource names
-13. **Credential File Issues**: If credentials file cannot be created, check directory permissions and disk space
-14. **File Permission Issues**: On Windows, file permissions may not be set correctly - manually secure the credentials file
-15. **Path Validation Errors**: Ensure file paths don't contain `..` and have correct extensions (`.py`, `.txt`)
-16. **JSON Validation Errors**: Verify runtime-configs is a valid JSON array with required fields
+1. Certifique-se de que as credenciais AWS estejam configuradas corretamente
+2. Verifique se os arquivos necessários do servidor MCP existem em seus respectivos diretórios
+3. Verifique as permissões da região AWS
+4. Revise os logs do CloudWatch para informações detalhadas de erro
+5. Certifique-se de que a URL do gateway esteja formatada corretamente ao testar
+6. Verifique se os Cognito User Pools e clientes foram criados com sucesso
+7. **Problemas com Access Token**: Se o access token expirar, execute novamente o toolkit para obter um novo token
+8. **Problemas de Conexão com QDev**: Certifique-se de que a URL do gateway termine com `/mcp` e que o bearer token esteja copiado corretamente
+9. **Descoberta de Ferramentas**: Use termos de consulta diferentes se as ferramentas não forem encontradas (tente "calculator", "greet" ou "tools")
+10. **Problemas de Autorização**: Atualmente apenas Cognito OAuth2 é suportado - certifique-se de que toda autenticação use tokens Cognito
+11. **Problemas com Usuário Cognito**: Se você encontrar erros na criação de usuários, verifique a configuração do seu arquivo `.env` ou use as credenciais padrão
+12. **Problemas de Limpeza**: Se a limpeza falhar, verifique manualmente os recursos no console AWS e tente novamente com nomes de recursos específicos
+13. **Problemas com Arquivo de Credenciais**: Se o arquivo de credenciais não puder ser criado, verifique as permissões do diretório e o espaço em disco
+14. **Problemas de Permissão de Arquivo**: No Windows, as permissões de arquivo podem não ser definidas corretamente - proteja manualmente o arquivo de credenciais
+15. **Erros de Validação de Caminho**: Certifique-se de que os caminhos de arquivo não contenham `..` e tenham as extensões corretas (`.py`, `.txt`)
+16. **Erros de Validação JSON**: Verifique se runtime-configs é um array JSON válido com os campos obrigatórios
 
-## Example MCP Servers
+## Exemplos de Servidores MCP
 
-The toolkit includes example MCP servers:
-- **Calculator**: Provides add and multiply functions
-- **HelloWorld**: Provides greeting functionality
+O toolkit inclui exemplos de servidores MCP:
+- **Calculator**: Fornece funções de adição e multiplicação
+- **HelloWorld**: Fornece funcionalidade de saudação
 
-Both servers demonstrate the MCP protocol implementation and can be used as templates for creating custom MCP servers.
+Ambos os servidores demonstram a implementação do protocolo MCP e podem ser usados como modelos para criar servidores MCP personalizados.

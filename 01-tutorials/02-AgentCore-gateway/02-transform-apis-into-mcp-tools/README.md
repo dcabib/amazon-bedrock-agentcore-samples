@@ -1,104 +1,103 @@
-# Implement MCP tools from your APIs using Amazon Bedrock AgentCore Gateway
+# Implementar ferramentas MCP a partir das suas APIs usando o Amazon Bedrock AgentCore Gateway
 
-## Overview
-Bedrock AgentCore Gateway provides customers a way to turn their existing APIs (OpenAPI and Smithy) into fully-managed MCP servers without needing to manage infra or hosting. Customers can bring their existing OpenAPI and Smithy specs to convert their tools. Gateway will provide a uniform Model Context Protocol (MCP) interface across all these tools. Gateway employs a dual authentication model to ensure secure access control for both incoming requests and outbound connections to target resources. The framework consists of two key components: Inbound Auth, which validates and authorizes users attempting to access gateway targets, and Outbound Auth, which enables the gateway to securely connect to backend APIs on behalf of authenticated users using API key, Oauth token and AWS IAM role.
+## Visão Geral
+O Bedrock AgentCore Gateway oferece aos clientes uma maneira de transformar suas APIs existentes (OpenAPI e Smithy) em servidores MCP totalmente gerenciados, sem a necessidade de gerenciar infraestrutura ou hospedagem. Os clientes podem trazer suas especificações OpenAPI e Smithy existentes para converter suas ferramentas. O Gateway fornece uma interface uniforme do Model Context Protocol (MCP) para todas essas ferramentas. O Gateway emprega um modelo de autenticação dupla para garantir o controle de acesso seguro tanto para requisições de entrada quanto para conexões de saída aos recursos de destino. O framework consiste em dois componentes principais: Autenticação de Entrada (Inbound Auth), que valida e autoriza usuários que tentam acessar os alvos do gateway, e Autenticação de Saída (Outbound Auth), que permite ao gateway conectar-se de forma segura às APIs de backend em nome dos usuários autenticados usando chave de API, token OAuth e role IAM da AWS.
 
-![How does it work](images/apis-into-mcp-gateway.png)
+![Como funciona](images/apis-into-mcp-gateway.png)
 
 
-## Defining concepts
+## Definição de conceitos
 
-Before starting, let us define a couple of important concepts for getting started with Amazon Bedrock AgentCore Gateway:
-You can group your OpenAPI or Smithy APIs and create Bedrock AgentCore Gateway Target. A target is a resource that you use to logically group your APIs and attach to your AmazonCore Gateway. 
+Antes de começar, vamos definir alguns conceitos importantes para iniciar com o Amazon Bedrock AgentCore Gateway:
+Você pode agrupar suas APIs OpenAPI ou Smithy e criar um Bedrock AgentCore Gateway Target. Um target é um recurso que você usa para agrupar logicamente suas APIs e anexar ao seu AgentCore Gateway.
 
-## Grouping your APIs into Gateway targets
+## Agrupando suas APIs em alvos do Gateway
 
-Below are the best practices on grouping your APIs into Gateway target -
-* Group your MCP tools based on Agentic application's business domain similar to Domain Driven Design principles applicable to microservices paradigm.
-* You can attach only one resource credentials provider for outbound authorization for the Gateway target. Group the tools based on the outbound authorizer.
-* Group your apis based on the type of the APIs i.e OpenAPI, Smithy, or AWS Lambda serving as a bridge to other enterprise APIs.
+Abaixo estão as melhores práticas para agrupar suas APIs em alvos do Gateway:
+* Agrupe suas ferramentas MCP com base no domínio de negócio da aplicação agêntica, similar aos princípios de Domain Driven Design aplicáveis ao paradigma de microsserviços.
+* Você pode anexar apenas um provedor de credenciais de recurso para autorização de saída por alvo do Gateway. Agrupe as ferramentas com base no autorizador de saída.
+* Agrupe suas APIs com base no tipo das APIs, ou seja, OpenAPI, Smithy ou AWS Lambda servindo como ponte para outras APIs empresariais.
 
-![Grouping the API tools into targets](images/api-groups-targets.png)
+![Agrupando as ferramentas de API em alvos](images/api-groups-targets.png)
 
-## Best practices
+## Melhores práticas
 
-1. Documentation Quality Guidelines
-- Write clear, descriptive summaries for each API endpoint and resource
-- Use natural language descriptions that explain the purpose and functionality
-- Include real-world use cases in the descriptions
-- Avoid technical jargon unless necessary
-- Ensure consistent terminology throughout documentation
+1. Diretrizes de Qualidade da Documentação
+- Escreva resumos claros e descritivos para cada endpoint e recurso da API
+- Use descrições em linguagem natural que expliquem o propósito e a funcionalidade
+- Inclua casos de uso do mundo real nas descrições
+- Evite jargão técnico, a menos que necessário
+- Garanta terminologia consistente em toda a documentação
 
-2. Schema Documentation
-- Provide detailed descriptions for all fields
-- Include field constraints and validation rules
-- Document data types precisely
-- Add examples for complex data structures
-- Explain relationships between different schemas
+2. Documentação de Schema
+- Forneça descrições detalhadas para todos os campos
+- Inclua restrições e regras de validação dos campos
+- Documente os tipos de dados com precisão
+- Adicione exemplos para estruturas de dados complexas
+- Explique os relacionamentos entre diferentes schemas
 
-3. OpenAPI Specification best practices
-- Validate specs using OpenAPI linters
-- Ensure proper semantic versioning
-- Include complete request/response examples
-- Document error responses and codes
-- Add security scheme definitions
+3. Melhores práticas para especificação OpenAPI
+- Valide as especificações usando linters OpenAPI
+- Garanta versionamento semântico adequado
+- Inclua exemplos completos de requisição/resposta
+- Documente respostas e códigos de erro
+- Adicione definições de esquema de segurança
 
-4. Tools search optimization
-- Include relevant keywords naturally in descriptions
-- Provide context about when to use each API
-- Document alternative approaches or related endpoints
-- Include business domain terminology
+4. Otimização de busca de ferramentas
+- Inclua palavras-chave relevantes naturalmente nas descrições
+- Forneça contexto sobre quando usar cada API
+- Documente abordagens alternativas ou endpoints relacionados
+- Inclua terminologia do domínio de negócio
 
-5. API extraction guidelines
-- Identify core functionality needed for agent tasks
-- Create focused API subsets based on use cases
-- Maintain semantic relationships between extracted APIs
-- Preserve security definitions and common schemas
-- Document dependencies between extracted components
+5. Diretrizes de extração de API
+- Identifique a funcionalidade principal necessária para as tarefas do agente
+- Crie subconjuntos focados de API com base nos casos de uso
+- Mantenha os relacionamentos semânticos entre as APIs extraídas
+- Preserve as definições de segurança e schemas comuns
+- Documente as dependências entre os componentes extraídos
 
-6. Monolithic API Extraction Process:
-- Review full OpenAPI specification
-- Map agent use cases to specific endpoints and Auth requirements
-- Extract relevant paths and schemas
-- Maintain component dependencies
-- Validate extracted specification
-- Test semantic search effectiveness
+6. Processo de Extração de API Monolítica:
+- Revise a especificação OpenAPI completa
+- Mapeie os casos de uso do agente para endpoints específicos e requisitos de autenticação
+- Extraia os caminhos e schemas relevantes
+- Mantenha as dependências dos componentes
+- Valide a especificação extraída
+- Teste a eficácia da busca semântica
 
-Remember to regularly review and update documentation as APIs evolve, maintaining the quality and accuracy of the agents.
+Lembre-se de revisar e atualizar regularmente a documentação conforme as APIs evoluem, mantendo a qualidade e precisão dos agentes.
 
-## Inbound and outbound authorization 
-Bedrock AgentCore Gateway provides secure connections via inbound and outbound authentication. For the inbound authentication, the AgentCore Gateway analyzes the OAuth token passed during invocation to decide allow or deny the access to a tool in the gateway. If a tool needs access to external resources, the AgentCore Gateway can use outbound authentication via API Key, IAM or OAuth Token to allow or deny the access to the external resource.
+## Autorização de entrada e saída
+O Bedrock AgentCore Gateway fornece conexões seguras via autenticação de entrada e saída. Para a autenticação de entrada, o AgentCore Gateway analisa o token OAuth passado durante a invocação para decidir permitir ou negar o acesso a uma ferramenta no gateway. Se uma ferramenta precisa acessar recursos externos, o AgentCore Gateway pode usar autenticação de saída via Chave de API, IAM ou Token OAuth para permitir ou negar o acesso ao recurso externo.
 
-During the inbound authorization flow, an agent or the MCP client calls an MCP tool in the AgentCore Gateway adding an OAuth access token (generated from the user’s IdP). AgentCore Gateway then validates the OAuth access token and performs inbound authorization.
+Durante o fluxo de autorização de entrada, um agente ou o cliente MCP chama uma ferramenta MCP no AgentCore Gateway adicionando um token de acesso OAuth (gerado a partir do IdP do usuário). O AgentCore Gateway então valida o token de acesso OAuth e realiza a autorização de entrada.
 
-If the tool running in AgentCore Gateway needs to access external resources, OAuth will retrieve credentials of downstream resources using the resource credential provider for the Gateway target. AgentCore Gateway pass the authorization credentials to the caller to get access to the downstream API. 
+Se a ferramenta executando no AgentCore Gateway precisa acessar recursos externos, o OAuth recuperará as credenciais dos recursos downstream usando o provedor de credenciais de recurso para o alvo do Gateway. O AgentCore Gateway passa as credenciais de autorização ao chamador para obter acesso à API downstream.
 
-![Secure access](../images/gateway_secure_access.png)
+![Acesso seguro](../images/gateway_secure_access.png)
 
-### Tutorial Details
+### Detalhes do Tutorial
 
-| Information          | Details                                                   |
+| Informação           | Detalhes                                                  |
 |:---------------------|:----------------------------------------------------------|
-| Tutorial type        | Interactive                                               |
-| AgentCore components | AgentCore Gateway, AgentCore Identity                     |
-| Agentic Framework    | Strands Agents                                            |
-| LLM model            | Anthropic Claude Haiku 4.5, Amazon Nova Pro              |
-| Tutorial components  | Creating AgentCore Gateway and Invoking AgentCore Gateway |
-| Tutorial vertical    | Cross-vertical                                            |
-| Example complexity   | Easy                                                      |
-| SDK used             | boto3                                                     |
+| Tipo de tutorial     | Interativo                                                |
+| Componentes AgentCore| AgentCore Gateway, AgentCore Identity                     |
+| Framework de Agentes | Strands Agents                                            |
+| Modelo LLM           | Anthropic Claude Haiku 4.5, Amazon Nova Pro              |
+| Componentes do tutorial | Criação do AgentCore Gateway e Invocação do AgentCore Gateway |
+| Vertical do tutorial | Cross-vertical                                            |
+| Complexidade do exemplo | Fácil                                                  |
+| SDK utilizado        | boto3                                                     |
 
-## Tutorial Architecture
+## Arquitetura do Tutorial
 
-### Tutorial Key Features
+### Principais Funcionalidades do Tutorial
 
-* Convert OpenAPI apis into MCP tools
-* Convert Smithy models into MCP tools
+* Converter APIs OpenAPI em ferramentas MCP
+* Converter modelos Smithy em ferramentas MCP
 
-### Tutorials Overview
+### Visão Geral dos Tutoriais
 
-In these tutorials we will cover the following functionality:
+Nestes tutoriais, cobriremos as seguintes funcionalidades:
 
-- [Transform your OpenAPIs into MCP tools](01-transform-openapi-into-mcp-tools)
-- [Transform your Smithy models into MCP tools](02-transform-smithyapis-into-mcp-tools)
-
+- [Transformar suas OpenAPIs em ferramentas MCP](01-transform-openapi-into-mcp-tools)
+- [Transformar seus modelos Smithy em ferramentas MCP](02-transform-smithyapis-into-mcp-tools)

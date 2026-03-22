@@ -1,8 +1,8 @@
-# End-to-End Flow: AgentCore Gateway with EntraID 3LO
+# Fluxo Ponta a Ponta: AgentCore Gateway com EntraID 3LO
 
-This document describes the complete working flow for the AgentCore MCP Gateway with EntraID inbound authentication and outbound 3LO (three-legged OAuth) for user-delegated access to downstream APIs.
+Este documento descreve o fluxo completo de funcionamento do AgentCore MCP Gateway com autenticação de entrada EntraID e 3LO de saída (OAuth de três pernas) para acesso delegado pelo usuário a APIs downstream.
 
-## System Overview
+## Visão Geral do Sistema
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -32,7 +32,7 @@ This document describes the complete working flow for the AgentCore MCP Gateway 
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-## AWS Architecture
+## Arquitetura AWS
 
 ```mermaid
 graph TB
@@ -98,20 +98,20 @@ graph TB
     style Clients fill:#1e1e2e,color:#fff
 ```
 
-## Two Flows, One Token Vault
+## Dois Fluxos, Um Único Token Vault
 
-There are two client flows that share the same user identity and token vault:
+Existem dois fluxos de cliente que compartilham a mesma identidade de usuário e o mesmo token vault:
 
-1. **Auth Onboarding SPA** — browser-based web app where users pre-authorize 3LO access
-2. **VS Code MCP Client** — IDE-based MCP client that calls tools through the proxy
+1. **Auth Onboarding SPA** — aplicação web baseada em navegador onde os usuários pré-autorizam o acesso 3LO
+2. **VS Code MCP Client** — cliente MCP baseado em IDE que chama ferramentas através do proxy
 
-Both authenticate against the same EntraID App A, so the JWT `sub` claim is identical for the same user. A token authorized via the SPA is immediately usable by VS Code.
+Ambos se autenticam contra o mesmo EntraID App A, então a claim `sub` do JWT é idêntica para o mesmo usuário. Um token autorizado via SPA é imediatamente utilizável pelo VS Code.
 
 ---
 
-## Flow 1: Auth Onboarding (First-Time Authorization)
+## Fluxo 1: Auth Onboarding (Primeira Autorização)
 
-The user visits the auth onboarding web app to pre-authorize access to downstream APIs before using them from VS Code.
+O usuário visita a aplicação web de auth onboarding para pré-autorizar o acesso a APIs downstream antes de usá-las a partir do VS Code.
 
 ```mermaid
 sequenceDiagram
@@ -170,27 +170,27 @@ sequenceDiagram
     end
 ```
 
-### What happens at each step
+### O que acontece em cada etapa
 
-1. User visits `https://<endpoint>/auth` — proxy Lambda serves the SPA HTML
-2. MSAL.js handles EntraID login via PKCE, gets a JWT with `gateway.access` scope
-3. SPA calls `POST /mcp` with `tools/call getWeather` — same request VS Code would make
-4. Gateway checks the token vault for the user's weather API token — not found
-5. Gateway returns elicitation (-32042) with an `authorizationUrl`
-6. SPA shows the Authorize button. User clicks it. JWT and role ARN are saved to sessionStorage.
-7. Browser redirects to AgentCore's authorize URL → EntraID consent page
-8. User consents. EntraID sends authorization code to AgentCore's callback
-9. AgentCore exchanges the code for a weather token using App B's client secret (from Secrets Manager)
-10. AgentCore stores the token in the token vault, redirects to `/auth/callback?session_id=xxx`
-11. Callback page reads JWT from sessionStorage, calls STS `AssumeRoleWithWebIdentity` to get temp AWS credentials
-12. Callback page calls `CompleteResourceTokenAuth` directly via SigV4 — no Lambda proxy involved
-13. Done. Token is in the vault, bound to this user.
+1. O usuário visita `https://<endpoint>/auth` — o proxy Lambda serve o HTML da SPA
+2. O MSAL.js gerencia o login no EntraID via PKCE, obtendo um JWT com o escopo `gateway.access`
+3. A SPA chama `POST /mcp` com `tools/call getWeather` — a mesma requisição que o VS Code faria
+4. O Gateway verifica o token vault em busca do token da API de clima do usuário — não encontrado
+5. O Gateway retorna elicitation (-32042) com uma `authorizationUrl`
+6. A SPA exibe o botão Authorize. O usuário clica nele. O JWT e o role ARN são salvos no sessionStorage.
+7. O navegador redireciona para a URL de autorização do AgentCore → página de consentimento do EntraID
+8. O usuário consente. O EntraID envia o código de autorização para o callback do AgentCore
+9. O AgentCore troca o código por um token de clima usando o client secret do App B (do Secrets Manager)
+10. O AgentCore armazena o token no token vault e redireciona para `/auth/callback?session_id=xxx`
+11. A página de callback lê o JWT do sessionStorage e chama STS `AssumeRoleWithWebIdentity` para obter credenciais temporárias da AWS
+12. A página de callback chama `CompleteResourceTokenAuth` diretamente via SigV4 — sem proxy Lambda envolvido
+13. Pronto. O token está no vault, vinculado a este usuário.
 
 ---
 
-## Flow 2: VS Code MCP (Happy Path After Authorization)
+## Fluxo 2: VS Code MCP (Caminho Feliz Após Autorização)
 
-After the user has authorized via the SPA, VS Code MCP calls work without any elicitation.
+Após o usuário ter autorizado via SPA, as chamadas MCP do VS Code funcionam sem nenhuma elicitation.
 
 ```mermaid
 sequenceDiagram
@@ -215,9 +215,9 @@ sequenceDiagram
 
 ---
 
-## Flow 3: VS Code Inbound OAuth (First Connection)
+## Fluxo 3: OAuth de Entrada do VS Code (Primeira Conexão)
 
-When VS Code first connects to the MCP server, it goes through the standard OAuth 2.1 flow for inbound authentication. This is separate from the 3LO outbound auth.
+Quando o VS Code se conecta pela primeira vez ao servidor MCP, ele passa pelo fluxo padrão OAuth 2.1 para autenticação de entrada. Isso é separado da autenticação 3LO de saída.
 
 ```mermaid
 sequenceDiagram
@@ -246,68 +246,68 @@ sequenceDiagram
     Note over VS: VS Code now has a JWT for all subsequent /mcp calls
 ```
 
-### Proxy Lambda's role in inbound auth
+### Papel do Proxy Lambda na autenticação de entrada
 
-The proxy Lambda acts as an OAuth intermediary between VS Code and EntraID:
+O proxy Lambda atua como intermediário OAuth entre o VS Code e o EntraID:
 
-- `/authorize` — rewrites `redirect_uri` to the proxy's `/callback`, encodes the original redirect_uri in the state parameter, injects the `gateway.access` scope
-- `/callback` — decodes the compound state, forwards the authorization code to VS Code's original redirect_uri
-- `/token` — strips the `resource` parameter (EntraID v2.0 doesn't support it), adds `Origin` header (required for SPA/public client token redemption), rewrites `redirect_uri`
-- `/register` — returns the pre-registered App A client_id (no dynamic registration needed)
-
----
-
-## Key Design Decisions
-
-### Why `tools/call` instead of `tools/list` for checking auth status
-
-`tools/list` does NOT trigger outbound auth — it returns the list of available tools without needing the weather API token. Only `tools/call` (actually invoking a tool) forces the Gateway to fetch the weather token, which triggers elicitation if the token is missing.
-
-### Why `CustomOauth2` vendor type for the credential provider
-
-The EntraID tenant is a CIAM (External ID) tenant. CIAM tenants use `ciamlogin.com` for their token endpoints, not `login.microsoftonline.com`. The `MicrosoftOauth2` vendor type auto-generates the discovery URL as `login.microsoftonline.com`, which causes token exchange failures. `CustomOauth2` lets us specify the correct CIAM discovery URL explicitly.
-
-### Why the browser calls `CompleteResourceTokenAuth` directly (no Lambda proxy)
-
-The callback page calls `CompleteResourceTokenAuth` directly from the browser using SigV4 signing with temporary AWS credentials from STS `AssumeRoleWithWebIdentity`. This eliminates the Lambda proxy from the auth completion flow entirely.
-
-The browser role has `secretsmanager:GetSecretValue` gated by `aws:CalledVia: bedrock-agentcore.amazonaws.com` — the browser cannot call GetSecretValue directly, but when AgentCore calls it internally during `CompleteResourceTokenAuth` via Forward Access Sessions (FAS), the condition passes. This pattern comes from the AWS-managed `BedrockAgentCoreFullAccess` policy.
-
-The browser loads the AWS SDK v3 (`@aws-sdk/client-sts` and `@aws-sdk/client-bedrock-agentcore`) from jsDelivr ESM CDN. The flow is:
-1. Read JWT from sessionStorage (saved before consent redirect)
-2. STS `AssumeRoleWithWebIdentity(JWT)` → temp credentials
-3. `CompleteResourceTokenAuth(sessionUri, userToken)` with SigV4
-
-This means the JWT never leaves the browser — no DynamoDB, no Lambda proxy, no server-side storage.
-
-### Why no `allowedClients` on the Gateway authorizer
-
-EntraID v2.0 tokens use `azp` for the client ID, not `client_id`. AgentCore validates `allowedClients` against the `client_id` claim, which doesn't exist in EntraID v2.0 tokens. We rely on `allowedAudience` (validated against `aud`) instead.
-
-### Why the proxy Lambda bundles its own boto3
-
-The Lambda runtime's built-in boto3 may be too old and lack `complete_resource_token_auth`. The CDK bundling step installs the latest boto3 into the deployment package.
+- `/authorize` — reescreve o `redirect_uri` para o `/callback` do proxy, codifica o redirect_uri original no parâmetro state e injeta o escopo `gateway.access`
+- `/callback` — decodifica o state composto e encaminha o código de autorização para o redirect_uri original do VS Code
+- `/token` — remove o parâmetro `resource` (o EntraID v2.0 não o suporta), adiciona o header `Origin` (necessário para resgate de token de SPA/cliente público) e reescreve o `redirect_uri`
+- `/register` — retorna o client_id pré-registrado do App A (não é necessário registro dinâmico)
 
 ---
 
-## Token Lifecycle
+## Decisões de Design Importantes
 
-| Token | Issued by | Stored where | Lifetime | Used for |
+### Por que `tools/call` em vez de `tools/list` para verificar o status de autorização
+
+`tools/list` NÃO aciona a autenticação de saída — ele retorna a lista de ferramentas disponíveis sem precisar do token da API de clima. Somente `tools/call` (invocando efetivamente uma ferramenta) força o Gateway a buscar o token de clima, o que aciona a elicitation se o token estiver ausente.
+
+### Por que o tipo de vendor `CustomOauth2` para o provedor de credenciais
+
+O tenant EntraID é um tenant CIAM (External ID). Tenants CIAM usam `ciamlogin.com` para seus endpoints de token, não `login.microsoftonline.com`. O tipo de vendor `MicrosoftOauth2` gera automaticamente a URL de descoberta como `login.microsoftonline.com`, o que causa falhas na troca de tokens. `CustomOauth2` permite especificar a URL de descoberta CIAM correta explicitamente.
+
+### Por que o navegador chama `CompleteResourceTokenAuth` diretamente (sem proxy Lambda)
+
+A página de callback chama `CompleteResourceTokenAuth` diretamente do navegador usando assinatura SigV4 com credenciais temporárias da AWS obtidas via STS `AssumeRoleWithWebIdentity`. Isso elimina completamente o proxy Lambda do fluxo de conclusão da autorização.
+
+A role do navegador possui `secretsmanager:GetSecretValue` condicionada por `aws:CalledVia: bedrock-agentcore.amazonaws.com` — o navegador não pode chamar GetSecretValue diretamente, mas quando o AgentCore o chama internamente durante `CompleteResourceTokenAuth` via Forward Access Sessions (FAS), a condição é satisfeita. Esse padrão vem da política gerenciada pela AWS `BedrockAgentCoreFullAccess`.
+
+O navegador carrega o AWS SDK v3 (`@aws-sdk/client-sts` e `@aws-sdk/client-bedrock-agentcore`) do CDN ESM do jsDelivr. O fluxo é:
+1. Lê o JWT do sessionStorage (salvo antes do redirecionamento de consentimento)
+2. STS `AssumeRoleWithWebIdentity(JWT)` → credenciais temporárias
+3. `CompleteResourceTokenAuth(sessionUri, userToken)` com SigV4
+
+Isso significa que o JWT nunca sai do navegador — sem DynamoDB, sem proxy Lambda, sem armazenamento no lado do servidor.
+
+### Por que não há `allowedClients` no autorizador do Gateway
+
+Os tokens EntraID v2.0 usam `azp` para o client ID, não `client_id`. O AgentCore valida `allowedClients` contra a claim `client_id`, que não existe nos tokens EntraID v2.0. Em vez disso, utilizamos `allowedAudience` (validado contra `aud`).
+
+### Por que o proxy Lambda inclui seu próprio boto3
+
+O boto3 embutido no runtime do Lambda pode estar desatualizado e não possuir `complete_resource_token_auth`. A etapa de empacotamento do CDK instala a versão mais recente do boto3 no pacote de implantação.
+
+---
+
+## Ciclo de Vida dos Tokens
+
+| Token | Emitido por | Armazenado em | Tempo de vida | Usado para |
 |-------|-----------|-------------|----------|----------|
-| EntraID JWT (gateway.access) | EntraID App A | Browser sessionStorage (MSAL.js) | ~1 hour | Inbound auth to Gateway, STS AssumeRoleWithWebIdentity, CompleteResourceTokenAuth |
-| Temp AWS credentials | STS | Browser memory (JS variable) | 1 hour | SigV4 signing for CompleteResourceTokenAuth |
-| Weather API token | EntraID App B | AgentCore Token Vault | Refresh token ~30 days | Gateway → Weather API calls |
-| Refresh token | EntraID App B | AgentCore Token Vault | ~30 days | Auto-refresh of weather token |
+| EntraID JWT (gateway.access) | EntraID App A | Browser sessionStorage (MSAL.js) | ~1 hora | Autenticação de entrada no Gateway, STS AssumeRoleWithWebIdentity, CompleteResourceTokenAuth |
+| Credenciais temporárias AWS | STS | Memória do navegador (variável JS) | 1 hora | Assinatura SigV4 para CompleteResourceTokenAuth |
+| Token da API de clima | EntraID App B | AgentCore Token Vault | Refresh token ~30 dias | Chamadas Gateway → Weather API |
+| Refresh token | EntraID App B | AgentCore Token Vault | ~30 dias | Renovação automática do token de clima |
 
 ---
 
-## Error Scenarios
+## Cenários de Erro
 
-| Scenario | What happens | Resolution |
+| Cenário | O que acontece | Resolução |
 |----------|-------------|------------|
-| User hasn't authorized yet | Gateway returns -32042 elicitation | Visit auth onboarding SPA, click Authorize |
-| Weather token expired | Gateway auto-refreshes using refresh token in vault | Transparent to user |
-| Refresh token expired | Gateway returns -32042 elicitation again | Re-authorize via SPA |
-| Wrong discovery URL on credential provider | `authorizationCode must not be null` error during consent | Recreate credential provider with `CustomOauth2` and CIAM discovery URL |
-| EntraID App B redirect URI mismatch | Consent flow fails at EntraID | Update redirect URI in Entra admin center to match credential provider callback URL |
-| CompleteResourceTokenAuth access denied | FAS/CalledVia condition not met | Verify IAM role has `secretsmanager:GetSecretValue` with `aws:CalledVia` condition for `bedrock-agentcore.amazonaws.com` |
+| Usuário ainda não autorizou | O Gateway retorna elicitation -32042 | Visite a SPA de auth onboarding e clique em Authorize |
+| Token de clima expirado | O Gateway renova automaticamente usando o refresh token no vault | Transparente para o usuário |
+| Refresh token expirado | O Gateway retorna elicitation -32042 novamente | Reautorize via SPA |
+| URL de descoberta incorreta no provedor de credenciais | Erro `authorizationCode must not be null` durante o consentimento | Recrie o provedor de credenciais com `CustomOauth2` e a URL de descoberta CIAM |
+| Redirect URI do EntraID App B incompatível | O fluxo de consentimento falha no EntraID | Atualize o redirect URI no centro de administração do Entra para corresponder à URL de callback do provedor de credenciais |
+| Acesso negado no CompleteResourceTokenAuth | Condição FAS/CalledVia não satisfeita | Verifique se a role IAM possui `secretsmanager:GetSecretValue` com a condição `aws:CalledVia` para `bedrock-agentcore.amazonaws.com` |

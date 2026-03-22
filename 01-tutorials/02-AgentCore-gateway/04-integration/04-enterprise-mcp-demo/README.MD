@@ -1,136 +1,136 @@
-# Enterprise MCP Infrastructure
+# Infraestrutura MCP Empresarial
 
-Enterprise-grade AWS infrastructure for Model Context Protocol (MCP) integration with Amazon Bedrock AgentCore, designed for secure IDE (VS Code) integration with OAuth 2.0 authentication and policy-based access control.
+Infraestrutura AWS de nível empresarial para integração do Model Context Protocol (MCP) com o Amazon Bedrock AgentCore, projetada para integração segura com IDEs (VS Code) com autenticação OAuth 2.0 e controle de acesso baseado em políticas.
 
-![Architecture Diagram](./assets/architecture.png)
+![Diagrama de Arquitetura](./assets/architecture.png)
 
-## Overview
+## Visão Geral
 
-This CDK infrastructure deploys a complete MCP gateway solution that enables VS Code and other IDEs to securely connect to Amazon Bedrock AgentCore through the Model Context Protocol. The solution provides enterprise features including:
+Esta infraestrutura CDK implanta uma solução completa de gateway MCP que permite que o VS Code e outros IDEs se conectem de forma segura ao Amazon Bedrock AgentCore através do Model Context Protocol. A solução oferece recursos empresariais incluindo:
 
-- **OAuth 2.0 Authentication** via Amazon Cognito
-- **Policy-Based Access Control** with custom Cedar policies
-- **Request/Response Interception** for logging and transformation
-- **PII Protection** using Bedrock Guardrails
-- **Flexible Deployment Options** (ALB or API Gateway)
-- **Custom Domain Support** with SSL/TLS
+- **Autenticação OAuth 2.0** via Amazon Cognito
+- **Controle de Acesso Baseado em Políticas** com políticas Cedar personalizadas
+- **Interceptação de Requisições/Respostas** para registro e transformação
+- **Proteção de PII** usando Bedrock Guardrails
+- **Opções Flexíveis de Implantação** (ALB ou API Gateway)
+- **Suporte a Domínio Personalizado** com SSL/TLS
 
-## Architecture
+## Arquitetura
 
-### Core Components
+### Componentes Principais
 
-#### 1. **Authentication Layer**
-- **Amazon Cognito User Pool**: Manages user authentication and OAuth 2.0 flows
-- **Pre-Token Generation Lambda**: Injects custom claims (user tags) into JWT tokens for policy evaluation
-- **OAuth Clients**:
-  - VS Code Client (Authorization Code Grant with PKCE)
+#### 1. **Camada de Autenticação**
+- **Amazon Cognito User Pool**: Gerencia a autenticação de usuários e fluxos OAuth 2.0
+- **Lambda de Geração de Token Pré-Autenticação**: Injeta claims personalizados (tags de usuário) nos tokens JWT para avaliação de políticas
+- **Clientes OAuth**:
+  - Cliente VS Code (Authorization Code Grant com PKCE)
 
-#### 2. **API Gateway Layer**
-Choose between two deployment options:
-- **Application Load Balancer (ALB)**: Production-grade with custom domains and SSL/TLS
-- **API Gateway HTTP API**: Serverless, cost-effective for development/testing
+#### 2. **Camada de API Gateway**
+Escolha entre duas opções de implantação:
+- **Application Load Balancer (ALB)**: Nível de produção com domínios personalizados e SSL/TLS
+- **API Gateway HTTP API**: Serverless, econômico para desenvolvimento/testes
 
-#### 3. **MCP Proxy Lambda**
-Central component that handles:
-- OAuth metadata endpoints (`/.well-known/oauth-*`)
-- Authorization flow (`/authorize`, `/callback`, `/token`)
-- Dynamic Client Registration (`/register`)
-- MCP protocol proxying to AgentCore Gateway
-- Request/response rewriting for seamless integration
+#### 3. **Lambda de Proxy MCP**
+Componente central que gerencia:
+- Endpoints de metadados OAuth (`/.well-known/oauth-*`)
+- Fluxo de autorização (`/authorize`, `/callback`, `/token`)
+- Registro Dinâmico de Cliente (`/register`)
+- Proxy do protocolo MCP para o AgentCore Gateway
+- Reescrita de requisições/respostas para integração transparente
 
 #### 4. **Amazon Bedrock AgentCore Gateway**
-- MCP protocol handler with semantic search capabilities
-- Supports multiple MCP versions (2025-03-26, 2025-06-18, 2025-11-25)
-- Integrates with Lambda-based MCP servers
-- Enforces authentication via Cognito
-- Applies policy engine decisions
+- Manipulador do protocolo MCP com capacidades de busca semântica
+- Suporta múltiplas versões do MCP (2025-03-26, 2025-06-18, 2025-11-25)
+- Integra-se com servidores MCP baseados em Lambda
+- Aplica autenticação via Cognito
+- Aplica decisões do motor de políticas
 
-#### 5. **MCP Server Lambdas**
-Example Lambda functions that implement MCP tools:
-- **Weather Lambda**: Provides weather information tools (`get_weather`)
-- **Inventory Lambda**: Provides inventory management tools (`get_inventory`)
-- **User Details Lambda**: Provides user information tools (`get_user_email`, `get_user_cc_number`)
+#### 5. **Lambdas de Servidor MCP**
+Funções Lambda de exemplo que implementam ferramentas MCP:
+- **Lambda de Clima**: Fornece ferramentas de informações meteorológicas (`get_weather`)
+- **Lambda de Inventário**: Fornece ferramentas de gerenciamento de inventário (`get_inventory`)
+- **Lambda de Detalhes do Usuário**: Fornece ferramentas de informações do usuário (`get_user_email`, `get_user_cc_number`)
 
-#### 6. **Interceptor Lambda**
-- Intercepts requests and responses to/from the Gateway
-- Enables logging, transformation, and custom business logic
-- Receives request headers for context-aware processing
+#### 6. **Lambda Interceptor**
+- Intercepta requisições e respostas de/para o Gateway
+- Permite registro, transformação e lógica de negócios personalizada
+- Recebe cabeçalhos de requisição para processamento contextual
 
-#### 7. **Policy Engine**
-- Custom Cedar-based policy engine deployed via Lambda
-- Evaluates user permissions based on JWT claims
-- Example policies:
-  - Admin users can access all tools (weather + inventory)
-  - Regular users can only access weather tools
+#### 7. **Motor de Políticas**
+- Motor de políticas personalizado baseado em Cedar implantado via Lambda
+- Avalia permissões de usuários com base em claims JWT
+- Políticas de exemplo:
+  - Usuários administradores podem acessar todas as ferramentas (clima + inventário)
+  - Usuários regulares podem acessar apenas ferramentas de clima
 
 #### 8. **Bedrock Guardrails**
-- Anonymizes PII in requests and responses
-- Configured PII entity types:
-  - **ADDRESS**: Anonymized in input and output
-  - **NAME**: Anonymized in input and output
-  - **EMAIL**: Anonymized in input and output
-  - **CREDIT_DEBIT_CARD_NUMBER**: Blocked in input and output
-- Applied via interceptor Lambda on `tools/call` method
-- Enforces content policies with custom messaging
+- Anonimiza PII em requisições e respostas
+- Tipos de entidades PII configurados:
+  - **ADDRESS**: Anonimizado na entrada e saída
+  - **NAME**: Anonimizado na entrada e saída
+  - **EMAIL**: Anonimizado na entrada e saída
+  - **CREDIT_DEBIT_CARD_NUMBER**: Bloqueado na entrada e saída
+- Aplicado via Lambda interceptor no método `tools/call`
+- Aplica políticas de conteúdo com mensagens personalizadas
 
-## Technology Stack
+## Stack Tecnológico
 
-### Infrastructure
+### Infraestrutura
 - **AWS CDK** 2.232.2+ (TypeScript)
-- **Node.js** 24.x with TypeScript 5.9
+- **Node.js** 24.x com TypeScript 5.9
 - **AWS Bedrock AgentCore** (Alpha) 2.238.0-alpha.0+
 
 ### Runtime
-- **Python** 3.12 (all Lambda functions)
-- **Boto3** (AWS SDK for Python)
+- **Python** 3.12 (todas as funções Lambda)
+- **Boto3** (AWS SDK para Python)
 
-### AWS Services
-| Service | Purpose |
+### Serviços AWS
+| Serviço | Finalidade |
 |---------|---------|
-| Amazon Cognito | OAuth 2.0 authentication and user management |
-| AWS Lambda | Serverless compute for proxy, MCP servers, and policy engine |
-| Amazon Bedrock AgentCore | MCP gateway and protocol handling |
-| Application Load Balancer | Production routing with custom domains (optional) |
-| API Gateway HTTP API | Serverless API endpoint (optional) |
-| Amazon VPC | Network isolation for ALB deployment |
-| AWS IAM | Identity and access management |
-| Amazon Route53 | DNS management for custom domains |
-| AWS Certificate Manager | SSL/TLS certificates |
-| Bedrock Guardrails | Content filtering and PII protection |
+| Amazon Cognito | Autenticação OAuth 2.0 e gerenciamento de usuários |
+| AWS Lambda | Computação serverless para proxy, servidores MCP e motor de políticas |
+| Amazon Bedrock AgentCore | Gateway MCP e manipulação de protocolo |
+| Application Load Balancer | Roteamento de produção com domínios personalizados (opcional) |
+| API Gateway HTTP API | Endpoint de API serverless (opcional) |
+| Amazon VPC | Isolamento de rede para implantação com ALB |
+| AWS IAM | Gerenciamento de identidade e acesso |
+| Amazon Route53 | Gerenciamento de DNS para domínios personalizados |
+| AWS Certificate Manager | Certificados SSL/TLS |
+| Bedrock Guardrails | Filtragem de conteúdo e proteção de PII |
 
-## Prerequisites
+## Pré-requisitos
 
-1. **AWS Account** with appropriate permissions
-2. **AWS CLI** configured with credentials
-3. **Node.js** 18.x or later
-4. **AWS CDK** CLI installed: `npm install -g aws-cdk`
-5. **Python** 3.12 (for Lambda functions)
+1. **Conta AWS** com permissões apropriadas
+2. **AWS CLI** configurado com credenciais
+3. **Node.js** 18.x ou posterior
+4. **AWS CDK** CLI instalado: `npm install -g aws-cdk`
+5. **Python** 3.12 (para funções Lambda)
 
-### For Custom Domain Setup (Optional)
-- Route53 hosted zone
-- ACM certificate in the same region
-- Domain name available
+### Para Configuração de Domínio Personalizado (Opcional)
+- Zona hospedada no Route53
+- Certificado ACM na mesma região
+- Nome de domínio disponível
 
-## Deployment
+## Implantação
 
-### 1. Install Dependencies
+### 1. Instalar Dependências
 
 ```bash
 cd enterprise-mcp-infra/cdk
 npm install
 ```
 
-### 2. Bootstrap CDK (First Time Only)
+### 2. Bootstrap do CDK (Apenas na Primeira Vez)
 
 ```bash
 cdk bootstrap aws://ACCOUNT-ID/REGION
 ```
 
-### 3. Configure Deployment Parameters
+### 3. Configurar Parâmetros de Implantação
 
-Edit `cdk/cdk.context.json` to configure your deployment:
+Edite `cdk/cdk.context.json` para configurar sua implantação:
 
-#### Option A: ALB Deployment with Custom Domain
+#### Opção A: Implantação com ALB e Domínio Personalizado
 
 ```json
 {
@@ -142,7 +142,7 @@ Edit `cdk/cdk.context.json` to configure your deployment:
 }
 ```
 
-#### Option B: API Gateway Deployment (Default URL)
+#### Opção B: Implantação com API Gateway (URL Padrão)
 
 ```json
 {
@@ -154,7 +154,7 @@ Edit `cdk/cdk.context.json` to configure your deployment:
 }
 ```
 
-#### Option C: API Gateway with Custom Domain
+#### Opção C: API Gateway com Domínio Personalizado
 
 ```json
 {
@@ -166,33 +166,33 @@ Edit `cdk/cdk.context.json` to configure your deployment:
 }
 ```
 
-**Configuration Parameters:**
+**Parâmetros de Configuração:**
 
-| Parameter | Description | Required | Default |
-|-----------|-------------|----------|---------|
-| `deploymentType` | Deployment type: `ALB` or `API_GATEWAY` | Yes | `ALB` |
-| `domainName` | Custom domain name (e.g., `enterprise-mcp` for ALB, or full domain for API Gateway) | No (API Gateway only) | `""` |
-| `hostedZoneName` | Route53 hosted zone name (e.g., `example.com`) | Only with custom domain | `""` |
-| `hostedZoneId` | Route53 hosted zone ID (e.g., `Z1234567890ABC`) | Only with custom domain | `""` |
-| `certificateArn` | ACM certificate ARN for HTTPS | Only with custom domain | `""` |
+| Parâmetro | Descrição | Obrigatório | Padrão |
+|-----------|-----------|-------------|--------|
+| `deploymentType` | Tipo de implantação: `ALB` ou `API_GATEWAY` | Sim | `ALB` |
+| `domainName` | Nome de domínio personalizado (ex.: `enterprise-mcp` para ALB, ou domínio completo para API Gateway) | Não (apenas API Gateway) | `""` |
+| `hostedZoneName` | Nome da zona hospedada no Route53 (ex.: `example.com`) | Apenas com domínio personalizado | `""` |
+| `hostedZoneId` | ID da zona hospedada no Route53 (ex.: `Z1234567890ABC`) | Apenas com domínio personalizado | `""` |
+| `certificateArn` | ARN do certificado ACM para HTTPS | Apenas com domínio personalizado | `""` |
 
-### 4. Deploy the Stack
+### 4. Implantar a Stack
 
 ```bash
 cdk deploy
 ```
 
-You can also override context values via command line:
+Você também pode sobrescrever valores de contexto via linha de comando:
 
 ```bash
 cdk deploy -c deploymentType=API_GATEWAY
 ```
 
-### 5. Save CDK Outputs
+### 5. Salvar as Saídas do CDK
 
-After deployment completes, the CDK will output important configuration values. **Copy the entire output** - you'll need it for the next step.
+Após a conclusão da implantação, o CDK exibirá valores de configuração importantes. **Copie toda a saída** - você precisará dela para o próximo passo.
 
-Example output:
+Exemplo de saída:
 ```
 EnterpriseMcpInfraStack.UserPoolId = us-east-1_XXXXXXXXX
 EnterpriseMcpInfraStack.VSCodeClientId = xxxxxxxxxxxxxxxxxxxx
@@ -202,35 +202,35 @@ EnterpriseMcpInfraStack.Gateway = agentcore-mcp-gateway-xxxxx
 ...
 ```
 
-## Configuration
+## Configuração
 
-### Create Cognito Users
+### Criar Usuários no Cognito
 
-#### Using the Automated Script (Recommended)
+#### Usando o Script Automatizado (Recomendado)
 
-1. **Edit** `enterprise-mcp-infra/scripts/script.py`:
-   - Replace the `output` variable content with your actual CDK outputs (from step 4)
-   - Customize the users list with your desired email addresses and passwords
+1. **Edite** `enterprise-mcp-infra/scripts/script.py`:
+   - Substitua o conteúdo da variável `output` com as saídas reais do CDK (do passo 4)
+   - Personalize a lista de usuários com os endereços de e-mail e senhas desejados
 
-2. **Run the script** to create users:
+2. **Execute o script** para criar os usuários:
 ```bash
 cd enterprise-mcp-infra/scripts
 python script.py
 ```
 
-The script will:
-- Parse the CDK outputs to extract the User Pool ID
-- Create two default users: `vscode-admin@example.com` and `vscode-user@example.com`
-- Set permanent passwords (no need for password reset on first login)
-- Skip users that already exist
+O script irá:
+- Analisar as saídas do CDK para extrair o User Pool ID
+- Criar dois usuários padrão: `vscode-admin@example.com` e `vscode-user@example.com`
+- Definir senhas permanentes (sem necessidade de redefinição de senha no primeiro login)
+- Ignorar usuários que já existem
 
-**Default Users Created:**
+**Usuários Padrão Criados:**
 - `vscode-admin@example.com` / `TempPassword123!`
 - `vscode-user@example.com` / `TempPassword1234!`
 
-#### Manual User Creation (Alternative)
+#### Criação Manual de Usuários (Alternativa)
 
-If you prefer manual creation:
+Se preferir a criação manual:
 
 ```bash
 aws cognito-idp admin-create-user \
@@ -246,15 +246,15 @@ aws cognito-idp admin-set-user-password \
   --permanent
 ```
 
-**Note**: The Pre-Token Generation Lambda automatically injects the `user_tag` claim into both ID tokens and access tokens based on the user's email address:
-- `vscode-admin@example.com` receives `user_tag: "admin_user"`
-- All other users receive `user_tag: "regular_user"`
+**Nota**: A Lambda de Geração de Token Pré-Autenticação injeta automaticamente o claim `user_tag` tanto nos tokens de ID quanto nos tokens de acesso com base no endereço de e-mail do usuário:
+- `vscode-admin@example.com` recebe `user_tag: "admin_user"`
+- Todos os outros usuários recebem `user_tag: "regular_user"`
 
-This claim is used by the Policy Engine to enforce authorization rules for gateway tool access.
+Este claim é usado pelo Motor de Políticas para aplicar regras de autorização para acesso às ferramentas do gateway.
 
-### VS Code Configuration
+### Configuração do VS Code
 
-Create or update `.vscode/mcp.json` in your workspace:
+Crie ou atualize `.vscode/mcp.json` no seu workspace:
 
 ```json
 {
@@ -270,32 +270,32 @@ Create or update `.vscode/mcp.json` in your workspace:
 }
 ```
 
-## Usage
+## Uso
 
-### 1. Start VS Code
-The MCP extension will automatically detect the configuration and prompt for authentication.
+### 1. Iniciar o VS Code
+A extensão MCP detectará automaticamente a configuração e solicitará autenticação.
 
-### 2. Authenticate
-- Click "Sign In" when prompted
-- Enter your Cognito credentials
-- Complete the OAuth flow
+### 2. Autenticar
+- Clique em "Sign In" quando solicitado
+- Insira suas credenciais do Cognito
+- Complete o fluxo OAuth
 
-### 3. Use MCP Tools
-Once authenticated, you can use the MCP tools through VS Code Copilot or the MCP extension:
-- Weather information: Ask about current weather (all authenticated users)
-- Inventory queries: Check product inventory (admin users only)
-- User details: Retrieve user email and credit card information (all authenticated users with user_tag)
+### 3. Usar Ferramentas MCP
+Uma vez autenticado, você pode usar as ferramentas MCP através do VS Code Copilot ou da extensão MCP:
+- Informações meteorológicas: Pergunte sobre o clima atual (todos os usuários autenticados)
+- Consultas de inventário: Verifique o inventário de produtos (apenas usuários administradores)
+- Detalhes do usuário: Recupere e-mail e informações de cartão de crédito do usuário (todos os usuários autenticados com user_tag)
 
-## Policy Management
+## Gerenciamento de Políticas
 
-### Understanding the Policy Engine
+### Entendendo o Motor de Políticas
 
-The policy engine uses Cedar policies to control access to MCP tools based on user attributes injected into JWT tokens.
+O motor de políticas usa políticas Cedar para controlar o acesso às ferramentas MCP com base em atributos de usuário injetados nos tokens JWT.
 
-**Example Policies** (deployed by default):
+**Políticas de Exemplo** (implantadas por padrão):
 
 ```cedar
-// Admin users can access inventory and weather tools
+// Usuários administradores podem acessar ferramentas de inventário e clima
 permit (
   principal is AgentCore::OAuthUser,
   action in [AgentCore::Action::"inventory-tool", AgentCore::Action::"weather-tool"],
@@ -305,7 +305,7 @@ permit (
   principal.getTag("user_tag") == "admin_user"
 };
 
-// Regular users can only access weather tool
+// Usuários regulares podem acessar apenas a ferramenta de clima
 permit (
   principal is AgentCore::OAuthUser,
   action in [AgentCore::Action::"weather-tool"],
@@ -315,7 +315,7 @@ permit (
   principal.getTag("user_tag") == "regular_user"
 };
 
-// All users with user_tag can access user details tool
+// Todos os usuários com user_tag podem acessar a ferramenta de detalhes do usuário
 permit (
   principal is AgentCore::OAuthUser,
   action in [AgentCore::Action::"user-details-tool"],
@@ -325,12 +325,12 @@ permit (
 };
 ```
 
-### Customizing Policies
+### Personalizando Políticas
 
-The stack deploys three Cedar policies by default. To customize, edit the policy statements in `cdk/lib/enterprise-mcp-infra-stack.ts`:
+A stack implanta três políticas Cedar por padrão. Para personalizar, edite as declarações de política em `cdk/lib/enterprise-mcp-infra-stack.ts`:
 
 ```typescript
-// Example: Modify admin user policy
+// Exemplo: Modificar a política de usuário administrador
 const policyEngineStatementInventoryTool = `
   permit (
     principal is AgentCore::OAuthUser,
@@ -342,7 +342,7 @@ const policyEngineStatementInventoryTool = `
   };
 `;
 
-// Example: Add a new policy for a specific tool
+// Exemplo: Adicionar uma nova política para uma ferramenta específica
 const customPolicy = `
   permit (
     principal is AgentCore::OAuthUser,
@@ -354,7 +354,7 @@ const customPolicy = `
   };
 `;
 
-// Add the custom policy
+// Adicionar a política personalizada
 agentCorePolicyEngine.addPolicy(
   "finance_user_details_policy",
   "Policy for finance users to access user details",
@@ -362,152 +362,152 @@ agentCorePolicyEngine.addPolicy(
 );
 ```
 
-Then redeploy:
+Em seguida, reimplante:
 
 ```bash
 cdk deploy
 ```
 
-**Important**: Policy tag names must match the claim names injected by the Pre-Token Generation Lambda (e.g., `user_tag` not `custom:user_tag`).
+**Importante**: Os nomes das tags de política devem corresponder aos nomes dos claims injetados pela Lambda de Geração de Token Pré-Autenticação (ex.: `user_tag` e não `custom:user_tag`).
 
-## Monitoring and Debugging
+## Monitoramento e Depuração
 
-### Lambda Logs
+### Logs do Lambda
 
 ```bash
-# MCP Proxy Lambda
+# Lambda de Proxy MCP
 aws logs tail /aws/lambda/<ProxyLambdaName> --follow
 
-# Policy Engine Lambda
+# Lambda do Motor de Políticas
 aws logs tail /aws/lambda/<PolicyEngineLambdaName> --follow
 
-# Interceptor Lambda
+# Lambda Interceptor
 aws logs tail /aws/lambda/<InterceptorLambdaName> --follow
 ```
 
-### CloudWatch Insights Queries
+### Consultas do CloudWatch Insights
 
-**OAuth Flow Tracking:**
+**Rastreamento do Fluxo OAuth:**
 ```
 fields @timestamp, @message
 | filter @message like /HANDLE_AUTHORIZE|HANDLE_CALLBACK/
 | sort @timestamp desc
 ```
 
-**Gateway Requests:**
+**Requisições ao Gateway:**
 ```
 fields @timestamp, method, path, statusCode
 | filter @message like /proxy_to_gateway/
 | sort @timestamp desc
 ```
 
-## Security Considerations
+## Considerações de Segurança
 
-### Authentication
-- OAuth 2.0 with PKCE (Proof Key for Code Exchange)
-- JWT tokens with custom claims
-- Secure token storage in VS Code
+### Autenticação
+- OAuth 2.0 com PKCE (Proof Key for Code Exchange)
+- Tokens JWT com claims personalizados
+- Armazenamento seguro de tokens no VS Code
 
-### Authorization
-- Policy-based access control using Cedar
-- User attribute injection via Lambda triggers
-- Gateway-level authorization enforcement
+### Autorização
+- Controle de acesso baseado em políticas usando Cedar
+- Injeção de atributos de usuário via triggers Lambda
+- Aplicação de autorização no nível do Gateway
 
-### Data Protection
-- SSL/TLS encryption in transit
-- PII anonymization via Bedrock Guardrails
-- VPC isolation for ALB deployments
+### Proteção de Dados
+- Criptografia SSL/TLS em trânsito
+- Anonimização de PII via Bedrock Guardrails
+- Isolamento VPC para implantações com ALB
 
-### Secrets Management
-- Client secrets stored in environment variables
-- OAuth tokens never exposed to logs
-- IAM role-based access for Lambda functions
+### Gerenciamento de Segredos
+- Segredos de cliente armazenados em variáveis de ambiente
+- Tokens OAuth nunca expostos em logs
+- Acesso baseado em roles IAM para funções Lambda
 
-## Troubleshooting
+## Solução de Problemas
 
-### Issue: "Failed to authenticate"
-**Solution**: Check Cognito user credentials and ensure the user has the correct custom attributes.
+### Problema: "Failed to authenticate"
+**Solução**: Verifique as credenciais do usuário no Cognito e certifique-se de que o usuário possui os atributos personalizados corretos.
 
-### Issue: "Tool not available"
-**Solution**: Verify the user's `custom:user_tag` attribute matches the policy requirements.
+### Problema: "Tool not available"
+**Solução**: Verifique se o atributo `custom:user_tag` do usuário corresponde aos requisitos da política.
 
-### Issue: "Gateway timeout"
-**Solution**: Check Lambda timeout settings (default: 300 seconds) and Gateway connectivity.
+### Problema: "Gateway timeout"
+**Solução**: Verifique as configurações de timeout do Lambda (padrão: 300 segundos) e a conectividade do Gateway.
 
-### Issue: "Invalid redirect_uri"
-**Solution**: Ensure callback URLs are properly registered in the Cognito client configuration.
+### Problema: "Invalid redirect_uri"
+**Solução**: Certifique-se de que as URLs de callback estão devidamente registradas na configuração do cliente Cognito.
 
-### Issue: ALB health check failing
-**Solution**: The `/ping` endpoint should return 200. Check Lambda logs for errors.
+### Problema: Falha no health check do ALB
+**Solução**: O endpoint `/ping` deve retornar 200. Verifique os logs do Lambda para erros.
 
-## Cleanup
+## Limpeza
 
-To remove all resources:
+Para remover todos os recursos:
 
 ```bash
 cdk destroy
 ```
 
-**Warning**: This will delete all resources including Cognito users, Lambda functions, and configurations.
+**Aviso**: Isso excluirá todos os recursos, incluindo usuários do Cognito, funções Lambda e configurações.
 
-## Architecture Decisions
+## Decisões de Arquitetura
 
-### Why Two Deployment Options?
+### Por que Duas Opções de Implantação?
 
-- **ALB**: Production environments requiring custom domains, SSL/TLS, and fine-grained routing
-- **API Gateway**: Development/testing, serverless preference, cost optimization
+- **ALB**: Ambientes de produção que requerem domínios personalizados, SSL/TLS e roteamento refinado
+- **API Gateway**: Desenvolvimento/testes, preferência por serverless, otimização de custos
 
-### Why Lambda for MCP Servers?
+### Por que Lambda para Servidores MCP?
 
-- Serverless, auto-scaling
-- Pay-per-use pricing
-- Easy integration with AgentCore Gateway
-- No infrastructure management
+- Serverless, auto-escalável
+- Precificação por uso
+- Fácil integração com o AgentCore Gateway
+- Sem gerenciamento de infraestrutura
 
-### Why Custom Policy Engine?
+### Por que um Motor de Políticas Personalizado?
 
-- Flexible, attribute-based access control
-- Cedar policy language for complex authorization logic
-- Runtime policy evaluation without redeployment
-- Integration with JWT custom claims
+- Controle de acesso flexível baseado em atributos
+- Linguagem de políticas Cedar para lógica de autorização complexa
+- Avaliação de políticas em tempo de execução sem reimplantação
+- Integração com claims personalizados JWT
 
-## Extending the Solution
+## Estendendo a Solução
 
-### Adding New MCP Tools
+### Adicionando Novas Ferramentas MCP
 
-1. Create a new Lambda function in `cdk/lambda/mcp-servers/`
-2. Define the tool schema
-3. Add the Lambda target to the Gateway in `enterprise-mcp-infra-stack.ts`
-4. Update policies if needed
+1. Crie uma nova função Lambda em `cdk/lambda/mcp-servers/`
+2. Defina o esquema da ferramenta
+3. Adicione o alvo Lambda ao Gateway em `enterprise-mcp-infra-stack.ts`
+4. Atualize as políticas se necessário
 
-### Custom Interceptors
+### Interceptores Personalizados
 
-Modify `cdk/lambda/interceptor/interceptor.py` to add custom logic:
-- Request validation
-- Response transformation
-- Logging and metrics
-- Integration with external systems
+Modifique `cdk/lambda/interceptor/interceptor.py` para adicionar lógica personalizada:
+- Validação de requisições
+- Transformação de respostas
+- Registro e métricas
+- Integração com sistemas externos
 
-### External MCP Servers
+### Servidores MCP Externos
 
-Configure the Gateway to connect to external MCP servers via HTTP/HTTPS with credential providers.
+Configure o Gateway para conectar-se a servidores MCP externos via HTTP/HTTPS com provedores de credenciais.
 
-## References
+## Referências
 
-- [AWS CDK Documentation](https://docs.aws.amazon.com/cdk/)
+- [Documentação do AWS CDK](https://docs.aws.amazon.com/cdk/)
 - [Amazon Bedrock AgentCore](https://docs.aws.amazon.com/bedrock/)
-- [Model Context Protocol Specification](https://modelcontextprotocol.io/)
+- [Especificação do Model Context Protocol](https://modelcontextprotocol.io/)
 - [OAuth 2.0 RFC 6749](https://tools.ietf.org/html/rfc6749)
-- [Cedar Policy Language](https://www.cedarpolicy.com/)
+- [Linguagem de Políticas Cedar](https://www.cedarpolicy.com/)
 
-## License
+## Licença
 
-This project is provided as-is for demonstration purposes.
+Este projeto é fornecido como está para fins de demonstração.
 
-## Support
+## Suporte
 
-For issues and questions:
-1. Check CloudWatch Logs for Lambda functions
-2. Review CloudFormation stack events
-3. Verify IAM permissions
-4. Consult AWS Bedrock AgentCore documentation
+Para problemas e dúvidas:
+1. Verifique os Logs do CloudWatch para funções Lambda
+2. Revise os eventos da stack do CloudFormation
+3. Verifique as permissões IAM
+4. Consulte a documentação do AWS Bedrock AgentCore

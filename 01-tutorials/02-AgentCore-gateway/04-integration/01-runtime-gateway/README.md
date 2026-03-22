@@ -1,27 +1,27 @@
-# Integrate Amazon Bedrock AgentCore Gateway with Amazon Bedrock AgentCore Runtime
+# Integrar o Amazon Bedrock AgentCore Gateway com o Amazon Bedrock AgentCore Runtime
 
-[Amazon Bedrock AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html) provides customers a way to turn their existing AWS Lambda functions & APIs (OpenAPI and Smithy) into fully-managed MCP servers without needing to manage infra or hosting. [Amazon Bedrock AgentCore Runtime](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html) provides a secure, serverless and purpose-built hosting environment for deploying and running AI agents or tools. In this tutorial we will integrate Amazon Bedrock AgentCore Gateway with AgentCore runtime and [Strands agents](https://strandsagents.com/latest/).
+O [Amazon Bedrock AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html) oferece aos clientes uma maneira de transformar suas funções AWS Lambda e APIs existentes (OpenAPI e Smithy) em servidores MCP totalmente gerenciados, sem a necessidade de gerenciar infraestrutura ou hospedagem. O [Amazon Bedrock AgentCore Runtime](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html) fornece um ambiente de hospedagem seguro, serverless e construído especificamente para implantar e executar agentes ou ferramentas de IA. Neste tutorial, integraremos o Amazon Bedrock AgentCore Gateway com o AgentCore Runtime e [Strands Agents](https://strandsagents.com/latest/).
 
-## Tutorial Details
+## Detalhes do Tutorial
 
-| Information          | Details                                                   |
+| Informação           | Detalhes                                                  |
 |:---------------------|:----------------------------------------------------------|
-| Tutorial type        | Interactive                                               |
-| AgentCore components | AgentCore Gateway, AgentCore Identity, AgentCore Runtime  |
-| Agentic Framework    | Strands Agents                                            |
-| Gateway Target type  | AWS Lambda, OpenAPI target                                |
-| Inbound Auth IdP     | AWS IAM                                                   |
-| Outbound Auth        | AWS IAM (AWS Lambda), API Key (OpenAPI target)            |
-| LLM model            | Anthropic Claude Haiku 4.5, Amazon Nova Pro              |
-| Tutorial components  | Creating AgentCore Gateway and Invoking AgentCore Gateway |
-| Tutorial vertical    | Cross-vertical                                            |
-| Example complexity   | Medium                                                    |
-| SDK used             | boto3                                                     |
+| Tipo de tutorial     | Interativo                                                |
+| Componentes AgentCore| AgentCore Gateway, AgentCore Identity, AgentCore Runtime  |
+| Framework de Agentes | Strands Agents                                            |
+| Tipo de Alvo do Gateway | AWS Lambda, alvo OpenAPI                               |
+| IdP de Auth de Entrada | AWS IAM                                                 |
+| Auth de Saída        | AWS IAM (AWS Lambda), Chave de API (alvo OpenAPI)         |
+| Modelo LLM           | Anthropic Claude Haiku 4.5, Amazon Nova Pro              |
+| Componentes do tutorial | Criação do AgentCore Gateway e Invocação do AgentCore Gateway |
+| Vertical do tutorial | Cross-vertical                                            |
+| Complexidade do exemplo | Médio                                                  |
+| SDK utilizado        | boto3                                                     |
 
-## Tutorial Architecture
+## Arquitetura do Tutorial
 
-In this tutorial we will transform operations defined in AWS lambda function & Restful API into MCP tools and host it in Bedrock AgentCore Gateway. We will demonstrate the ingress auth using AWS IAM credentials in AWS Sigv4 format. We will deploy a Strands Agent utilizing AgentCore Gateway tools on AgentCore runtime.
+Neste tutorial, transformaremos operações definidas em funções AWS Lambda e APIs RESTful em ferramentas MCP e as hospedaremos no Bedrock AgentCore Gateway. Demonstraremos a autenticação de entrada usando credenciais AWS IAM no formato AWS Sigv4. Implantaremos um Agente Strands utilizando ferramentas do AgentCore Gateway no AgentCore Runtime.
 
-For demonstration purposes, we will use a Strands Agent using [Amazon Bedrock](https://aws.amazon.com/bedrock/) models.
+Para fins de demonstração, usaremos um Agente Strands usando modelos do [Amazon Bedrock](https://aws.amazon.com/bedrock/).
 
 ![runtime gateway](./images/runtime_gateway.png)

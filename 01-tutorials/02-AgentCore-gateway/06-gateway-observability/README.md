@@ -1,91 +1,91 @@
-AgentCore Gateway Observability Tutorial
-# Configure Observability for AgentCore Gateway with Amazon CloudWatch and AWS CloudTrail
+Tutorial de Observabilidade do AgentCore Gateway
+# Configurar Observabilidade para o AgentCore Gateway com Amazon CloudWatch e AWS CloudTrail
 
-## Overview
+## Visão Geral
 
-Observability is a fundamental capability for the AgentCore Gateway because it provides comprehensive real-time insights into the functioning and performance of AI agents deployed through the gateway. By capturing and displaying key metrics such as request volumes, success rates, error patterns, latency for tool invocations, and authentication events, the observability features allow developers and operators to monitor the health and efficiency of their agent workflows continuously. This level of monitoring helps quickly identify anomalies or bottlenecks that could affect user experience or system reliability, enabling proactive troubleshooting and performance tuning.
+A observabilidade é uma capacidade fundamental para o AgentCore Gateway porque fornece insights abrangentes em tempo real sobre o funcionamento e desempenho dos agentes de IA implantados através do gateway. Ao capturar e exibir métricas chave como volumes de requisições, taxas de sucesso, padrões de erro, latência para invocações de ferramentas e eventos de autenticação, os recursos de observabilidade permitem que desenvolvedores e operadores monitorem continuamente a saúde e eficiência de seus fluxos de trabalho de agentes. Este nível de monitoramento ajuda a identificar rapidamente anomalias ou gargalos que poderiam afetar a experiência do usuário ou a confiabilidade do sistema, permitindo solução proativa de problemas e ajuste de desempenho.
 
-Beyond high-level metrics, AgentCore Gateway observability offers detailed tracing of each agent’s workflow. Every action—from invoking tools to model calls and memory retrieval—is logged as spans and traces compliant with OpenTelemetry standards. This rich telemetry data provides developers with a transparent view into the internal decision-making processes of agents, including how each step was executed and its duration. Such granular traceability is invaluable for debugging complex failures or unexpected behaviors, as it allows engineers to drill down into the exact point of error or inefficiency. Additionally, by integrating with widely used monitoring platforms like Amazon CloudWatch, these observability features enable a unified and accessible operational overview.
+Além das métricas de alto nível, a observabilidade do AgentCore Gateway oferece rastreamento detalhado do fluxo de trabalho de cada agente. Cada ação — desde a invocação de ferramentas até chamadas de modelo e recuperação de memória — é registrada como spans e traces em conformidade com os padrões OpenTelemetry. Estes dados ricos de telemetria fornecem aos desenvolvedores uma visão transparente dos processos internos de tomada de decisão dos agentes, incluindo como cada etapa foi executada e sua duração. Tal rastreabilidade granular é inestimável para depurar falhas complexas ou comportamentos inesperados, pois permite que engenheiros investiguem o ponto exato de erro ou ineficiência. Além disso, ao integrar-se com plataformas de monitoramento amplamente utilizadas como o Amazon CloudWatch, esses recursos de observabilidade permitem uma visão operacional unificada e acessível.
 
-Furthermore, observability supports compliance and governance requirements by offering audit trails of agent activity, which is critical for enterprise environments. It also facilitates optimization by revealing usage patterns and helping adjust agent workflows to reduce costs or improve speed. Ultimately, these observability capabilities transform the AgentCore Gateway from a black-box interface into a transparent, manageable system that supports reliable, scalable, and performant AI agent deployment in production environments.
- 
-## Observability with Amazon CloudWatch and AWS CloudTrail
+Além disso, a observabilidade suporta requisitos de conformidade e governança ao oferecer trilhas de auditoria da atividade dos agentes, o que é crítico para ambientes empresariais. Também facilita a otimização ao revelar padrões de uso e ajudar a ajustar fluxos de trabalho de agentes para reduzir custos ou melhorar a velocidade. Em última análise, essas capacidades de observabilidade transformam o AgentCore Gateway de uma interface caixa-preta em um sistema transparente, gerenciável, que suporta implantação confiável, escalável e performática de agentes de IA em ambientes de produção.
 
-* Amazon CloudWatch focuses on real-time performance monitoring and operational troubleshooting for AgentCore Gateway, providing detailed metrics and logs for latency, error rates, and usage patterns. 
-* AWS CloudTrail focuses on security, compliance, and auditing by recording a full history of API calls and user actions related to the gateway. 
+## Observabilidade com Amazon CloudWatch e AWS CloudTrail
 
-Together, they offer a holistic observability and governance framework for managing AgentCore Gateway in production.
+* O Amazon CloudWatch foca no monitoramento de desempenho em tempo real e solução de problemas operacionais para o AgentCore Gateway, fornecendo métricas e logs detalhados para latência, taxas de erro e padrões de uso.
+* O AWS CloudTrail foca em segurança, conformidade e auditoria ao registrar um histórico completo de chamadas de API e ações de usuários relacionadas ao gateway.
+
+Juntos, eles oferecem um framework holístico de observabilidade e governança para gerenciar o AgentCore Gateway em produção.
 
 ![images/1-agentcore-gw-architecture.png]
 
-#### AgentCore Gateway CloudWatch Metrics
+#### Métricas do CloudWatch do AgentCore Gateway
 
-Gateway publishes the following metrics to Amazon CloudWatch. They provide information about about API invocations, performance, and errors.
+O Gateway publica as seguintes métricas no Amazon CloudWatch. Elas fornecem informações sobre invocações de API, desempenho e erros.
 
-* **Invocations:** The total number of requests made to each Data Plane API. Each API call counts as one invocation regardless of the response status.
+* **Invocations:** O número total de requisições feitas para cada API do Data Plane. Cada chamada de API conta como uma invocação independentemente do status da resposta.
 
-* **Throttles:** The number of requests throttled (status code 429) by the service.
+* **Throttles:** O número de requisições limitadas (código de status 429) pelo serviço.
 
-* **SystemErrors:** The number of requests which failed with 5xx status code.
+* **SystemErrors:** O número de requisições que falharam com código de status 5xx.
 
-* **UserErrors:** The number of requests which failed with 4xx status code except 429.
+* **UserErrors:** O número de requisições que falharam com código de status 4xx, exceto 429.
 
-* **Latency:** The time elapsed between when the service receives the request and when it begins sending the first response token. In other words, initial response time.
+* **Latency:** O tempo decorrido entre quando o serviço recebe a requisição e quando começa a enviar o primeiro token de resposta. Em outras palavras, o tempo de resposta inicial.
 
-* **Duration:** The total time elapsed between receiving the request and sending the final response token. Represents complete end-to-end processing time of the request.
+* **Duration:** O tempo total decorrido entre o recebimento da requisição e o envio do último token de resposta. Representa o tempo completo de processamento ponta a ponta da requisição.
 
-* **TargetExecutionTime:**  The total time taken to execute the target over Lambda / OpenAPI / etc. This helps determine the contribution of the target to the total Latency.
+* **TargetExecutionTime:** O tempo total gasto para executar o alvo via Lambda / OpenAPI / etc. Isso ajuda a determinar a contribuição do alvo para a Latência total.
 
-* **TargetType:** The total number of requests served by each type of target (MCP, Lambda, OpenAPI). 
+* **TargetType:** O número total de requisições atendidas por cada tipo de alvo (MCP, Lambda, OpenAPI).
 
-#### AgentCore Gateway Cloudwatch Vended Logs
+#### Logs Fornecidos pelo CloudWatch do AgentCore Gateway
 
-AgentCore logs the following information for gateway resources:
+O AgentCore registra as seguintes informações para recursos do gateway:
 
-* Start and completion of gateway requests processing
-* Error messages for Target configurations
-* MCP Requests with missing or incorrect authorization headers
-* MCP Requests with incorrect request parameters (tools, method)
+* Início e conclusão do processamento de requisições do gateway
+* Mensagens de erro para configurações de alvos
+* Requisições MCP com cabeçalhos de autorização ausentes ou incorretos
+* Requisições MCP com parâmetros de requisição incorretos (ferramentas, método)
 
-AgentCore can output logs to Amazon CloudWatch, Amazon S3, or Firehose stream. This tutorial focuses on CloudWatch.
+O AgentCore pode enviar logs para Amazon CloudWatch, Amazon S3 ou stream do Firehose. Este tutorial foca no CloudWatch.
 
-If you add Amazon CloudWatch Logs under AgentCore Gateway Log Delivery in the AWS console, these logs are stored under the default log group **/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/{gateway_id}**. You can also configure your custom log group starting with /**aws/vendedlogs/**. 
+Se você adicionar Amazon CloudWatch Logs em Entrega de Logs do AgentCore Gateway no console da AWS, esses logs são armazenados no grupo de logs padrão **/aws/vendedlogs/bedrock-agentcore/gateway/APPLICATION_LOGS/{gateway_id}**. Você também pode configurar seu grupo de logs personalizado começando com /**aws/vendedlogs/**.
 
-#### AgentCore Gateway CloudWatch Tracing 
+#### Rastreamento do CloudWatch do AgentCore Gateway
 
-Enabling tracing on the Amazon Bedrock AgentCore gateway provides deep insights into the behavior and performance of your AI agents and the tools they interact with. It captures the full execution path of a request as it moves through the gateway, which is essential for effective debugging, optimization, and auditing of complex agentic workflow. 
+Habilitar o rastreamento no gateway do Amazon Bedrock AgentCore fornece insights profundos sobre o comportamento e desempenho dos seus agentes de IA e as ferramentas com as quais eles interagem. Ele captura o caminho completo de execução de uma requisição conforme ela se move pelo gateway, o que é essencial para depuração eficaz, otimização e auditoria de fluxos de trabalho agênticos complexos.
 
-* **Traces - Top Level Container**
+* **Traces - Contêiner de Nível Superior**
 
-  * Represents the complete interaction context
-  * Captures the full execution path starting from an agent invocation
-  * May include multiple agent calls throughout the interaction
-  * Provides the broadest view of the entire workflow
+  * Representa o contexto completo de interação
+  * Captura o caminho completo de execução começando de uma invocação de agente
+  * Pode incluir múltiplas chamadas de agente ao longo da interação
+  * Fornece a visão mais ampla de todo o fluxo de trabalho
 
-* **Requests - Individual Agent Invocations**
+* **Requests - Invocações Individuais de Agente**
 
-  * Represents a single request-response cycle within a trace
-  * Each agent invocation creates a new request
-  * Captures one complete call to an agent and its response
-  * Multiple requests can exist within a single trace
+  * Representa um único ciclo de requisição-resposta dentro de um trace
+  * Cada invocação de agente cria uma nova requisição
+  * Captura uma chamada completa a um agente e sua resposta
+  * Múltiplas requisições podem existir dentro de um único trace
 
-* **Spans - Discrete Units of Work**
+* **Spans - Unidades Discretas de Trabalho**
 
-  * Represents specific, measurable operations within a request
-  * Captures fine-grained steps like:
-    * Component initialization
-    * Tool executions
-    * API calls
-    * Processing steps
-  * Has precise start/end timestamps for duration analysis
+  * Representa operações específicas e mensuráveis dentro de uma requisição
+  * Captura etapas granulares como:
+    * Inicialização de componentes
+    * Execuções de ferramentas
+    * Chamadas de API
+    * Etapas de processamento
+  * Possui timestamps precisos de início/fim para análise de duração
 
-The relationship between these three observability components can be visualized as:
+O relacionamento entre esses três componentes de observabilidade pode ser visualizado como:
 
-  Traces (highest level) - Represent complete user conversations or interaction contexts
+  Traces (nível mais alto) - Representam conversas completas de usuários ou contextos de interação
 
-  Requests (middle level) - Represent individual request-response cycles within a Trace
+  Requests (nível intermediário) - Representam ciclos individuais de requisição-resposta dentro de um Trace
 
-  Spans (lowest level) - Represent specific operations or steps within Request
+  Spans (nível mais baixo) - Representam operações ou etapas específicas dentro de uma Request
 
           Trace 1
           ├── Request 1.1
@@ -111,49 +111,48 @@ The relationship between these three observability components can be visualized 
 
 
 
-#### AgentCore Gateway CloudTrail
+#### CloudTrail do AgentCore Gateway
 
-AgentCore Gateway is fully integrated with AWS CloudTrail, which provides comprehensive logging and monitoring capabilities for **tracking API activity** and operational events within your gateway infrastructure.
+O AgentCore Gateway é totalmente integrado com o AWS CloudTrail, que fornece capacidades abrangentes de registro e monitoramento para **rastrear atividade de API** e eventos operacionais dentro da sua infraestrutura de gateway.
 
-CloudTrail captures two distinct types of events for AgentCore Gateway 
-* Management events are logged automatically and capture control plane operations such as creating, updating, or deleting gateway resources 
-* Data events, which provide information about resource operations performed on or within a gateway (also known as data plane operations), are high-volume activities that must be explicitly enabled as they are not logged by default 
+O CloudTrail captura dois tipos distintos de eventos para o AgentCore Gateway:
+* Eventos de gerenciamento são registrados automaticamente e capturam operações do plano de controle, como criação, atualização ou exclusão de recursos do gateway
+* Eventos de dados, que fornecem informações sobre operações de recursos realizadas no ou dentro de um gateway (também conhecidas como operações do plano de dados), são atividades de alto volume que devem ser explicitamente habilitadas, pois não são registradas por padrão
 
-CloudTrail captures all API calls for Gateway as events, including calls from the Gateway console and code calls to the Gateway APIs. Using the information collected by CloudTrail, you can determine the request that was made to Gateway, who made the request, when it was made, and additional details [3]. Management events provide information about management operations performed on resources in your AWS account, also known as control plane operations.
+O CloudTrail captura todas as chamadas de API para o Gateway como eventos, incluindo chamadas do console do Gateway e chamadas de código para as APIs do Gateway. Usando as informações coletadas pelo CloudTrail, você pode determinar a requisição que foi feita ao Gateway, quem fez a requisição, quando foi feita e detalhes adicionais [3]. Eventos de gerenciamento fornecem informações sobre operações de gerenciamento realizadas em recursos na sua conta AWS, também conhecidas como operações do plano de controle.
 
-## Tutorials Overview
+## Visão Geral dos Tutoriais
 
-In these tutorials we will cover observability of AgentCore Gateway. 
+Nestes tutoriais, cobriremos a observabilidade do AgentCore Gateway.
 
 
-| Information          | Details                                                   |
+| Informação           | Detalhes                                                  |
 |:---------------------|:----------------------------------------------------------|
-| Tutorial type        | Interactive                                               |
-| AgentCore components | AgentCore Gateway, Amazon CloudWatch, AWS CloudTrail      |
-| Agentic Framework    | Strands Agents                                            |
-| Gateway Target type  | AWS Lambda                                                |
-| Inbound Auth IdP     | Amazon Cognito                                            |
-| Outbound Auth        | AWS IAM                                                   |
-| LLM model            | Anthropic Claude Sonnet 4.0                               |
-| Tutorial components  | AgentCore Gateway Observability with CloudWatch,CloudTrail|
-| Tutorial vertical    | Cross-vertical                                            |
-| Example complexity   | Easy                                                      |
-| SDK used             | boto3                                                     |
+| Tipo de tutorial     | Interativo                                                |
+| Componentes AgentCore| AgentCore Gateway, Amazon CloudWatch, AWS CloudTrail      |
+| Framework de Agentes | Strands Agents                                            |
+| Tipo de Alvo do Gateway | AWS Lambda                                             |
+| IdP de Auth de Entrada | Amazon Cognito                                          |
+| Auth de Saída        | AWS IAM                                                   |
+| Modelo LLM           | Anthropic Claude Sonnet 4.0                               |
+| Componentes do tutorial | Observabilidade do AgentCore Gateway com CloudWatch, CloudTrail |
+| Vertical do tutorial | Cross-vertical                                            |
+| Complexidade do exemplo | Fácil                                                  |
+| SDK utilizado        | boto3                                                     |
 
-#### Tutorial Details
+#### Detalhes do Tutorial
 
-* In this tutorial, we will create Bedrock AgentCore Gateway and add lambda as the target type with two tools: get_order and update_order. 
-* We will create the log delivery group with destination as CloudWatch and observe the vended logs.
-* We will enable Amazon CloudWatch Tracing and connect the trace ID found in vended logs with the Traces / Spans to dive deeper
-* We will create AgentCore Runtime with Strands Agent and walk through the Spans.
-* We will configure CloudTrail Management and Data Events and check some examples
+* Neste tutorial, criaremos o Bedrock AgentCore Gateway e adicionaremos lambda como tipo de alvo com duas ferramentas: get_order e update_order.
+* Criaremos o grupo de entrega de logs com destino CloudWatch e observaremos os logs fornecidos.
+* Habilitaremos o Rastreamento do Amazon CloudWatch e conectaremos o ID de trace encontrado nos logs fornecidos com os Traces / Spans para investigar mais profundamente.
+* Criaremos o AgentCore Runtime com Strands Agent e percorreremos os Spans.
+* Configuraremos Eventos de Gerenciamento e Dados do CloudTrail e verificaremos alguns exemplos.
 
-### Resources
+### Recursos
 
-* [AgentCore generated gateway observability data](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-gateway-metrics.html)
-* [Enable log destinations and tracing for AgentCore gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html#observability-configure-cloudwatch)
-* [Logging AgentCore Gateway API calls with CloudTrail](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-cloudtrail.html)
-* [Setting up AgentCore CloudWatch Metrics and Alarms](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-advanced-observability-metrics.html)
-* [Logging Gateway API calls with CloudTrail](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-cloudtrail.html)
-* [Observability Concepts](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-telemetry.html)
-
+* [Dados de observabilidade gerados pelo gateway AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-gateway-metrics.html)
+* [Habilitar destinos de log e rastreamento para o gateway AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html#observability-configure-cloudwatch)
+* [Registrando chamadas de API do AgentCore Gateway com CloudTrail](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-cloudtrail.html)
+* [Configurando Métricas e Alarmes do CloudWatch do AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-advanced-observability-metrics.html)
+* [Registrando chamadas de API do Gateway com CloudTrail](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-cloudtrail.html)
+* [Conceitos de Observabilidade](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-telemetry.html)

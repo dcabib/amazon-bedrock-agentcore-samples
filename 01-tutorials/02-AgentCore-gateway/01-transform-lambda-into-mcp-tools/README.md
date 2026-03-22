@@ -1,46 +1,46 @@
-# Implement Lambda function tools for Gateway
+# Implementar ferramentas Lambda para o Gateway
 
-## Overview
-Bedrock AgentCore Gateway provides customers a way to turn their existing Lambda functions into fully-managed MCP servers without needing to manage infra or hosting. Customers can bring their existing AWS Lambda functions, or add new Lambda functions to front their tools. Gateway will provide a uniform Model Context Protocol (MCP) interface across all these tools. Gateway employs a dual authentication model to ensure secure access control for both incoming requests and outbound connections to target resources. The framework consists of two key components: Inbound Auth, which validates and authorizes users attempting to access gateway targets, and Outbound Auth, which enables the gateway to securely connect to backend resources on behalf of authenticated users. Together, these authentication mechanisms create a secure bridge between users and their target resources, supporting both IAM credentials and OAuth-based authentication flows. 
+## Visão Geral
+O Bedrock AgentCore Gateway oferece aos clientes uma maneira de transformar suas funções Lambda existentes em servidores MCP totalmente gerenciados, sem a necessidade de gerenciar infraestrutura ou hospedagem. Os clientes podem trazer suas funções AWS Lambda existentes, ou adicionar novas funções Lambda como front-end para suas ferramentas. O Gateway fornece uma interface uniforme do Model Context Protocol (MCP) para todas essas ferramentas. O Gateway emprega um modelo de autenticação dupla para garantir o controle de acesso seguro tanto para requisições de entrada quanto para conexões de saída aos recursos de destino. O framework consiste em dois componentes principais: Autenticação de Entrada (Inbound Auth), que valida e autoriza usuários que tentam acessar os alvos do gateway, e Autenticação de Saída (Outbound Auth), que permite ao gateway conectar-se de forma segura aos recursos de backend em nome dos usuários autenticados. Juntos, esses mecanismos de autenticação criam uma ponte segura entre os usuários e seus recursos de destino, suportando tanto credenciais IAM quanto fluxos de autenticação baseados em OAuth.
 
-![How does it work](images/lambda-iam-gateway.png)
+![Como funciona](images/lambda-iam-gateway.png)
 
-![How does it work](images/lambda-gw-iam-inbound.png)
+![Como funciona](images/lambda-gw-iam-inbound.png)
 
 
-### Understanding the Lambda context object
-When Gateway invokes a Lambda function, it passes special context information through the context.client_context object. This context includes important metadata about the invocation, which your function can use to determine how to process the request.
-The following properties are available in the context.client_context.custom object:
-* bedrockagentcoreEndpointId: The ID of the Gateway endpoint that received the request.
-* bedrockagentcoreTargetId: The ID of the Gateway target that routed the request to your function.
-* bedrockagentcoreMessageVersion: The version of the message format used for the request.
-* bedrockagentcoreToolName: The name of the tool being invoked. This is particularly important when your Lambda function implements multiple tools.
-* bedrockagentcoreSessionId: The session ID for the current invocation, which can be used to correlate multiple tool calls within the same session.
+### Entendendo o objeto de contexto do Lambda
+Quando o Gateway invoca uma função Lambda, ele passa informações de contexto especiais através do objeto context.client_context. Este contexto inclui metadados importantes sobre a invocação, que sua função pode usar para determinar como processar a requisição.
+As seguintes propriedades estão disponíveis no objeto context.client_context.custom:
+* bedrockagentcoreEndpointId: O ID do endpoint do Gateway que recebeu a requisição.
+* bedrockagentcoreTargetId: O ID do alvo do Gateway que roteou a requisição para sua função.
+* bedrockagentcoreMessageVersion: A versão do formato de mensagem usado para a requisição.
+* bedrockagentcoreToolName: O nome da ferramenta sendo invocada. Isso é particularmente importante quando sua função Lambda implementa múltiplas ferramentas.
+* bedrockagentcoreSessionId: O ID da sessão para a invocação atual, que pode ser usado para correlacionar múltiplas chamadas de ferramentas dentro da mesma sessão.
 
-You can access these properties in your Lambda function code to determine which tool is being invoked and to customize your function's behavior accordingly
+Você pode acessar essas propriedades no código da sua função Lambda para determinar qual ferramenta está sendo invocada e personalizar o comportamento da sua função de acordo.
 
-![How does it work](images/lambda-context-object.png)
+![Como funciona](images/lambda-context-object.png)
 
-### Response format and error handling
+### Formato de resposta e tratamento de erros
 
-Your Lambda function should return a response that the Gateway can interpret and pass back to the client. The response should be a JSON object with the following structure:The statusCode field should be an HTTP status code indicating the result of the operation:
-* 200: Success
-* 400: Bad request (client error)
-* 500: Internal server error
+Sua função Lambda deve retornar uma resposta que o Gateway possa interpretar e repassar ao cliente. A resposta deve ser um objeto JSON com a seguinte estrutura: O campo statusCode deve ser um código de status HTTP indicando o resultado da operação:
+* 200: Sucesso
+* 400: Requisição inválida (erro do cliente)
+* 500: Erro interno do servidor
 
-The body field can be either a string or a JSON string representing a more complex response. If you want to return a structured response, you should serialize it to a JSON string
+O campo body pode ser uma string ou uma string JSON representando uma resposta mais complexa. Se você quiser retornar uma resposta estruturada, deve serializá-la como uma string JSON.
 
-### Error handling
-Proper error handling is important for providing meaningful feedback to clients. Your Lambda function should catch exceptions and return appropriate error responses
+### Tratamento de erros
+O tratamento adequado de erros é importante para fornecer feedback significativo aos clientes. Sua função Lambda deve capturar exceções e retornar respostas de erro apropriadas.
 
-### Testing 
+### Testes
 
-Note that the ```__context__``` field is not part of the actual event that will be passed to your function when invoked by Gateway. It's only used for testing purposes to simulate the context object.
-When testing in the Lambda console, you'll need to modify your function to handle the simulated context. This approach allows you to test your Lambda function with different tool names and input parameters before deploying it as a Gateway target.
+Note que o campo ```__context__``` não faz parte do evento real que será passado para sua função quando invocada pelo Gateway. Ele é usado apenas para fins de teste para simular o objeto de contexto.
+Ao testar no console do Lambda, você precisará modificar sua função para lidar com o contexto simulado. Esta abordagem permite que você teste sua função Lambda com diferentes nomes de ferramentas e parâmetros de entrada antes de implantá-la como um alvo do Gateway.
 
-### Cross-account Lambda access
+### Acesso Lambda entre contas
 
-If your Lambda function is in a different AWS account than your Gateway, you need to configure a resource-based policy on the Lambda function to allow the Gateway to invoke it. Here's an example policy:
+Se sua função Lambda está em uma conta AWS diferente do seu Gateway, você precisa configurar uma política baseada em recurso na função Lambda para permitir que o Gateway a invoque. Aqui está um exemplo de política:
 
 ```
 {
@@ -59,39 +59,39 @@ If your Lambda function is in a different AWS account than your Gateway, you nee
   ]
 }
 ```
-In this policy:
-- 123456789012 is the account ID where the Gateway is deployed
-- GatewayExecutionRole is the IAM role used by the Gateway.
-- 987654321098 is the account ID where the Lambda function is deployed.
-- MyLambdaFunction is the name of the Lambda function.
+Nesta política:
+- 123456789012 é o ID da conta onde o Gateway está implantado
+- GatewayExecutionRole é a role IAM usada pelo Gateway.
+- 987654321098 é o ID da conta onde a função Lambda está implantada.
+- MyLambdaFunction é o nome da função Lambda.
 
-After adding this policy, you can specify the Lambda function ARN in your Gateway target configuration, even though it's in a different account.
+Após adicionar esta política, você pode especificar o ARN da função Lambda na configuração do alvo do Gateway, mesmo que esteja em uma conta diferente.
 
-### Tutorial Details
+### Detalhes do Tutorial
 
 
-| Information          | Details                                                   |
+| Informação           | Detalhes                                                  |
 |:---------------------|:----------------------------------------------------------|
-| Tutorial type        | Interactive                                               |
-| AgentCore components | AgentCore Gateway, AgentCore Identity, AWS IAM            |
-| Agentic Framework    | Strands Agents                                            |
-| LLM model            | Anthropic Claude Haiku 4.5, Amazon Nova Pro              |
-| Tutorial components  | Creating AgentCore Gateway and Invoking AgentCore Gateway |
-| Tutorial vertical    | Cross-vertical                                            |
-| Example complexity   | Easy                                                      |
-| SDK used             | boto3                                                     |
+| Tipo de tutorial     | Interativo                                                |
+| Componentes AgentCore| AgentCore Gateway, AgentCore Identity, AWS IAM            |
+| Framework de Agentes | Strands Agents                                            |
+| Modelo LLM           | Anthropic Claude Haiku 4.5, Amazon Nova Pro              |
+| Componentes do tutorial | Criação do AgentCore Gateway e Invocação do AgentCore Gateway |
+| Vertical do tutorial | Cross-vertical                                            |
+| Complexidade do exemplo | Fácil                                                  |
+| SDK utilizado        | boto3                                                     |
 
-## Tutorial Architecture
+## Arquitetura do Tutorial
 
-### Tutorial Key Features
+### Principais Funcionalidades do Tutorial
 
-* Expose Lambda functions into MCP tools
-* Secure the tools call using OAuth and IAM
+* Expor funções Lambda como ferramentas MCP
+* Proteger as chamadas de ferramentas usando OAuth e IAM
 
-## Tutorials Overview
+## Visão Geral dos Tutoriais
 
-In these tutorials we will cover the following functionality:
+Nestes tutoriais, cobriremos as seguintes funcionalidades:
 
-- [Transform your AWS Lambda function into MCP tools with OAuth inbound Auth](01-gateway-target-lambda-oauth.ipynb)
+- [Transformar sua função AWS Lambda em ferramentas MCP com autenticação de entrada OAuth](01-gateway-target-lambda-oauth.ipynb)
 
-- [Transform your AWS Lambda function into MCP tools with AWS IAM inbound Auth](02-gateway-target-lambda-iam.ipynb)
+- [Transformar sua função AWS Lambda em ferramentas MCP com autenticação de entrada AWS IAM](02-gateway-target-lambda-iam.ipynb)

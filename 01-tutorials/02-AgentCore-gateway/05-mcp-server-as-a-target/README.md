@@ -1,56 +1,55 @@
-# Integrate your MCP Server with AgentCore Gateway
+# Integrar seu Servidor MCP com o AgentCore Gateway
 
-## Overview
-Amazon Bedrock AgentCore Gateway now supports MCP servers as native targets alongside existing REST APIs and AWS Lambda functions. This enhancement allows organizations to integrate their MCP server implementations through a unified interface, eliminating the need for writing custom client code per MCP Server. The Gateway addresses key enterprise challenges in scaling AI agent deployments across multiple teams and servers by centralizing tool management, authentication, and routing.
+## Visão Geral
+O Amazon Bedrock AgentCore Gateway agora suporta servidores MCP como alvos nativos, juntamente com APIs REST e funções AWS Lambda existentes. Esta melhoria permite que organizações integrem suas implementações de servidores MCP através de uma interface unificada, eliminando a necessidade de escrever código de cliente personalizado por servidor MCP. O Gateway aborda desafios empresariais chave na escalabilidade de implantações de agentes de IA entre múltiplas equipes e servidores, centralizando o gerenciamento de ferramentas, autenticação e roteamento.
 
-The Gateway employs a centralized management framework that simplifies tool discovery, standardizes security protocols, and reduces operational complexity when scaling from dozens to hundreds of MCP servers. This unified approach allows enterprises to maintain consistent security and operational standards while efficiently managing their AI agent infrastructure through a single interface, eliminating the need for multiple separate gateways and reducing the overall maintenance burden.
+O Gateway emprega um framework de gerenciamento centralizado que simplifica a descoberta de ferramentas, padroniza protocolos de segurança e reduz a complexidade operacional ao escalar de dezenas para centenas de servidores MCP. Esta abordagem unificada permite que empresas mantenham padrões consistentes de segurança e operação enquanto gerenciam eficientemente sua infraestrutura de agentes de IA através de uma única interface, eliminando a necessidade de múltiplos gateways separados e reduzindo a carga geral de manutenção.
 
-![How does it work](images/mcp-server-target.png)
+![Como funciona](images/mcp-server-target.png)
 
-### Refreshing tool definitions of your MCP servers in AgentCore Gateway
-The SynchronizeGateway API enables on-demand synchronization of tools from MCP server targets through a sequence of carefully orchestrated steps. An Ops Admin initiates the process by making a SynchronizeGateway API call to the AgentCore Gateway, launching an asynchronous operation to update tool definitions. This control is particularly valuable after modifying MCP server configurations.
+### Atualizando definições de ferramentas dos seus servidores MCP no AgentCore Gateway
+A API SynchronizeGateway permite a sincronização sob demanda de ferramentas de alvos de servidores MCP através de uma sequência de etapas cuidadosamente orquestradas. Um Administrador de Operações inicia o processo fazendo uma chamada à API SynchronizeGateway para o AgentCore Gateway, lançando uma operação assíncrona para atualizar as definições de ferramentas. Este controle é particularmente valioso após modificar configurações de servidores MCP.
 
-For OAuth-authenticated targets, the AgentCore Gateway first communicates with the AgentCore Identity service to obtain and validate credentials. The Identity service acts as an OAuth resource credentials provider, returning the necessary tokens. If credential validation fails at this stage, the synchronization process immediately terminates, and the target transitions to a FAILED state.
+Para alvos autenticados via OAuth, o AgentCore Gateway primeiro se comunica com o serviço AgentCore Identity para obter e validar credenciais. O serviço Identity atua como um provedor de credenciais de recurso OAuth, retornando os tokens necessários. Se a validação de credenciais falhar nesta etapa, o processo de sincronização é imediatamente encerrado e o alvo transiciona para o estado FAILED.
 
-Upon successful authentication (or immediately for targets configured without authentication), the Gateway initializes a session with the MCP server, establishing a secure connection. The Gateway then makes paginated calls using the tools/list capability, processing tools in efficient batches of 100 to optimize performance and resource utilization. 
+Após autenticação bem-sucedida (ou imediatamente para alvos configurados sem autenticação), o Gateway inicializa uma sessão com o servidor MCP, estabelecendo uma conexão segura. O Gateway então faz chamadas paginadas usando a capacidade tools/list, processando ferramentas em lotes eficientes de 100 para otimizar desempenho e utilização de recursos.
 
-As tools are retrieved, the Gateway normalizes their definitions by adding target-specific prefixes to prevent naming conflicts with other targets. This normalization process maintains consistency while preserving essential metadata from the original MCP server definitions. Throughout the process, the Gateway enforces a strict limit of 10,000 tools per target to ensure system stability. The API implements optimistic locking during synchronization to prevent concurrent modifications that could lead to inconsistent states. The cached tool definitions ensure consistent high performance for ListTools operations between synchronizations.
+Conforme as ferramentas são recuperadas, o Gateway normaliza suas definições adicionando prefixos específicos do alvo para prevenir conflitos de nomenclatura com outros alvos. Este processo de normalização mantém a consistência enquanto preserva metadados essenciais das definições originais do servidor MCP. Durante todo o processo, o Gateway impõe um limite estrito de 10.000 ferramentas por alvo para garantir a estabilidade do sistema. A API implementa bloqueio otimista durante a sincronização para prevenir modificações concorrentes que poderiam levar a estados inconsistentes. As definições de ferramentas em cache garantem desempenho consistente e alto para operações ListTools entre sincronizações.
 
-![How does it work](images/mcp-server-target-explicit-sync.png)
+![Como funciona](images/mcp-server-target-explicit-sync.png)
 
-### Implicit synchronization of tools schema
-During CreateGatewayTarget and UpdateGatewayTarget operations, AgentCore Gateway automatically syncs tool schemas that differs from the explicit SynchronizeGateway API. This built-in sync ensures new or updated MCP targets are ready for immediate use and maintains data consistency. While this makes create/update operations slower compared to other target types, it guarantees that targets marked as READY have valid tool definitions and prevents issues from targets with unvalidated tool definitions.
+### Sincronização implícita do schema de ferramentas
+Durante as operações CreateGatewayTarget e UpdateGatewayTarget, o AgentCore Gateway sincroniza automaticamente os schemas de ferramentas, diferindo da API explícita SynchronizeGateway. Esta sincronização integrada garante que alvos MCP novos ou atualizados estejam prontos para uso imediato e mantém a consistência dos dados. Embora isso torne as operações de criação/atualização mais lentas em comparação com outros tipos de alvo, garante que alvos marcados como READY tenham definições de ferramentas válidas e previne problemas com alvos com definições de ferramentas não validadas.
 
-![How does it work](images/mcp-server-target-implicit-sync.png)
+![Como funciona](images/mcp-server-target-implicit-sync.png)
 
-### Tutorial Details
+### Detalhes do Tutorial
 
 
-| Information          | Details                                                                |
+| Informação           | Detalhes                                                               |
 |:---------------------|:-----------------------------------------------------------------------|
-| Tutorial type        | Interactive                                                            |
-| AgentCore components | AgentCore Gateway, AgentCore Identity, AgentCore Runtime               |
-| Agentic Framework    | Strands Agents                                                         |
-| Gateway Target Type  | MCP Server                                                             |
-| Inbound Auth IdP     | Amazon Cognito, but can use others                                     |
-| Outbound Auth        | Amazon Cognito, but can use others                                     |
-| LLM model            | Anthropic Claude Sonnet 4                                              |
-| Tutorial components  | Creating AgentCore Gateway with MCP Target and synchronize the tools   |
-| Tutorial vertical    | Cross-vertical                                                         |
-| Example complexity   | Easy                                                                   |
-| SDK used             | boto3                                                                  |
+| Tipo de tutorial     | Interativo                                                             |
+| Componentes AgentCore| AgentCore Gateway, AgentCore Identity, AgentCore Runtime               |
+| Framework de Agentes | Strands Agents                                                         |
+| Tipo de Alvo do Gateway | Servidor MCP                                                        |
+| IdP de Auth de Entrada | Amazon Cognito, mas pode usar outros                                 |
+| Auth de Saída        | Amazon Cognito, mas pode usar outros                                   |
+| Modelo LLM           | Anthropic Claude Sonnet 4                                              |
+| Componentes do tutorial | Criação do AgentCore Gateway com Alvo MCP e sincronização das ferramentas |
+| Vertical do tutorial | Cross-vertical                                                         |
+| Complexidade do exemplo | Fácil                                                               |
+| SDK utilizado        | boto3                                                                  |
 
-## Tutorial Architecture
+## Arquitetura do Tutorial
 
-### Tutorial Key Features
+### Principais Funcionalidades do Tutorial
 
-* Integrate the MCP Server with AgentCore Gateway
-* Perform explicit and implicit synchronization to refresh tool definitions
+* Integrar o Servidor MCP com o AgentCore Gateway
+* Realizar sincronização explícita e implícita para atualizar definições de ferramentas
 
-## Tutorials Overview
+## Visão Geral dos Tutoriais
 
-In these tutorials we will cover the following functionality:
+Nestes tutoriais, cobriremos as seguintes funcionalidades:
 
-- [Integrate the MCP Server with AgentCore Gateway](01-mcp-server-target.ipynb)
-- [Perform explicit and implicit synchronization to refresh tool definitions](02-mcp-target-synchronization.ipynb)
-
+- [Integrar o Servidor MCP com o AgentCore Gateway](01-mcp-server-target.ipynb)
+- [Realizar sincronização explícita e implícita para atualizar definições de ferramentas](02-mcp-target-synchronization.ipynb)

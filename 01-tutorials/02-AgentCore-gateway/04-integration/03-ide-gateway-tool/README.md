@@ -1,91 +1,91 @@
-# VS Code + AgentCore Gateway: Serverless OAuth Proxy
+# VS Code + AgentCore Gateway: Proxy OAuth Serverless
 
-## Overview
+## Visão Geral
 
-This document explains how to connect **Visual Studio Code with Copilot** to **Amazon Bedrock AgentCore Gateway** using a **serverless OAuth proxy** deployed on AWS, with **Atlassian Confluence** as a backend tool using **OAuth 2.0 Authorization Code Grant (3LO)** for user-delegated access.
+Este documento explica como conectar o **Visual Studio Code com Copilot** ao **Amazon Bedrock AgentCore Gateway** usando um **proxy OAuth serverless** implantado na AWS, com **Atlassian Confluence** como ferramenta backend usando **OAuth 2.0 Authorization Code Grant (3LO)** para acesso delegado pelo usuário.
 
-**Key Benefit**: No local servers required. The OAuth proxy and callback handler run as Lambda functions behind API Gateway in AWS, allowing developers to connect VS Code directly to a cloud endpoint.
+**Benefício Principal**: Nenhum servidor local necessário. O proxy OAuth e o manipulador de callback rodam como funções Lambda atrás do API Gateway na AWS, permitindo que desenvolvedores conectem o VS Code diretamente a um endpoint na nuvem.
 
-**Note**: This example requires `MCP-Protocol-Version: 2025-11-25` which adds URL elicitation, configured in VS Code's `mcp.json` using the `headers` field.
+**Nota**: Este exemplo requer `MCP-Protocol-Version: 2025-11-25` que adiciona elicitação de URL, configurado no `mcp.json` do VS Code usando o campo `headers`.
 
-## Architecture
+## Arquitetura
 
-![VS Code + AgentCore Gateway Serverless OAuth Proxy](generated-diagrams/vscode-agentcore-serverless-proxy.png)
+![VS Code + AgentCore Gateway Proxy OAuth Serverless](generated-diagrams/vscode-agentcore-serverless-proxy.png)
 
-**Flow Summary:**
-1. VS Code connects to Amazon API Gateway (public endpoint) via MCP/HTTP
-2. MCP Proxy Lambda handles OAuth metadata discovery and callback interception
-3. User authenticates with Cognito via browser
-4. Proxy Lambda forwards authenticated requests to AgentCore Gateway with JWT
-5. AgentCore Gateway returns 3LO elicitation when Confluence access is needed
-6. User grants consent in browser via Atlassian OAuth
-7. Callback Lambda receives authorization code and calls `CompleteResourceTokenAuth`
-8. AgentCore Gateway can now call Confluence API on behalf of user (tokens cached by AgentCore Identity)
+**Resumo do Fluxo:**
+1. VS Code conecta ao Amazon API Gateway (endpoint público) via MCP/HTTP
+2. Lambda do Proxy MCP lida com descoberta de metadados OAuth e interceptação de callback
+3. Usuário autentica com Cognito via navegador
+4. Lambda do Proxy encaminha requisições autenticadas ao AgentCore Gateway com JWT
+5. AgentCore Gateway retorna elicitação 3LO quando acesso ao Confluence é necessário
+6. Usuário concede consentimento no navegador via OAuth da Atlassian
+7. Lambda de Callback recebe código de autorização e chama `CompleteResourceTokenAuth`
+8. AgentCore Gateway agora pode chamar a API do Confluence em nome do usuário (tokens cacheados pelo AgentCore Identity)
 
-## Two OAuth Flows
+## Dois Fluxos OAuth
 
-| Flow | Purpose | Direction | When |
-|------|---------|-----------|------|
-| **Inbound Auth** | VS Code authenticates to AgentCore Gateway | VS Code → Cognito → AgentCore Gateway | On MCP server connection |
-| **Outbound Auth (3LO)** | AgentCore Gateway accesses Confluence on behalf of user | AgentCore Gateway → Atlassian → User consent | On first Confluence tool call |
+| Fluxo | Propósito | Direção | Quando |
+|-------|-----------|---------|--------|
+| **Auth de Entrada** | VS Code autentica no AgentCore Gateway | VS Code → Cognito → AgentCore Gateway | Na conexão do servidor MCP |
+| **Auth de Saída (3LO)** | AgentCore Gateway acessa Confluence em nome do usuário | AgentCore Gateway → Atlassian → Consentimento do usuário | Na primeira chamada de ferramenta do Confluence |
 
-### Token Lifetime and Consent Persistence
+### Tempo de Vida do Token e Persistência do Consentimento
 
-**How often will users be prompted for Confluence consent?**
+**Com que frequência os usuários serão solicitados para consentimento do Confluence?**
 
-AgentCore Identity manages 3LO tokens automatically:
-- When the user completes 3LO, AgentCore stores both the access token and refresh token
-- On subsequent tool calls, AgentCore uses the stored token — no user interaction
-- When the access token expires, AgentCore automatically refreshes it using the refresh token
+O AgentCore Identity gerencia tokens 3LO automaticamente:
+- Quando o usuário completa o 3LO, o AgentCore armazena tanto o token de acesso quanto o token de atualização
+- Em chamadas de ferramentas subsequentes, o AgentCore usa o token armazenado — sem interação do usuário
+- Quando o token de acesso expira, o AgentCore o atualiza automaticamente usando o token de atualização
 
-**Consent lifetime is controlled by Atlassian (the OAuth provider), not AgentCore:**
-- Atlassian refresh tokens are long-lived (~90 days of inactivity)
-- As long as the token is used periodically, users won't be re-prompted
-- Re-consent is required if: (a) user revokes access in Atlassian settings, (b) refresh token expires from inactivity, or (c) the app's requested scopes change
+**O tempo de vida do consentimento é controlado pela Atlassian (o provedor OAuth), não pelo AgentCore:**
+- Tokens de atualização da Atlassian são de longa duração (~90 dias de inatividade)
+- Enquanto o token for usado periodicamente, os usuários não serão solicitados novamente
+- Novo consentimento é necessário se: (a) o usuário revogar o acesso nas configurações da Atlassian, (b) o token de atualização expirar por inatividade, ou (c) os escopos solicitados pelo aplicativo mudarem
 
-**The `offline_access` scope** (configured in the notebook) is what enables refresh tokens. Without it, users would need to re-authenticate every time the access token expires (typically 1 hour).
+**O escopo `offline_access`** (configurado no notebook) é o que habilita tokens de atualização. Sem ele, os usuários precisariam reautenticar toda vez que o token de acesso expirasse (tipicamente 1 hora).
 
-**Note**: Cognito handles only inbound auth (VS Code → AgentCore Gateway). The 3LO tokens for Confluence are managed entirely by AgentCore Identity.
+**Nota**: O Cognito lida apenas com a auth de entrada (VS Code → AgentCore Gateway). Os tokens 3LO para o Confluence são gerenciados inteiramente pelo AgentCore Identity.
 
-## Serverless vs Local Proxy
+## Serverless vs Proxy Local
 
-This example could be also deployed with local callback and proxy servers. Having those in the AWS cloud offers advantages, detailed below.
+Este exemplo também poderia ser implantado com servidores de callback e proxy locais. Tê-los na nuvem AWS oferece vantagens, detalhadas abaixo.
 
-| Aspect | Local Proxy (notebook 02) | Serverless Proxy (notebook 03) |
-|--------|---------------------------|--------------------------------|
-| **Setup** | Run 2 local Python servers | Deploy once via notebook |
-| **Developer Experience** | Start servers before each session | Just configure VS Code |
+| Aspecto | Proxy Local (notebook 02) | Proxy Serverless (notebook 03) |
+|---------|---------------------------|--------------------------------|
+| **Setup** | Executar 2 servidores Python locais | Implantar uma vez via notebook |
+| **Experiência do Desenvolvedor** | Iniciar servidores antes de cada sessão | Apenas configurar o VS Code |
 | **Endpoint** | `http://127.0.0.1:8080` | `https://<api-id>.execute-api.<region>.amazonaws.com` |
-| **Scalability** | Single developer | Team-wide deployment |
-| **Cost** | Free (local) | Pay-per-use (Lambda + API Gateway) |
+| **Escalabilidade** | Desenvolvedor único | Implantação para toda a equipe |
+| **Custo** | Gratuito (local) | Pague por uso (Lambda + API Gateway) |
 
-## Components
+## Componentes
 
-| Component | Purpose |
+| Componente | Propósito |
 |-----------|---------|
-| **Amazon API Gateway** | Public HTTPS endpoint for VS Code (HTTP API) |
-| **MCP Proxy Lambda** | OAuth metadata, callback interception, token proxying, MCP forwarding |
-| **Callback Lambda** | 3LO OAuth callbacks, `CompleteResourceTokenAuth` |
-| **Cognito User Pool** | JWT tokens for inbound authentication |
-| **AgentCore Gateway** | AWS-managed MCP server with Confluence target |
+| **Amazon API Gateway** | Endpoint HTTPS público para VS Code (HTTP API) |
+| **Lambda do Proxy MCP** | Metadados OAuth, interceptação de callback, proxy de tokens, encaminhamento MCP |
+| **Lambda de Callback** | Callbacks OAuth 3LO, `CompleteResourceTokenAuth` |
+| **Cognito User Pool** | Tokens JWT para autenticação de entrada |
+| **AgentCore Gateway** | Servidor MCP gerenciado pela AWS com alvo Confluence |
 
-**Note on terminology**: This architecture uses two different "gateways":
-- **Amazon API Gateway**: The HTTP API that exposes Lambda functions as a public endpoint
-- **AgentCore Gateway**: The AWS-managed MCP server that routes tool calls to Confluence
+**Nota sobre terminologia**: Esta arquitetura usa dois "gateways" diferentes:
+- **Amazon API Gateway**: A HTTP API que expõe funções Lambda como endpoint público
+- **AgentCore Gateway**: O servidor MCP gerenciado pela AWS que roteia chamadas de ferramentas para o Confluence
 
-## Key Technical Details
+## Detalhes Técnicos Principais
 
-### Why the Proxy Architecture is Needed
+### Por que a Arquitetura de Proxy é Necessária
 
-This solution uses Amazon API Gateway + AWS Lambda functions as a proxy layer between VS Code and AgentCore Gateway. This architecture is needed for two reasons:
+Esta solução usa Amazon API Gateway + funções AWS Lambda como camada de proxy entre o VS Code e o AgentCore Gateway. Esta arquitetura é necessária por duas razões:
 
-1. **OAuth Authorization Server Facade**: VS Code's MCP client expects to interact with OAuth endpoints (`/authorize`, `/token`) at the MCP server URL. AgentCore Gateway validates incoming JWTs but doesn't act as an OAuth Authorization Server. The MCP Proxy Lambda provides this facade, proxying OAuth requests to Cognito while handling redirect interception and state management. The proxy also serves its own RFC 9728 Protected Resource Metadata (`/.well-known/oauth-protected-resource`) because the `resource` identifier must match the URL the client connects to (the proxy URL), not the underlying Gateway URL.
+1. **Fachada do Servidor de Autorização OAuth**: O cliente MCP do VS Code espera interagir com endpoints OAuth (`/authorize`, `/token`) na URL do servidor MCP. O AgentCore Gateway valida JWTs de entrada, mas não atua como um Servidor de Autorização OAuth. O Lambda do Proxy MCP fornece esta fachada, fazendo proxy de requisições OAuth para o Cognito enquanto lida com interceptação de redirecionamento e gerenciamento de estado. O proxy também serve seus próprios Metadados de Recurso Protegido RFC 9728 (`/.well-known/oauth-protected-resource`) porque o identificador `resource` deve corresponder à URL à qual o cliente se conecta (a URL do proxy), não a URL do Gateway subjacente.
 
-2. **3LO Callback Handling with Session Binding**: When a user completes 3LO consent (e.g., granting Confluence access), the OAuth callback must be received and the `CompleteResourceTokenAuth` API must be called with the user's identity to bind the token. The Callback Lambda handles this flow. While a managed 3LO callback endpoint currently not natively supported in AgentCore Gateway, this Lambda provides the callback handling and session binding.
+2. **Manipulação de Callback 3LO com Vinculação de Sessão**: Quando um usuário completa o consentimento 3LO (por exemplo, concedendo acesso ao Confluence), o callback OAuth deve ser recebido e a API `CompleteResourceTokenAuth` deve ser chamada com a identidade do usuário para vincular o token. O Lambda de Callback lida com este fluxo. Embora um endpoint de callback 3LO gerenciado não seja atualmente suportado nativamente no AgentCore Gateway, este Lambda fornece a manipulação de callback e vinculação de sessão.
 
-### MCP-Protocol-Version Header
+### Cabeçalho MCP-Protocol-Version
 
-The `MCP-Protocol-Version: 2025-11-25` header is required for 3LO elicitation. Configure in VS Code's `mcp.json`:
+O cabeçalho `MCP-Protocol-Version: 2025-11-25` é necessário para elicitação 3LO. Configure no `mcp.json` do VS Code:
 
 ```json
 {
@@ -101,9 +101,9 @@ The `MCP-Protocol-Version: 2025-11-25` header is required for 3LO elicitation. C
 }
 ```
 
-### 3LO Elicitation Response
+### Resposta de Elicitação 3LO
 
-When a tool requires user OAuth consent, the gateway returns error code `-32042`:
+Quando uma ferramenta requer consentimento OAuth do usuário, o gateway retorna o código de erro `-32042`:
 
 ```json
 {
@@ -122,41 +122,41 @@ When a tool requires user OAuth consent, the gateway returns error code `-32042`
 }
 ```
 
-## Setup
+## Configuração
 
-### Prerequisites
+### Pré-requisitos
 - Python 3.10+
-- AWS credentials configured with permissions for Lambda, API Gateway, Cognito, IAM, and Bedrock AgentCore
-- Atlassian Cloud account with Confluence
-- VS Code 1.107+ with GitHub Copilot - This version adds support for the 3LO URL elicitation
+- Credenciais AWS configuradas com permissões para Lambda, API Gateway, Cognito, IAM e Bedrock AgentCore
+- Conta Atlassian Cloud com Confluence
+- VS Code 1.107+ com GitHub Copilot - Esta versão adiciona suporte para elicitação de URL 3LO
 
-### Step 1: Create Atlassian OAuth App
-1. Go to https://developer.atlassian.com/console/myapps/
-2. Create → OAuth 2.0 integration
-3. Under **Permissions**, add these **granular scopes** for Confluence:
+### Passo 1: Criar Aplicação OAuth da Atlassian
+1. Acesse https://developer.atlassian.com/console/myapps/
+2. Criar → Integração OAuth 2.0
+3. Em **Permissões**, adicione estes **escopos granulares** para Confluence:
    - `read:space:confluence`
    - `read:page:confluence`
-4. Copy Client ID and Client Secret
-5. Add the AgentCore callback URL (shown after running notebook)
+4. Copie o Client ID e Client Secret
+5. Adicione a URL de callback do AgentCore (mostrada após executar o notebook)
 
-**Note**: The `offline_access` scope (for refresh tokens) is a standard OAuth scope — you don't configure it in the console. It's automatically requested by AgentCore when making the authorization request.
+**Nota**: O escopo `offline_access` (para tokens de atualização) é um escopo OAuth padrão — você não o configura no console. Ele é automaticamente solicitado pelo AgentCore ao fazer a requisição de autorização.
 
-### Step 2: Run the Setup Notebook
+### Passo 2: Executar o Notebook de Configuração
 
-Run `01_vscode_agentcore_confluence_serverless.ipynb` to create:
-- API Gateway with Lambda integrations
-- MCP Proxy Lambda function
-- Callback Lambda function
-- Cognito User Pool with app client
-- AgentCore Gateway with Cognito JWT auth
-- Atlassian credential provider
-- Confluence target with 3LO OAuth
+Execute `01_vscode_agentcore_confluence_serverless.ipynb` para criar:
+- API Gateway com integrações Lambda
+- Função Lambda do Proxy MCP
+- Função Lambda de Callback
+- Cognito User Pool com cliente de aplicação
+- AgentCore Gateway com auth JWT do Cognito
+- Provedor de credenciais da Atlassian
+- Alvo Confluence com OAuth 3LO
 
-The notebook outputs the API Gateway URL and VS Code configuration.
+O notebook exibe a URL do API Gateway e a configuração do VS Code.
 
-### Step 3: Configure VS Code
+### Passo 3: Configurar o VS Code
 
-Add to `.vscode/mcp.json` (values from notebook output):
+Adicione ao `.vscode/mcp.json` (valores da saída do notebook):
 
 ```json
 {
@@ -172,57 +172,57 @@ Add to `.vscode/mcp.json` (values from notebook output):
 }
 ```
 
-### Step 4: Connect and Use
-1. Reload VS Code
-2. Complete Cognito OAuth when prompted (user: `vscode-user`, password: `TempPassword123!`)
-3. Use Confluence tools - 3LO consent will be triggered on first use
-4. After granting Atlassian consent, retry the tool call
+### Passo 4: Conectar e Usar
+1. Recarregue o VS Code
+2. Complete o OAuth do Cognito quando solicitado (usuário: `vscode-user`, senha: `TempPassword123!`)
+3. Use as ferramentas do Confluence - o consentimento 3LO será acionado no primeiro uso
+4. Após conceder o consentimento da Atlassian, tente a chamada da ferramenta novamente
 
-## Troubleshooting
+## Solução de Problemas
 
 ### "Cannot initiate authorization code grant flow"
-**Cause**: Gateway not receiving `MCP-Protocol-Version: 2025-11-25` header.
-**Solution**: Add `"headers": {"MCP-Protocol-Version": "2025-11-25"}` to your mcp.json config.
+**Causa**: O Gateway não está recebendo o cabeçalho `MCP-Protocol-Version: 2025-11-25`.
+**Solução**: Adicione `"headers": {"MCP-Protocol-Version": "2025-11-25"}` à sua configuração mcp.json.
 
 ### "Client is not enabled for OAuth2.0 flows"
-**Cause**: Cognito app client missing `AllowedOAuthFlowsUserPoolClient=True`.
-**Solution**: Re-run the notebook to recreate resources.
+**Causa**: Cliente de aplicação do Cognito sem `AllowedOAuthFlowsUserPoolClient=True`.
+**Solução**: Execute novamente o notebook para recriar os recursos.
 
-### "redirect_mismatch" from Cognito
-**Cause**: Callback URL not registered in Cognito.
-**Solution**: Ensure the API Gateway callback URL is registered. Re-run notebook if needed.
+### "redirect_mismatch" do Cognito
+**Causa**: URL de callback não registrada no Cognito.
+**Solução**: Certifique-se de que a URL de callback do API Gateway está registrada. Execute novamente o notebook se necessário.
 
-### Lambda timeout errors
-**Cause**: Lambda function timing out during MCP forwarding.
-**Solution**: Increase Lambda timeout in AWS Console or re-deploy with higher timeout.
+### Erros de timeout do Lambda
+**Causa**: Função Lambda expirando durante o encaminhamento MCP.
+**Solução**: Aumente o timeout do Lambda no Console AWS ou reimplante com timeout maior.
 
-### 3LO completed but tool still fails
-**Cause**: VS Code doesn't auto-retry after 3LO completion.
-**Solution**: Invoke the tool again after completing the 3LO flow in the browser.
+### 3LO completado mas a ferramenta ainda falha
+**Causa**: O VS Code não tenta automaticamente após a conclusão do 3LO.
+**Solução**: Invoque a ferramenta novamente após completar o fluxo 3LO no navegador.
 
-## Files
+## Arquivos
 
-| File | Description |
-|------|-------------|
-| `01_vscode_agentcore_confluence_serverless.ipynb` | Setup notebook for serverless deployment |
-| `lambda/mcp_proxy_lambda.py` | MCP Proxy Lambda source code |
-| `lambda/callback_lambda.py` | 3LO Callback Lambda source code |
+| Arquivo | Descrição |
+|---------|-----------|
+| `01_vscode_agentcore_confluence_serverless.ipynb` | Notebook de configuração para implantação serverless |
+| `lambda/mcp_proxy_lambda.py` | Código fonte do Lambda do Proxy MCP |
+| `lambda/callback_lambda.py` | Código fonte do Lambda de Callback 3LO |
 
-## Cleanup
+## Limpeza
 
-Run the cleanup cell at the end of the notebook, or run Step 1b on a fresh notebook execution to delete:
+Execute a célula de limpeza no final do notebook, ou execute o Passo 1b em uma nova execução do notebook para excluir:
 - API Gateway
-- Lambda functions
-- AgentCore Gateway and targets
-- Credential providers
+- Funções Lambda
+- AgentCore Gateway e alvos
+- Provedores de credenciais
 - Cognito User Pool
-- IAM roles
+- Roles IAM
 
-## References
+## Referências
 
-- [MCP Specification 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25)
-- [VS Code MCP Documentation](https://code.visualstudio.com/docs/copilot/customization/mcp-servers)
-- [AgentCore Gateway Documentation](https://docs.aws.amazon.com/bedrock-agentcore/)
-- [AWS Lambda Documentation](https://docs.aws.amazon.com/lambda/)
-- [Amazon API Gateway Documentation](https://docs.aws.amazon.com/apigateway/)
-- [Confluence REST API v2](https://developer.atlassian.com/cloud/confluence/rest/v2/)
+- [Especificação MCP 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25)
+- [Documentação MCP do VS Code](https://code.visualstudio.com/docs/copilot/customization/mcp-servers)
+- [Documentação do AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/)
+- [Documentação do AWS Lambda](https://docs.aws.amazon.com/lambda/)
+- [Documentação do Amazon API Gateway](https://docs.aws.amazon.com/apigateway/)
+- [API REST do Confluence v2](https://developer.atlassian.com/cloud/confluence/rest/v2/)
