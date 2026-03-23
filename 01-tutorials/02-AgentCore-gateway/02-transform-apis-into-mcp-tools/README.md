@@ -1,7 +1,7 @@
 # Implementar ferramentas MCP a partir das suas APIs usando o Amazon Bedrock AgentCore Gateway
 
 ## Visão Geral
-O Bedrock AgentCore Gateway oferece aos clientes uma maneira de transformar suas APIs existentes (OpenAPI e Smithy) em servidores MCP totalmente gerenciados, sem a necessidade de gerenciar infraestrutura ou hospedagem. Os clientes podem trazer suas especificações OpenAPI e Smithy existentes para converter suas ferramentas. O Gateway fornece uma interface uniforme do Model Context Protocol (MCP) para todas essas ferramentas. O Gateway emprega um modelo de autenticação dupla para garantir o controle de acesso seguro tanto para requisições de entrada quanto para conexões de saída aos recursos de destino. O framework consiste em dois componentes principais: Autenticação de Entrada (Inbound Auth), que valida e autoriza usuários que tentam acessar os alvos do gateway, e Autenticação de Saída (Outbound Auth), que permite ao gateway conectar-se de forma segura às APIs de backend em nome dos usuários autenticados usando chave de API, token OAuth e role IAM da AWS.
+O Bedrock AgentCore Gateway oferece aos clientes uma maneira de transformar suas APIs existentes (OpenAPI e Smithy) em servidores MCP totalmente gerenciados, sem a necessidade de gerenciar infraestrutura ou hospedagem. Os clientes podem trazer suas especificações OpenAPI e Smithy existentes para converter suas ferramentas. O Gateway fornece uma interface uniforme do Model Context Protocol (MCP) para todas essas ferramentas. O Gateway emprega um modelo de autenticação dupla para garantir o controle de acesso seguro tanto para inbound requests quanto para outbound connections aos recursos de destino. O framework consiste em dois componentes principais: Inbound Auth (Inbound Auth), que valida e autoriza usuários que tentam acessar os alvos do gateway, e Outbound Auth (Outbound Auth), que permite ao gateway conectar-se de forma segura às APIs de backend em nome dos usuários autenticados usando chave de API, token OAuth e role IAM da AWS.
 
 ![Como funciona](images/apis-into-mcp-gateway.png)
 
@@ -15,7 +15,7 @@ Você pode agrupar suas APIs OpenAPI ou Smithy e criar um Bedrock AgentCore Gate
 
 Abaixo estão as melhores práticas para agrupar suas APIs em alvos do Gateway:
 * Agrupe suas ferramentas MCP com base no domínio de negócio da aplicação agêntica, similar aos princípios de Domain Driven Design aplicáveis ao paradigma de microsserviços.
-* Você pode anexar apenas um provedor de credenciais de recurso para autorização de saída por alvo do Gateway. Agrupe as ferramentas com base no autorizador de saída.
+* Você pode anexar apenas um provedor de credenciais de recurso para outbound auth por alvo do Gateway. Agrupe as ferramentas com base no outbound authorizer.
 * Agrupe suas APIs com base no tipo das APIs, ou seja, OpenAPI, Smithy ou AWS Lambda servindo como ponte para outras APIs empresariais.
 
 ![Agrupando as ferramentas de API em alvos](images/api-groups-targets.png)
@@ -66,10 +66,10 @@ Abaixo estão as melhores práticas para agrupar suas APIs em alvos do Gateway:
 
 Lembre-se de revisar e atualizar regularmente a documentação conforme as APIs evoluem, mantendo a qualidade e precisão dos agentes.
 
-## Autorização de entrada e saída
-O Bedrock AgentCore Gateway fornece conexões seguras via autenticação de entrada e saída. Para a autenticação de entrada, o AgentCore Gateway analisa o token OAuth passado durante a invocação para decidir permitir ou negar o acesso a uma ferramenta no gateway. Se uma ferramenta precisa acessar recursos externos, o AgentCore Gateway pode usar autenticação de saída via Chave de API, IAM ou Token OAuth para permitir ou negar o acesso ao recurso externo.
+## Inbound Auth e saída
+O Bedrock AgentCore Gateway fornece conexões seguras via inbound auth e saída. Para a inbound auth, o AgentCore Gateway analisa o token OAuth passado durante a invocação para decidir permitir ou negar o acesso a uma ferramenta no gateway. Se uma ferramenta precisa acessar recursos externos, o AgentCore Gateway pode usar outbound auth via Chave de API, IAM ou Token OAuth para permitir ou negar o acesso ao recurso externo.
 
-Durante o fluxo de autorização de entrada, um agente ou o cliente MCP chama uma ferramenta MCP no AgentCore Gateway adicionando um token de acesso OAuth (gerado a partir do IdP do usuário). O AgentCore Gateway então valida o token de acesso OAuth e realiza a autorização de entrada.
+Durante o fluxo de inbound auth, um agente ou o cliente MCP chama uma ferramenta MCP no AgentCore Gateway adicionando um token de acesso OAuth (gerado a partir do IdP do usuário). O AgentCore Gateway então valida o token de acesso OAuth e realiza a inbound auth.
 
 Se a ferramenta executando no AgentCore Gateway precisa acessar recursos externos, o OAuth recuperará as credenciais dos recursos downstream usando o provedor de credenciais de recurso para o alvo do Gateway. O AgentCore Gateway passa as credenciais de autorização ao chamador para obter acesso à API downstream.
 

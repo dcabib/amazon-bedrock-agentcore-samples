@@ -34,8 +34,8 @@ Com esta integração, os clientes não precisarão mais gerenciar este processo
 | Framework de Agentes | Strands Agents                                            |
 | Tipo de Alvo do Gateway | API Gateway                                            |
 | Agente               | Strands                                                   |
-| IdP de Auth de Entrada | Amazon Cognito, mas pode usar outros                    |
-| Auth de Saída        | Autorização IAM e Chave de API                            |
+| Inbound Auth IdP | Amazon Cognito, mas pode usar outros                    |
+| Outbound Auth        | Autorização IAM e Chave de API                            |
 | Modelo LLM           | Anthropic Claude Sonnet 4                                 |
 | Componentes do tutorial | Invocando API Gateway via alvo do AgentCore Gateway    |
 | Vertical do tutorial | Cross-vertical                                            |

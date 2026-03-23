@@ -132,8 +132,8 @@ Nestes tutoriais, cobriremos a observabilidade do AgentCore Gateway.
 | Componentes AgentCore| AgentCore Gateway, Amazon CloudWatch, AWS CloudTrail      |
 | Framework de Agentes | Strands Agents                                            |
 | Tipo de Alvo do Gateway | AWS Lambda                                             |
-| IdP de Auth de Entrada | Amazon Cognito                                          |
-| Auth de Saída        | AWS IAM                                                   |
+| Inbound Auth IdP | Amazon Cognito                                          |
+| Outbound Auth        | AWS IAM                                                   |
 | Modelo LLM           | Anthropic Claude Sonnet 4.0                               |
 | Componentes do tutorial | Observabilidade do AgentCore Gateway com CloudWatch, CloudTrail |
 | Vertical do tutorial | Cross-vertical                                            |

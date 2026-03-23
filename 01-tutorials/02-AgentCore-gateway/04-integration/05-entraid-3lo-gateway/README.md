@@ -1,6 +1,6 @@
 # AgentCore MCP Gateway com Autenticação EntraID
 
-Configuração automatizada para um AgentCore MCP Gateway com autenticação de entrada EntraID e 3LO (three-legged OAuth) de saída para acesso delegado pelo usuário a uma API downstream. Inclui um SPA de onboarding de autenticação baseado em navegador para pré-autorizar o acesso.
+Configuração automatizada para um AgentCore MCP Gateway com inbound auth EntraID e 3LO (three-legged OAuth) de saída para acesso delegado pelo usuário a uma API downstream. Inclui um SPA de onboarding de autenticação baseado em navegador para pré-autorizar o acesso.
 
 ## Pré-requisitos
 
@@ -247,7 +247,7 @@ O IAM OIDC provider é único por URL de emissor por conta. Se estiver implantan
 
 ### O servidor MCP do VS Code apresenta erros de autenticação após reimplantações
 
-Credenciais de autenticação de entrada acumuladas de sessões anteriores podem causar erros de estado obsoleto. Abra a paleta de comandos (`F1` ou `⇧⌘P`) e execute "Remove Dynamic Authentication Providers" para limpá-las, depois reconecte.
+Credenciais de inbound auth acumuladas de sessões anteriores podem causar erros de estado obsoleto. Abra a paleta de comandos (`F1` ou `⇧⌘P`) e execute "Remove Dynamic Authentication Providers" para limpá-las, depois reconecte.
 
 ---
 

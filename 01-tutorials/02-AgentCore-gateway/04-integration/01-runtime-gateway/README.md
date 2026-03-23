@@ -10,8 +10,8 @@ O [Amazon Bedrock AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentco
 | Componentes AgentCore| AgentCore Gateway, AgentCore Identity, AgentCore Runtime  |
 | Framework de Agentes | Strands Agents                                            |
 | Tipo de Alvo do Gateway | AWS Lambda, alvo OpenAPI                               |
-| IdP de Auth de Entrada | AWS IAM                                                 |
-| Auth de Saída        | AWS IAM (AWS Lambda), Chave de API (alvo OpenAPI)         |
+| Inbound Auth IdP | AWS IAM                                                 |
+| Outbound Auth        | AWS IAM (AWS Lambda), Chave de API (alvo OpenAPI)         |
 | Modelo LLM           | Anthropic Claude Haiku 4.5, Amazon Nova Pro              |
 | Componentes do tutorial | Criação do AgentCore Gateway e Invocação do AgentCore Gateway |
 | Vertical do tutorial | Cross-vertical                                            |
@@ -20,7 +20,7 @@ O [Amazon Bedrock AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentco
 
 ## Arquitetura do Tutorial
 
-Neste tutorial, transformaremos operações definidas em funções AWS Lambda e APIs RESTful em ferramentas MCP e as hospedaremos no Bedrock AgentCore Gateway. Demonstraremos a autenticação de entrada usando credenciais AWS IAM no formato AWS Sigv4. Implantaremos um Agente Strands utilizando ferramentas do AgentCore Gateway no AgentCore Runtime.
+Neste tutorial, transformaremos operações definidas em funções AWS Lambda e APIs RESTful em ferramentas MCP e as hospedaremos no Bedrock AgentCore Gateway. Demonstraremos a inbound auth usando credenciais AWS IAM no formato AWS Sigv4. Implantaremos um Agente Strands utilizando ferramentas do AgentCore Gateway no AgentCore Runtime.
 
 Para fins de demonstração, usaremos um Agente Strands usando modelos do [Amazon Bedrock](https://aws.amazon.com/bedrock/).
 

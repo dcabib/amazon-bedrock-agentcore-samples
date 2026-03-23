@@ -31,7 +31,7 @@ Esta abordagem abrangente de segurança de banco de dados oferece vários benef�
 | Componentes AgentCore  | Amazon Bedrock AgentCore Gateway, Interceptores do Gateway                   |
 | Tipo de Alvo do Gateway| Servidor MCP (ferramenta de banco de dados baseada em Lambda)                |
 | Tipos de interceptor   | AWS Lambda (REQUEST)                                                         |
-| IdP de Auth de Entrada | Amazon Cognito (autorizador CUSTOM_JWT)                                      |
+| Inbound Auth IdP | Amazon Cognito (autorizador CUSTOM_JWT)                                      |
 | Padrão de segurança    | Detecção de injeção SQL usando correspondência de padrões                    |
 | Componentes do tutorial| Amazon Bedrock AgentCore Gateway, Interceptor AWS Lambda, Amazon Cognito, ferramentas MCP |
 | Vertical do tutorial   | Cross-vertical (aplicável a qualquer agente de IA com acesso a banco de dados) |

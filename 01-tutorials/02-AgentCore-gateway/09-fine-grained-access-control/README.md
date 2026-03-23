@@ -22,8 +22,8 @@ Esta abordagem abrangente de controle de acesso oferece vários benefícios chav
 | Componentes AgentCore| AgentCore Gateway, AgentCore Identity, AgentCore Runtime, Interceptores do Gateway |
 | Framework de Agentes | Strands Agents                                                                  |
 | Tipo de Alvo do Gateway | Servidor MCP                                                                 |
-| IdP de Auth de Entrada | Amazon Cognito, mas pode usar outros                                          |
-| Auth de Saída        | Amazon Cognito, mas pode usar outros                                            |
+| Inbound Auth IdP | Amazon Cognito, mas pode usar outros                                          |
+| Outbound Auth        | Amazon Cognito, mas pode usar outros                                            |
 | Componentes do tutorial | Controle de Acesso Granular através de Interceptores do AgentCore Gateway    |
 | Vertical do tutorial | Cross-vertical                                                                  |
 | Complexidade do exemplo | Fácil-intermediário                                                          |

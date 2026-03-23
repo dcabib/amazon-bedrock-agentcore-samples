@@ -26,8 +26,8 @@ Este documento explica como conectar o **Visual Studio Code com Copilot** ao **A
 
 | Fluxo | Propósito | Direção | Quando |
 |-------|-----------|---------|--------|
-| **Auth de Entrada** | VS Code autentica no AgentCore Gateway | VS Code → Cognito → AgentCore Gateway | Na conexão do servidor MCP |
-| **Auth de Saída (3LO)** | AgentCore Gateway acessa Confluence em nome do usuário | AgentCore Gateway → Atlassian → Consentimento do usuário | Na primeira chamada de ferramenta do Confluence |
+| **Inbound Auth** | VS Code autentica no AgentCore Gateway | VS Code → Cognito → AgentCore Gateway | Na conexão do servidor MCP |
+| **Outbound Auth (3LO)** | AgentCore Gateway acessa Confluence em nome do usuário | AgentCore Gateway → Atlassian → Consentimento do usuário | Na primeira chamada de ferramenta do Confluence |
 
 ### Tempo de Vida do Token e Persistência do Consentimento
 
@@ -45,7 +45,7 @@ O AgentCore Identity gerencia tokens 3LO automaticamente:
 
 **O escopo `offline_access`** (configurado no notebook) é o que habilita tokens de atualização. Sem ele, os usuários precisariam reautenticar toda vez que o token de acesso expirasse (tipicamente 1 hora).
 
-**Nota**: O Cognito lida apenas com a auth de entrada (VS Code → AgentCore Gateway). Os tokens 3LO para o Confluence são gerenciados inteiramente pelo AgentCore Identity.
+**Nota**: O Cognito lida apenas com a inbound auth (VS Code → AgentCore Gateway). Os tokens 3LO para o Confluence são gerenciados inteiramente pelo AgentCore Identity.
 
 ## Serverless vs Proxy Local
 
@@ -66,7 +66,7 @@ Este exemplo também poderia ser implantado com servidores de callback e proxy l
 | **Amazon API Gateway** | Endpoint HTTPS público para VS Code (HTTP API) |
 | **Lambda do Proxy MCP** | Metadados OAuth, interceptação de callback, proxy de tokens, encaminhamento MCP |
 | **Lambda de Callback** | Callbacks OAuth 3LO, `CompleteResourceTokenAuth` |
-| **Cognito User Pool** | Tokens JWT para autenticação de entrada |
+| **Cognito User Pool** | Tokens JWT para inbound auth |
 | **AgentCore Gateway** | Servidor MCP gerenciado pela AWS com alvo Confluence |
 
 **Nota sobre terminologia**: Esta arquitetura usa dois "gateways" diferentes:
@@ -79,7 +79,7 @@ Este exemplo também poderia ser implantado com servidores de callback e proxy l
 
 Esta solução usa Amazon API Gateway + funções AWS Lambda como camada de proxy entre o VS Code e o AgentCore Gateway. Esta arquitetura é necessária por duas razões:
 
-1. **Fachada do Servidor de Autorização OAuth**: O cliente MCP do VS Code espera interagir com endpoints OAuth (`/authorize`, `/token`) na URL do servidor MCP. O AgentCore Gateway valida JWTs de entrada, mas não atua como um Servidor de Autorização OAuth. O Lambda do Proxy MCP fornece esta fachada, fazendo proxy de requisições OAuth para o Cognito enquanto lida com interceptação de redirecionamento e gerenciamento de estado. O proxy também serve seus próprios Metadados de Recurso Protegido RFC 9728 (`/.well-known/oauth-protected-resource`) porque o identificador `resource` deve corresponder à URL à qual o cliente se conecta (a URL do proxy), não a URL do Gateway subjacente.
+1. **Fachada do Servidor de Autorização OAuth**: O cliente MCP do VS Code espera interagir com endpoints OAuth (`/authorize`, `/token`) na URL do servidor MCP. O AgentCore Gateway valida Inbound JWTs, mas não atua como um Servidor de Autorização OAuth. O Lambda do Proxy MCP fornece esta fachada, fazendo proxy de requisições OAuth para o Cognito enquanto lida com interceptação de redirecionamento e gerenciamento de estado. O proxy também serve seus próprios Metadados de Recurso Protegido RFC 9728 (`/.well-known/oauth-protected-resource`) porque o identificador `resource` deve corresponder à URL à qual o cliente se conecta (a URL do proxy), não a URL do Gateway subjacente.
 
 2. **Manipulação de Callback 3LO com Vinculação de Sessão**: Quando um usuário completa o consentimento 3LO (por exemplo, concedendo acesso ao Confluence), o callback OAuth deve ser recebido e a API `CompleteResourceTokenAuth` deve ser chamada com a identidade do usuário para vincular o token. O Lambda de Callback lida com este fluxo. Embora um endpoint de callback 3LO gerenciado não seja atualmente suportado nativamente no AgentCore Gateway, este Lambda fornece a manipulação de callback e vinculação de sessão.
 

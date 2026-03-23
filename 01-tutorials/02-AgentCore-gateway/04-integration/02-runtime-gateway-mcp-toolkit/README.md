@@ -267,12 +267,12 @@ O toolkit cria:
 
 ### Fluxo de Autenticação
 
-**Autorização de Entrada (Cliente → Gateway):**
+**Inbound Auth (Cliente → Gateway):**
 - O Cliente MCP (QDev) envia requisições com token Bearer
 - O JWT Authorizer do Gateway valida o token contra o Cognito User Pool do Gateway
 - Requisições autorizadas são roteadas para os alvos apropriados
 
-**Autorização de Saída (Gateway → Runtime):**
+**Outbound Auth (Gateway → Runtime):**
 - Cada alvo possui seu próprio provedor de credenciais OAuth2
 - O Gateway obtém tokens OAuth dos respectivos Cognito User Pools do Runtime
 - Requisições autenticadas são enviadas para os runtimes individuais dos servidores MCP
@@ -280,12 +280,12 @@ O toolkit cria:
 ## Suporte à Autorização
 
 ### Implementação Atual
-Este toolkit atualmente suporta **Amazon Cognito OAuth2** para autorização de entrada e saída:
-- **Autorização de Entrada**: O Gateway usa tokens JWT do Cognito para autenticação de clientes
-- **Autorização de Saída**: O Gateway se autentica no runtime usando credenciais OAuth2 do Cognito
+Este toolkit atualmente suporta **Amazon Cognito OAuth2** para inbound auth e saída:
+- **Inbound Auth**: O Gateway usa tokens JWT do Cognito para autenticação de clientes
+- **Outbound Auth**: O Gateway se autentica no runtime usando credenciais OAuth2 do Cognito
 
 ### Roadmap
-- **Autorização baseada em IAM Role**: Suporte para IAM roles e políticas para autenticação de entrada e saída (A FAZER - planejado para a próxima versão)
+- **Autorização baseada em IAM Role**: Suporte para IAM roles e políticas para inbound auth e saída (A FAZER - planejado para a próxima versão)
 
 ## Recursos de Segurança
 

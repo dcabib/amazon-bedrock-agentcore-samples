@@ -1,7 +1,7 @@
 # Amazon Bedrock AgentCore Gateway
 
 ## Visão Geral
-O Bedrock AgentCore Gateway oferece aos clientes uma maneira de transformar suas APIs e funções Lambda existentes em servidores MCP totalmente gerenciados, sem a necessidade de gerenciar infraestrutura ou hospedagem. Os clientes podem trazer especificações OpenAPI ou modelos Smithy para suas APIs existentes, ou adicionar funções Lambda que servem como front-end para suas ferramentas. O Gateway fornece uma interface uniforme do Model Context Protocol (MCP) para todas essas ferramentas. O Gateway emprega um modelo de autenticação dupla para garantir o controle de acesso seguro tanto para requisições de entrada quanto para conexões de saída aos recursos de destino. O framework consiste em dois componentes principais: Autenticação de Entrada (Inbound Auth), que valida e autoriza usuários que tentam acessar os alvos do gateway, e Autenticação de Saída (Outbound Auth), que permite ao gateway conectar-se de forma segura aos recursos de backend em nome dos usuários autenticados. Juntos, esses mecanismos de autenticação criam uma ponte segura entre os usuários e seus recursos de destino, suportando tanto credenciais IAM quanto fluxos de autenticação baseados em OAuth. O Gateway suporta conexão de transporte Streamable HTTP do MCP.
+O Bedrock AgentCore Gateway oferece aos clientes uma maneira de transformar suas APIs e funções Lambda existentes em servidores MCP totalmente gerenciados, sem a necessidade de gerenciar infraestrutura ou hospedagem. Os clientes podem trazer especificações OpenAPI ou modelos Smithy para suas APIs existentes, ou adicionar funções Lambda que servem como front-end para suas ferramentas. O Gateway fornece uma interface uniforme do Model Context Protocol (MCP) para todas essas ferramentas. O Gateway emprega um modelo de autenticação dupla para garantir o controle de acesso seguro tanto para inbound requests quanto para outbound connections aos recursos de destino. O framework consiste em dois componentes principais: Inbound Auth (Inbound Auth), que valida e autoriza usuários que tentam acessar os alvos do gateway, e Outbound Auth (Outbound Auth), que permite ao gateway conectar-se de forma segura aos recursos de backend em nome dos usuários autenticados. Juntos, esses mecanismos de autenticação criam uma ponte segura entre os usuários e seus recursos de destino, suportando tanto credenciais IAM quanto fluxos de autenticação baseados em OAuth. O Gateway suporta conexão de transporte Streamable HTTP do MCP.
 
 ![Como funciona](images/gateway-end-end-overview.png)
 
@@ -19,10 +19,10 @@ Antes de começar, vamos definir alguns conceitos importantes para iniciar com o
 
 ![Como funciona](images/gateway_how_does_it_work.png)
 
-## Autorização de entrada e saída
-O Bedrock AgentCore Gateway fornece conexões seguras via autenticação de entrada e saída. Para a autenticação de entrada, o AgentCore Gateway analisa o token OAuth passado durante a invocação para decidir permitir ou negar o acesso a uma ferramenta no gateway. Se uma ferramenta precisa acessar recursos externos, o AgentCore Gateway pode usar autenticação de saída via Chave de API, IAM ou Token OAuth para permitir ou negar o acesso ao recurso externo.
+## Inbound Auth e saída
+O Bedrock AgentCore Gateway fornece conexões seguras via inbound auth e saída. Para a inbound auth, o AgentCore Gateway analisa o token OAuth passado durante a invocação para decidir permitir ou negar o acesso a uma ferramenta no gateway. Se uma ferramenta precisa acessar recursos externos, o AgentCore Gateway pode usar outbound auth via Chave de API, IAM ou Token OAuth para permitir ou negar o acesso ao recurso externo.
 
-Durante o fluxo de autorização de entrada, um agente ou o cliente MCP chama uma ferramenta MCP no AgentCore Gateway adicionando um token de acesso OAuth (gerado a partir do IdP do usuário). O AgentCore Gateway então valida o token de acesso OAuth e realiza a autorização de entrada.
+Durante o fluxo de inbound auth, um agente ou o cliente MCP chama uma ferramenta MCP no AgentCore Gateway adicionando um token de acesso OAuth (gerado a partir do IdP do usuário). O AgentCore Gateway então valida o token de acesso OAuth e realiza a inbound auth.
 
 Se a ferramenta executando no AgentCore Gateway precisa acessar recursos externos, o OAuth recuperará as credenciais dos recursos downstream usando o provedor de credenciais de recurso para o alvo do Gateway. O AgentCore Gateway passa as credenciais de autorização ao chamador para obter acesso à API downstream.
 
@@ -30,7 +30,7 @@ Se a ferramenta executando no AgentCore Gateway precisa acessar recursos externo
 
 ### Autorização MCP e Gateway
 
-O Amazon Bedrock AgentCore Gateway está em conformidade com a [especificação de autorização MCP](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization) para a autorização de chamadas de ferramentas MCP de entrada.
+O Amazon Bedrock AgentCore Gateway está em conformidade com a [especificação de autorização MCP](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization) para a autorização de inbound MCP tool calls.
 
 ![Acesso seguro](images/oauth-flow-gateway.png)
 
@@ -65,8 +65,8 @@ desenvolvedores a encontrar as ferramentas mais relevantes através de consultas
 #### Acesso Seguro a Ferramentas
 
 O Amazon Bedrock AgentCore Gateway está em conformidade com a [especificação de autorização MCP](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization)
-para a autorização de chamadas de ferramentas MCP de entrada.
-O Amazon Bedrock AgentCore Gateway também oferece 2 opções para suportar a autorização das chamadas de saída do Gateway:
+para a autorização de inbound MCP tool calls.
+O Amazon Bedrock AgentCore Gateway também oferece 2 opções para suportar a autorização das outbound calls do Gateway:
 * usando chave de API ou
 * usando tokens de acesso OAuth
 Você pode configurar a autorização usando a API de provedor de credenciais do Amazon Bedrock AgentCore Identity e
@@ -82,7 +82,7 @@ O Bedrock AgentCore Gateway integra-se com
 ### Casos de uso
 
 * Agentes interativos em tempo real chamando ferramentas MCP
-* Autorização de entrada e saída usando diferentes IdPs
+* Inbound Auth e saída usando diferentes IdPs
 * Transformação de funções AWS Lambda, APIs Open e modelos Smithy em MCP
 * Descoberta de ferramentas MCP
 

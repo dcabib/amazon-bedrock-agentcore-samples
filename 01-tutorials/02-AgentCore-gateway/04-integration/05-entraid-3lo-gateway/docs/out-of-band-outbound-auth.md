@@ -1,6 +1,6 @@
 # Fluxo Ponta a Ponta: AgentCore Gateway com EntraID 3LO
 
-Este documento descreve o fluxo completo de funcionamento do AgentCore MCP Gateway com autenticação de entrada EntraID e 3LO de saída (OAuth de três pernas) para acesso delegado pelo usuário a APIs downstream.
+Este documento descreve o fluxo completo de funcionamento do AgentCore MCP Gateway com inbound auth EntraID e outbound 3LO (OAuth de três pernas) para acesso delegado pelo usuário a APIs downstream.
 
 ## Visão Geral do Sistema
 
@@ -215,9 +215,9 @@ sequenceDiagram
 
 ---
 
-## Fluxo 3: OAuth de Entrada do VS Code (Primeira Conexão)
+## Fluxo 3: OInbound Auth do VS Code (Primeira Conexão)
 
-Quando o VS Code se conecta pela primeira vez ao servidor MCP, ele passa pelo fluxo padrão OAuth 2.1 para autenticação de entrada. Isso é separado da autenticação 3LO de saída.
+Quando o VS Code se conecta pela primeira vez ao servidor MCP, ele passa pelo fluxo padrão OAuth 2.1 para inbound auth. Isso é separado da autenticação outbound 3LO.
 
 ```mermaid
 sequenceDiagram
@@ -246,7 +246,7 @@ sequenceDiagram
     Note over VS: VS Code now has a JWT for all subsequent /mcp calls
 ```
 
-### Papel do Proxy Lambda na autenticação de entrada
+### Papel do Proxy Lambda na inbound auth
 
 O proxy Lambda atua como intermediário OAuth entre o VS Code e o EntraID:
 
@@ -261,7 +261,7 @@ O proxy Lambda atua como intermediário OAuth entre o VS Code e o EntraID:
 
 ### Por que `tools/call` em vez de `tools/list` para verificar o status de autorização
 
-`tools/list` NÃO aciona a autenticação de saída — ele retorna a lista de ferramentas disponíveis sem precisar do token da API de clima. Somente `tools/call` (invocando efetivamente uma ferramenta) força o Gateway a buscar o token de clima, o que aciona a elicitation se o token estiver ausente.
+`tools/list` NÃO aciona a outbound auth — ele retorna a lista de ferramentas disponíveis sem precisar do token da API de clima. Somente `tools/call` (invocando efetivamente uma ferramenta) força o Gateway a buscar o token de clima, o que aciona a elicitation se o token estiver ausente.
 
 ### Por que o tipo de vendor `CustomOauth2` para o provedor de credenciais
 
@@ -294,7 +294,7 @@ O boto3 embutido no runtime do Lambda pode estar desatualizado e não possuir `c
 
 | Token | Emitido por | Armazenado em | Tempo de vida | Usado para |
 |-------|-----------|-------------|----------|----------|
-| EntraID JWT (gateway.access) | EntraID App A | Browser sessionStorage (MSAL.js) | ~1 hora | Autenticação de entrada no Gateway, STS AssumeRoleWithWebIdentity, CompleteResourceTokenAuth |
+| EntraID JWT (gateway.access) | EntraID App A | Browser sessionStorage (MSAL.js) | ~1 hora | Inbound Auth no Gateway, STS AssumeRoleWithWebIdentity, CompleteResourceTokenAuth |
 | Credenciais temporárias AWS | STS | Memória do navegador (variável JS) | 1 hora | Assinatura SigV4 para CompleteResourceTokenAuth |
 | Token da API de clima | EntraID App B | AgentCore Token Vault | Refresh token ~30 dias | Chamadas Gateway → Weather API |
 | Refresh token | EntraID App B | AgentCore Token Vault | ~30 dias | Renovação automática do token de clima |

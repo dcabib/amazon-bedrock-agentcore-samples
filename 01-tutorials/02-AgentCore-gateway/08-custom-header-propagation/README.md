@@ -49,8 +49,8 @@ O gateway automaticamente:
 | Componentes AgentCore| AgentCore Gateway                                         |
 | Framework de Agentes | Strands Agents                                            |
 | Tipo de Alvo do Gateway | AWS Lambda                                             |
-| IdP de Auth de Entrada | Amazon Cognito, mas pode usar outros                    |
-| Auth de Saída        | AWS IAM                                                   |
+| Inbound Auth IdP | Amazon Cognito, mas pode usar outros                    |
+| Outbound Auth        | AWS IAM                                                   |
 | Modelo LLM           | Anthropic Claude Haiku 4.5, Amazon Nova Pro              |
 | Componentes do tutorial | Criação do AgentCore Gateway e Invocação do AgentCore Gateway |
 | Vertical do tutorial | Cross-vertical                                            |

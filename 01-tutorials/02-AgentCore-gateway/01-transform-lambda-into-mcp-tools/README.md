@@ -1,7 +1,7 @@
 # Implementar ferramentas Lambda para o Gateway
 
 ## Visão Geral
-O Bedrock AgentCore Gateway oferece aos clientes uma maneira de transformar suas funções Lambda existentes em servidores MCP totalmente gerenciados, sem a necessidade de gerenciar infraestrutura ou hospedagem. Os clientes podem trazer suas funções AWS Lambda existentes, ou adicionar novas funções Lambda como front-end para suas ferramentas. O Gateway fornece uma interface uniforme do Model Context Protocol (MCP) para todas essas ferramentas. O Gateway emprega um modelo de autenticação dupla para garantir o controle de acesso seguro tanto para requisições de entrada quanto para conexões de saída aos recursos de destino. O framework consiste em dois componentes principais: Autenticação de Entrada (Inbound Auth), que valida e autoriza usuários que tentam acessar os alvos do gateway, e Autenticação de Saída (Outbound Auth), que permite ao gateway conectar-se de forma segura aos recursos de backend em nome dos usuários autenticados. Juntos, esses mecanismos de autenticação criam uma ponte segura entre os usuários e seus recursos de destino, suportando tanto credenciais IAM quanto fluxos de autenticação baseados em OAuth.
+O Bedrock AgentCore Gateway oferece aos clientes uma maneira de transformar suas funções Lambda existentes em servidores MCP totalmente gerenciados, sem a necessidade de gerenciar infraestrutura ou hospedagem. Os clientes podem trazer suas funções AWS Lambda existentes, ou adicionar novas funções Lambda como front-end para suas ferramentas. O Gateway fornece uma interface uniforme do Model Context Protocol (MCP) para todas essas ferramentas. O Gateway emprega um modelo de autenticação dupla para garantir o controle de acesso seguro tanto para inbound requests quanto para outbound connections aos recursos de destino. O framework consiste em dois componentes principais: Inbound Auth (Inbound Auth), que valida e autoriza usuários que tentam acessar os alvos do gateway, e Outbound Auth (Outbound Auth), que permite ao gateway conectar-se de forma segura aos recursos de backend em nome dos usuários autenticados. Juntos, esses mecanismos de autenticação criam uma ponte segura entre os usuários e seus recursos de destino, suportando tanto credenciais IAM quanto fluxos de autenticação baseados em OAuth.
 
 ![Como funciona](images/lambda-iam-gateway.png)
 
@@ -92,6 +92,6 @@ Após adicionar esta política, você pode especificar o ARN da função Lambda 
 
 Nestes tutoriais, cobriremos as seguintes funcionalidades:
 
-- [Transformar sua função AWS Lambda em ferramentas MCP com autenticação de entrada OAuth](01-gateway-target-lambda-oauth.ipynb)
+- [Transformar sua função AWS Lambda em ferramentas MCP com inbound auth OAuth](01-gateway-target-lambda-oauth.ipynb)
 
-- [Transformar sua função AWS Lambda em ferramentas MCP com autenticação de entrada AWS IAM](02-gateway-target-lambda-iam.ipynb)
+- [Transformar sua função AWS Lambda em ferramentas MCP com inbound auth AWS IAM](02-gateway-target-lambda-iam.ipynb)
