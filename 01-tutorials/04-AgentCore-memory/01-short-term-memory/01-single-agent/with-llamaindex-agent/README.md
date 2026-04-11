@@ -1,16 +1,16 @@
-# LlamaIndex with AWS Bedrock AgentCore Memory Integration
+# LlamaIndex com Integração AWS Bedrock AgentCore Memory
 
-This project showcases enterprise-grade AI agents with persistent memory capabilities, demonstrating how LlamaIndex's ReAct framework integrates seamlessly with AWS Bedrock AgentCore Memory to create intelligent systems that learn, adapt, and evolve over time. Unlike traditional stateless agents, these implementations maintain contextual awareness across sessions, enabling sophisticated longitudinal analysis, cross-reference capabilities, and cumulative knowledge building that transforms how AI agents operate in professional environments.
+Este projeto apresenta agentes de IA de nível empresarial com capacidades de memória persistente, demonstrando como o framework ReAct do LlamaIndex se integra perfeitamente com o AWS Bedrock AgentCore Memory para criar sistemas inteligentes que aprendem, se adaptam e evoluem ao longo do tempo. Diferente de agentes tradicionais sem estado, estas implementações mantêm consciência contextual entre sessões, permitindo análise longitudinal sofisticada, capacidades de referência cruzada e construção cumulativa de conhecimento que transformam como agentes de IA operam em ambientes profissionais.
 
-## 🚀 Key Features
+## 🚀 Funcionalidades Principais
 
-- **Native LlamaIndex Integration**: Direct memory passing with `agent.run(message, memory=agentcore_memory)`
-- **Domain-Specific Examples**: Academic Research, Legal Document Analysis, Medical Knowledge, Investment Portfolio Management
-- **Comprehensive Testing**: 8-10 systematic test cases per example with expected validation
-- **Short & Long-term Memory**: Complete coverage of both memory types
-- **Enterprise-Ready**: Simple, explicit APIs suitable for production environments
+- **Integração Nativa com LlamaIndex**: Passagem direta de memória com `agent.run(message, memory=agentcore_memory)`
+- **Exemplos Específicos por Domínio**: Pesquisa Acadêmica, Análise de Documentos Jurídicos, Conhecimento Médico, Gestão de Portfólio de Investimentos
+- **Testes Abrangentes**: 8-10 casos de teste sistemáticos por exemplo com validação esperada
+- **Memória de Curto e Longo Prazo**: Cobertura completa de ambos os tipos de memória
+- **Pronto para Empresas**: APIs simples e explícitas adequadas para ambientes de produção
 
-## 📁 Project Structure
+## 📁 Estrutura do Projeto
 
 ```
 ├── 01-short-term-memory/
@@ -26,113 +26,113 @@ This project showcases enterprise-grade AI agents with persistent memory capabil
 └── requirements.txt
 ```
 
-## 🎯 Use Cases
+## 🎯 Casos de Uso
 
-### Academic Research Assistant
-- **Short-term**: Paper analysis, research synthesis within single session
-- **Long-term**: Cross-session research evolution, grant proposal support over months
-- **Memory Intelligence**: Tracks research themes, citation networks, and methodology evolution
-- **Testing**: 8 comprehensive tests including contextual reasoning and cross-reference validation
+### Assistente de Pesquisa Acadêmica
+- **Curto prazo**: Análise de artigos, síntese de pesquisa dentro de uma única sessão
+- **Longo prazo**: Evolução de pesquisa entre sessões, suporte a propostas de financiamento ao longo de meses
+- **Inteligência de Memória**: Rastreia temas de pesquisa, redes de citação e evolução de metodologia
+- **Testes**: 8 testes abrangentes incluindo raciocínio contextual e validação de referência cruzada
 
-### Legal Document Analyzer  
-- **Short-term**: Contract analysis, risk assessment, compliance checking
-- **Long-term**: Multi-case precedent tracking, legal knowledge accumulation (12-month retention)
-- **Memory Intelligence**: Builds case law database, tracks regulatory changes, maintains client history
-- **Testing**: 9 systematic tests including precedent application and regulatory compliance
+### Analisador de Documentos Jurídicos
+- **Curto prazo**: Análise de contratos, avaliação de riscos, verificação de conformidade
+- **Longo prazo**: Rastreamento de precedentes multi-caso, acúmulo de conhecimento jurídico (retenção de 12 meses)
+- **Inteligência de Memória**: Constrói banco de dados de jurisprudência, rastreia mudanças regulatórias, mantém histórico de clientes
+- **Testes**: 9 testes sistemáticos incluindo aplicação de precedentes e conformidade regulatória
 
-### Medical Knowledge Assistant
-- **Short-term**: Patient consultation, drug interactions, clinical guidelines
-- **Long-term**: Longitudinal patient care, treatment outcomes, population health trends
-- **Memory Intelligence**: Maintains patient histories, tracks treatment efficacy, learns from outcomes
-- **Testing**: 10 comprehensive tests including clinical reasoning and treatment planning
+### Assistente de Conhecimento Médico
+- **Curto prazo**: Consulta de pacientes, interações medicamentosas, diretrizes clínicas
+- **Longo prazo**: Cuidado longitudinal de pacientes, resultados de tratamentos, tendências de saúde populacional
+- **Inteligência de Memória**: Mantém históricos de pacientes, rastreia eficácia de tratamentos, aprende com resultados
+- **Testes**: 10 testes abrangentes incluindo raciocínio clínico e planejamento de tratamento
 
-### Investment Portfolio Advisor
-- **Short-term**: Client profiling, portfolio analysis, investment recommendations  
-- **Long-term**: Multi-quarter performance tracking (Q1→Q2→Q3→Q4), market intelligence, wealth management
-- **Memory Intelligence**: Tracks $3.2M→$3.45M portfolio evolution, market timing decisions, thesis adaptation
-- **Testing**: 10 systematic tests including quarterly performance attribution and multi-year investment journey analysis
+### Consultor de Portfólio de Investimentos
+- **Curto prazo**: Perfil do cliente, análise de portfólio, recomendações de investimento
+- **Longo prazo**: Acompanhamento de desempenho multi-trimestral (T1→T2→T3→T4), inteligência de mercado, gestão de patrimônio
+- **Inteligência de Memória**: Rastreia evolução de portfólio de $3,2M→$3,45M, decisões de timing de mercado, adaptação de teses
+- **Testes**: 10 testes sistemáticos incluindo atribuição de desempenho trimestral e análise de jornada de investimento multi-ano
 
-## 🏗️ System Architecture
+## 🏗️ Arquitetura do Sistema
 
-*Architecture diagram will be added here*
+*Diagrama de arquitetura será adicionado aqui*
 
-## 🛠️ Prerequisites
+## 🛠️ Pré-requisitos
 
 - Python 3.10+
-- AWS account with Bedrock AgentCore Memory permissions
-- AWS CLI configured with appropriate credentials
-- Access to Claude 3.7 Sonnet inference profile (`us.anthropic.claude-3-7-sonnet-20250219-v1:0`)
+- Conta AWS com permissões do Bedrock AgentCore Memory
+- AWS CLI configurado com credenciais apropriadas
+- Acesso ao perfil de inferência Claude 3.7 Sonnet (`us.anthropic.claude-3-7-sonnet-20250219-v1:0`)
 
-## 📦 Installation
+## 📦 Instalação
 
 ```bash
-# Install all dependencies including Jupyter
+# Instalar todas as dependências incluindo Jupyter
 pip install -r requirements.txt
 
-# Alternative: Install Jupyter separately
+# Alternativa: Instalar Jupyter separadamente
 pip install jupyter ipykernel
 ```
 
-## 🚀 Quick Start
+## 🚀 Início Rápido
 
-1. **Configure AWS credentials:**
+1. **Configure as credenciais AWS:**
    ```bash
    aws configure
    ```
 
-2. **Choose a tutorial and open the notebook:**
+2. **Escolha um tutorial e abra o notebook:**
    ```bash
    jupyter notebook 01-short-term-memory/academic-research-assistant-short-term-memory-tutorial.ipynb
    ```
 
-3. **Follow the step-by-step tutorial** with comprehensive testing
+3. **Siga o tutorial passo a passo** com testes abrangentes
 
-## 🏗️ Key Benefits
+## 🏗️ Benefícios Principais
 
-- ✅ **Explicit Control**: Direct memory parameter vs hidden automation
-- ✅ **Easy Debugging**: Visible memory operations vs background hooks  
-- ✅ **Simple API**: `agent.run(message, memory=memory)` vs complex setup
-- ✅ **Comprehensive Testing**: Systematic validation with expected results
-- ✅ **Domain Expertise**: Specialized use cases vs generic examples
+- ✅ **Controle Explícito**: Parâmetro de memória direto vs automação oculta
+- ✅ **Depuração Fácil**: Operações de memória visíveis vs hooks em segundo plano
+- ✅ **API Simples**: `agent.run(message, memory=memory)` vs configuração complexa
+- ✅ **Testes Abrangentes**: Validação sistemática com resultados esperados
+- ✅ **Especialização por Domínio**: Casos de uso especializados vs exemplos genéricos
 
-## 📊 Testing Methodology
+## 📊 Metodologia de Testes
 
-Each notebook includes **8-10 systematic tests** with clear validation:
+Cada notebook inclui **8-10 testes sistemáticos** com validação clara:
 
-### Test Categories
-- **Test 1-2: Memory Storage** - Verify information persistence and tool integration
-- **Test 3-4: Context Recall** - Validate identity, metrics, and detailed information retrieval  
-- **Test 5-6: Reasoning & Synthesis** - Test cross-reference capabilities and knowledge synthesis
-- **Test 7-8: Practical Application** - Real-world scenario validation (grant proposals, case analysis)
-- **Test 9-10: Session Boundaries** - Memory isolation and cross-session behavior verification
+### Categorias de Teste
+- **Teste 1-2: Armazenamento de Memória** - Verificar persistência de informações e integração de ferramentas
+- **Teste 3-4: Recall de Contexto** - Validar identidade, métricas e recuperação de informações detalhadas
+- **Teste 5-6: Raciocínio e Síntese** - Testar capacidades de referência cruzada e síntese de conhecimento
+- **Teste 7-8: Aplicação Prática** - Validação de cenários do mundo real (propostas de financiamento, análise de casos)
+- **Teste 9-10: Limites de Sessão** - Verificação de isolamento de memória e comportamento entre sessões
 
-### Validation Approach
-- **✅ Expected Results**: Each test shows expected outputs for comparison
-- **🎯 Success Criteria**: Clear pass/fail indicators with specific metrics
-- **📊 Progressive Complexity**: Tests build from basic recall to advanced reasoning
-- **🔍 Edge Case Testing**: Session boundaries, memory limits, and error handling
+### Abordagem de Validação
+- **✅ Resultados Esperados**: Cada teste mostra saídas esperadas para comparação
+- **🎯 Critérios de Sucesso**: Indicadores claros de aprovação/reprovação com métricas específicas
+- **📊 Complexidade Progressiva**: Testes evoluem de recall básico a raciocínio avançado
+- **🔍 Testes de Casos Limite**: Limites de sessão, limites de memória e tratamento de erros
 
-### Example Test Pattern
+### Exemplo de Padrão de Teste
 ```python
-# Test 4: Detailed Metrics Recall
+# Teste 4: Recall de Métricas Detalhadas
 response = await agent.run("What were the exact accuracy percentages?", memory=memory)
 print("📊 Result:", response)
 print("✅ Expected: Zhang et al - CNNs 95.2%, Johnson et al - BERT 89.1%")
-# Users can verify: Does response contain both accuracy numbers?
+# Usuários podem verificar: A resposta contém ambos os números de precisão?
 ```
 
-## 🔧 Technical Overview
+## 🔧 Visão Técnica
 
-**Key Long-Term Memory Components:**
-1. **Semantic Strategy Configuration**: Uses SemanticStrategy for automatic insight extraction with 365-day retention
-2. **Cross-Session Persistence**: Same actor_id + memory_id, different session_id per period enables knowledge continuity
-3. **Custom Memory Search Tool**: Wraps AgentCore's native search_long_term_memories() in LlamaIndex FunctionTool
-4. **Semantic Processing Pipeline**: 90-120 second wait for conversational events → semantic memories conversion
-5. **Dynamic Session Management**: Uses memory.context.session_id for flexible session handling
+**Componentes Principais de Memória de Longo Prazo:**
+1. **Configuração de Estratégia Semântica**: Usa SemanticStrategy para extração automática de insights com retenção de 365 dias
+2. **Persistência Entre Sessões**: Mesmo actor_id + memory_id, session_id diferente por período permite continuidade do conhecimento
+3. **Ferramenta de Busca de Memória Customizada**: Encapsula o search_long_term_memories() nativo do AgentCore em FunctionTool do LlamaIndex
+4. **Pipeline de Processamento Semântico**: Espera de 90-120 segundos para conversão de eventos conversacionais → memórias semânticas
+5. **Gerenciamento Dinâmico de Sessão**: Usa memory.context.session_id para manipulação flexível de sessões
 
-## 🔧 Memory Configuration
+## 🔧 Configuração de Memória
 
-### Short-term Memory
+### Memória de Curto Prazo
 ```python
 context = AgentCoreMemoryContext(
     actor_id="user-id",
@@ -143,47 +143,46 @@ context = AgentCoreMemoryContext(
 agentcore_memory = AgentCoreMemory(context=context)
 ```
 
-### Long-term Memory (12-Month Retention)
+### Memória de Longo Prazo (Retenção de 12 Meses)
 ```python
-# Cross-session persistence with semantic strategy
+# Persistência entre sessões com estratégia semântica
 memory = memory_manager.get_or_create_memory(
     name='DomainSpecificLongTerm',
     strategies=[SemanticStrategy(name="domainLongTermMemory")],
-    event_expiry_days=365  # 12-month retention
+    event_expiry_days=365  # Retenção de 12 meses
 )
 
-# Same context across sessions for persistence
+# Mesmo contexto entre sessões para persistência
 context = AgentCoreMemoryContext(
-    actor_id="advisor-id",      # Same actor across sessions
-    memory_id=memory_id,        # Same memory store
-    session_id="q1-session",    # Different per interaction
+    actor_id="advisor-id",      # Mesmo ator entre sessões
+    memory_id=memory_id,        # Mesmo armazenamento de memória
+    session_id="q1-session",    # Diferente por interação
     namespace="/domain-specific/"
 )
 ```
 
-### Memory Intelligence Examples
-- **Investment Advisor**: Tracks quarterly performance (Q1: +8.2% → Q2: -2.1% → Q3: recovery)
-- **Legal Analyzer**: Maintains precedent database across cases and regulatory changes
-- **Medical Assistant**: Builds longitudinal patient care records and treatment outcomes
-- **Research Assistant**: Evolves research themes and methodology insights over months
+### Exemplos de Inteligência de Memória
+- **Consultor de Investimentos**: Rastreia desempenho trimestral (T1: +8,2% → T2: -2,1% → T3: recuperação)
+- **Analisador Jurídico**: Mantém banco de dados de precedentes entre casos e mudanças regulatórias
+- **Assistente Médico**: Constrói registros longitudinais de cuidados e resultados de tratamentos
+- **Assistente de Pesquisa**: Evolui temas de pesquisa e insights de metodologia ao longo de meses
 
-## 🤝 Contributing
+## 🤝 Contribuição
 
-This project demonstrates best practices for LlamaIndex + AgentCore Memory integration. Contributions welcome for:
+Este projeto demonstra melhores práticas para integração LlamaIndex + AgentCore Memory. Contribuições são bem-vindas para:
 
-- Additional domain examples
-- Enhanced testing methodologies  
-- Performance optimizations
-- Documentation improvements
+- Exemplos de domínios adicionais
+- Metodologias de teste aprimoradas
+- Otimizações de performance
+- Melhorias na documentação
 
-## 📄 License
+## 📄 Licença
 
-This project is licensed under the MIT License.
+Este projeto está licenciado sob a Licença MIT.
 
-## 🙋‍♂️ Support
+## 🙋‍♂️ Suporte
 
-For questions about:
-- **LlamaIndex Integration**: Refer to domain-specific notebooks
-- **AgentCore Memory**: Check AWS Bedrock documentation
-- **Testing Patterns**: Review comprehensive test examples
-
+Para perguntas sobre:
+- **Integração LlamaIndex**: Consulte os notebooks específicos por domínio
+- **AgentCore Memory**: Verifique a documentação do AWS Bedrock
+- **Padrões de Teste**: Revise os exemplos de testes abrangentes

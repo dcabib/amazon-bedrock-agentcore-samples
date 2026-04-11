@@ -1,10 +1,10 @@
-# Multi-Agent Systems with Observability
+# Sistemas Multi-Agente com Observabilidade
 
-## Overview
+## Visão Geral
 
-This tutorial demonstrates how to build **multi-agent systems** with full observability using Amazon Bedrock AgentCore Runtime and Observability. You'll learn two patterns for coordinating multiple agents while maintaining end-to-end tracing through CloudWatch GenAI Observability.
+Este tutorial demonstra como construir **sistemas multi-agente** com observabilidade completa usando Amazon Bedrock AgentCore Runtime e Observability. Você aprenderá dois padrões para coordenar múltiplos agentes mantendo rastreamento de ponta a ponta através do CloudWatch GenAI Observability.
 
-###  Patterns
+###  Padrões
 
 ```
 ┌───────────────────────────────────────────────────────────────────────────┐
@@ -32,50 +32,50 @@ This tutorial demonstrates how to build **multi-agent systems** with full observ
 ```
 
 
-## Prerequisites
+## Pré-requisitos
 
-1. AWS CLI configured (`aws configure`) with required permissions 
-2. Amazon Bedrock model access enabled for `global.anthropic.claude-haiku-4-5-20251001-v1:0`
-3. CloudWatch Transaction Search enabled ([Setup Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-getting-started.html))
+1. AWS CLI configurado (`aws configure`) com permissões necessárias
+2. Acesso ao modelo Amazon Bedrock habilitado para `global.anthropic.claude-haiku-4-5-20251001-v1:0`
+3. CloudWatch Transaction Search habilitado ([Guia de Configuração](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-getting-started.html))
 
-## Project Structure
+## Estrutura do Projeto
 
 ```
 03-multi-runtimes-with-observability/
-├── multi_agent_observability.ipynb   # Main tutorial notebook
-├── utils.py                          # Helper functions
-├── requirements.txt                  # Dependencies
+├── multi_agent_observability.ipynb   # Notebook principal do tutorial
+├── utils.py                          # Funções auxiliares
+├── requirements.txt                  # Dependências
 │
-├── single_runtime/                   # Part 1: All agents in one runtime
+├── single_runtime/                   # Parte 1: Todos os agentes em um runtime
 │   ├── multi_agent.py               # Orchestrator + Travel + Weather agents
 │   └── requirements.txt
 │
-├── travel_agent/                     # Part 2: Strands-based travel agent
-│   ├── main.py                      # Web search capabilities
+├── travel_agent/                     # Parte 2: Agente de viagens baseado em Strands
+│   ├── main.py                      # Capacidades de busca na web
 │   └── requirements.txt
 │
-├── weather_agent/                    # Part 2: LangGraph-based weather agent
-│   ├── main.py                      # Weather lookup capabilities
+├── weather_agent/                    # Parte 2: Agente de clima baseado em LangGraph
+│   ├── main.py                      # Capacidades de consulta de clima
 │   └── requirements.txt
 │
-└── orchestrator_agent/               # Part 2: Coordinator agent
-    ├── main.py                      # Routes queries to sub-agents
+└── orchestrator_agent/               # Parte 2: Agente coordenador
+    ├── main.py                      # Roteia consultas para sub-agentes
     └── requirements.txt
 ```
 
-## Quick Start
+## Início Rápido
 
 ```bash
-# Install dependencies
+# Instalar dependências
 pip install -r requirements.txt
 
-# Launch the tutorial notebook
+# Iniciar o notebook do tutorial
 jupyter notebook multi_agent_observability.ipynb
 ```
 
-## Part 1: Single Runtime Architecture
+## Parte 1: Arquitetura Single Runtime
 
-All agents run in a single AgentCore Runtime with direct function calls between them.
+Todos os agentes executam em um único AgentCore Runtime com chamadas diretas de função entre eles.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -95,14 +95,14 @@ All agents run in a single AgentCore Runtime with direct function calls between 
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Key Points:**
-- Single deployment, single IAM role
-- Unified trace tree in CloudWatch
-- Best for: tightly coupled agents, single team ownership
+**Pontos Principais:**
+- Implantação única, IAM role única
+- Árvore de trace unificada no CloudWatch
+- Melhor para: agentes fortemente acoplados, propriedade de um único time
 
-## Part 2: Multi-Runtime Architecture
+## Parte 2: Arquitetura Multi-Runtime
 
-Each agent runs in its own AgentCore Runtime, communicating via direct invocation with session ID propagation.
+Cada agente executa em seu próprio AgentCore Runtime, comunicando-se via invocação direta com propagação de session ID.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -130,18 +130,16 @@ Each agent runs in its own AgentCore Runtime, communicating via direct invocatio
                    (Linked Traces)
 ```
 
-**Key Points:**
-- Different frameworks per agent (Strands + LangGraph)
-- Traces linked
+**Pontos Principais:**
+- Frameworks diferentes por agente (Strands + LangGraph)
+- Traces vinculados
 
 
-## View Traces
+## Visualizar Traces
 
-After running the agents, view Traces, Sessions, logs, vended logs, and metrics in CloudWatch Dashboards and monitor the logs and metrics on Cloudwatch.
-
-
-## Next Steps
-
-After completing this tutorial, explore [Multi runtimes with A2A](https://github.com/awslabs/amazon-bedrock-agentcore-samples/tree/main/02-use-cases/A2A-multi-agent-incident-response)
+Após executar os agentes, visualize Traces, Sessions, logs, vended logs e métricas nos Dashboards do CloudWatch e monitore os logs e métricas no CloudWatch.
 
 
+## Próximos Passos
+
+Após concluir este tutorial, explore [Multi runtimes com A2A](https://github.com/awslabs/amazon-bedrock-agentcore-samples/tree/main/02-use-cases/A2A-multi-agent-incident-response)

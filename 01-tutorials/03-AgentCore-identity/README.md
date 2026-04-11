@@ -1,100 +1,100 @@
 # Amazon Bedrock AgentCore Identity
 
-## Overview
+## Visão Geral
 
-Amazon Bedrock AgentCore Identity is a comprehensive identity and credential management service designed specifically for AI agents and automated workloads. It provides secure authentication, authorization, and credential management capabilities that enable users to invoke agents, and agents to access external resources and services on behalf of users while maintaining strict security controls and audit trails.
+Amazon Bedrock AgentCore Identity é um serviço abrangente de gerenciamento de identidade e credenciais projetado especificamente para agentes de IA e cargas de trabalho automatizadas. Ele fornece recursos seguros de autenticação, autorização e gerenciamento de credenciais que permitem aos usuários invocar agentes, e aos agentes acessar recursos e serviços externos em nome dos usuários, mantendo controles de segurança rigorosos e trilhas de auditoria.
 
-AgentCore Identity addresses a fundamental challenge in AI agent deployment: enabling agents to securely access user-specific data across multiple services without compromising security or user experience. The service operates on the principle of **delegation rather than impersonation**, where agents authenticate as themselves while carrying verifiable user context.
+AgentCore Identity aborda um desafio fundamental na implantação de agentes de IA: permitir que os agentes acessem com segurança dados específicos do usuário em múltiplos serviços sem comprometer a segurança ou a experiência do usuário. O serviço opera no princípio de **delegação em vez de representação**, onde os agentes se autenticam como eles mesmos enquanto carregam contexto verificável do usuário.
 
-## Key Features
+## Principais Funcionalidades
 
-- **Inbound Authentication**: Validate access for users and applications calling agents or tools
-- **Outbound Authentication**: Secure access from agents to external services on behalf of users
-- **OAuth Integration**: Support for 2-legged and 3-legged OAuth flows
-- **AWS IAM Integration**: Native integration with AWS identity and access management
-- **Zero Trust Security**: Every request is validated regardless of source or previous trust relationships
-- **Cross-Platform Support**: Works across AWS, other cloud providers, and on-premise environments
+- **Autenticação de Entrada (Inbound)**: Valida acesso para usuários e aplicações que chamam agentes ou ferramentas
+- **Autenticação de Saída (Outbound)**: Acesso seguro de agentes a serviços externos em nome dos usuários
+- **Integração OAuth**: Suporte para fluxos OAuth de 2 e 3 etapas
+- **Integração com AWS IAM**: Integração nativa com gerenciamento de identidade e acesso da AWS
+- **Segurança Zero Trust**: Toda requisição é validada independentemente da origem ou relacionamentos de confiança anteriores
+- **Suporte Multiplataforma**: Funciona na AWS, outros provedores de nuvem e ambientes on-premise
 
-## Authentication Types
+## Tipos de Autenticação
 
-AgentCore Identity supports two primary authentication patterns:
+AgentCore Identity suporta dois padrões principais de autenticação:
 
-### Inbound Auth
-Validates access for users and applications calling agents or tools in AgentCore Runtime or Gateway targets. Supports:
-- **AWS IAM**: Direct IAM-based access control
-- **OAuth**: Token-based authentication without requiring IAM permissions for end users
+### Autenticação de Entrada (Inbound Auth)
+Valida acesso para usuários e aplicações que chamam agentes ou ferramentas em alvos AgentCore Runtime ou Gateway. Suporta:
+- **AWS IAM**: Controle de acesso baseado em IAM direto
+- **OAuth**: Autenticação baseada em token sem exigir permissões IAM para usuários finais
 
-### Outbound Auth
-Enables agents to access AWS services and external resources on behalf of users:
-- **AWS Resources**: Uses IAM execution roles for AWS service access
-- **External Services**: OAuth 2-legged (client credentials) and 3-legged (authorization code) flows
+### Autenticação de Saída (Outbound Auth)
+Permite que agentes acessem serviços AWS e recursos externos em nome dos usuários:
+- **Recursos AWS**: Usa roles de execução IAM para acesso a serviços AWS
+- **Serviços Externos**: Fluxos OAuth de 2 etapas (credenciais do cliente) e 3 etapas (código de autorização)
 
 
 ![Authentication Basics](images/auth_basics3.png)
 
-## How It Works
+## Como Funciona
 
-AgentCore Identity implements a comprehensive workflow that orchestrates authentication and authorization across multiple trust domains:
+AgentCore Identity implementa um fluxo de trabalho abrangente que orquestra autenticação e autorização em múltiplos domínios de confiança:
 
-1. **User Authentication**: Users authenticate through existing identity providers (Cognito, Auth0, etc.)
-2. **Agent Authorization**: Applications request agent access with user tokens
-3. **Token Exchange**: AgentCore Identity validates user tokens and issues workload access tokens
-4. **Resource Access**: Agents use workload tokens to access AWS and third-party resources
-5. **Delegation & Audit**: All actions maintain user context and audit trails
+1. **Autenticação do Usuário**: Usuários se autenticam através de provedores de identidade existentes (Cognito, Auth0, etc.)
+2. **Autorização do Agente**: Aplicações solicitam acesso ao agente com tokens de usuário
+3. **Troca de Tokens**: AgentCore Identity valida tokens de usuário e emite tokens de acesso de carga de trabalho
+4. **Acesso a Recursos**: Agentes usam tokens de carga de trabalho para acessar recursos AWS e de terceiros
+5. **Delegação e Auditoria**: Todas as ações mantêm contexto do usuário e trilhas de auditoria
 
 ![How It Works](images/how_it_works.png)
 
-For detailed technical information, see [How AgentCore Identity Works](02-how_it_works.md).
+Para informações técnicas detalhadas, veja [Como AgentCore Identity Funciona](02-how_it_works.md).
 
-## Tutorial Examples
+## Exemplos de Tutorial
 
-This tutorial includes four hands-on examples demonstrating different authentication scenarios:
+Este tutorial inclui quatro exemplos práticos demonstrando diferentes cenários de autenticação:
 
-| Example | Type | Description |
-|---------|------|-------------|
-| **[Inbound Auth Example](03-Inbound%20Auth%20example)** | Inbound | User authentication with Strands agents and Bedrock models |
-| **[Outbound Auth Example](04-Outbound%20Auth%20example)** | Outbound | Agent access to external services with Strands and OpenAI |
-| **[3-Legged OAuth](05-Outbound_Auth_3lo)** | Outbound | User-delegated access with Cognito and 3-legged OAuth flow with Google |
-| **[GitHub Integration](06-Outbound_Auth_Github)** | Outbound | GitHub API access using 3-legged OAuth authentication |
+| Exemplo | Tipo | Descrição |
+|---------|------|-----------|
+| **[Exemplo de Inbound Auth](03-Inbound%20Auth%20example)** | Inbound | Autenticação de usuário com agentes Strands e modelos Bedrock |
+| **[Exemplo de Outbound Auth](04-Outbound%20Auth%20example)** | Outbound | Acesso de agente a serviços externos com Strands e OpenAI |
+| **[OAuth 3 Etapas](05-Outbound_Auth_3lo)** | Outbound | Acesso delegado pelo usuário com Cognito e fluxo OAuth 3 etapas com Google |
+| **[Integração GitHub](06-Outbound_Auth_Github)** | Outbound | Acesso à API do GitHub usando autenticação OAuth 3 etapas |
 
-Each example includes:
-- Complete Jupyter notebook walkthrough
-- Step-by-step setup instructions
-- Code samples and explanations
-- Best practices and security considerations
+Cada exemplo inclui:
+- Passo a passo completo em notebook Jupyter
+- Instruções de configuração detalhadas
+- Exemplos de código e explicações
+- Melhores práticas e considerações de segurança
 
-## Getting Started
+## Começando
 
-1. **Read the Introduction**: Start with [Getting Started](01-getting_started.md) to understand AgentCore Identity concepts
-2. **Understand the Workflow**: Review [How It Works](02-how_it_works.md) for technical details
-3. **Choose an Example**: Select a tutorial example based on your authentication needs:
-   - For user authentication to agents: Start with **Inbound Auth Example**
-   - For agent access to external services: Try **Outbound Auth Example**
-   - For user-delegated access patterns: Explore **3-Legged OAuth** or **GitHub Integration**
+1. **Leia a Introdução**: Comece com [Começando](01-getting_started.md) para entender os conceitos do AgentCore Identity
+2. **Entenda o Fluxo de Trabalho**: Revise [Como Funciona](02-how_it_works.md) para detalhes técnicos
+3. **Escolha um Exemplo**: Selecione um exemplo de tutorial baseado em suas necessidades de autenticação:
+   - Para autenticação de usuário em agentes: Comece com **Exemplo de Inbound Auth**
+   - Para acesso de agente a serviços externos: Experimente **Exemplo de Outbound Auth**
+   - Para padrões de acesso delegado pelo usuário: Explore **OAuth 3 Etapas** ou **Integração GitHub**
 
-## Key Benefits
+## Principais Benefícios
 
-- **Enhanced Security**: Zero trust authentication with fine-grained access controls
-- **User Experience**: Seamless access without repeated authentication prompts
-- **Audit & Compliance**: Complete audit trails for all agent actions
-- **Framework Agnostic**: Works with any agent framework (Strands, LangGraph, CrewAI, etc.)
-- **Scalable**: Enterprise-ready with support for multiple identity providers
-- **Standards-Based**: Built on OAuth 2.0, OIDC, and industry security standards
+- **Segurança Aprimorada**: Autenticação zero trust com controles de acesso granulares
+- **Experiência do Usuário**: Acesso contínuo sem solicitações repetidas de autenticação
+- **Auditoria e Conformidade**: Trilhas de auditoria completas para todas as ações do agente
+- **Agnóstico de Framework**: Funciona com qualquer framework de agente (Strands, LangGraph, CrewAI, etc.)
+- **Escalável**: Pronto para empresas com suporte a múltiplos provedores de identidade
+- **Baseado em Padrões**: Construído sobre OAuth 2.0, OIDC e padrões de segurança da indústria
 
-## Architecture Integration
+## Integração de Arquitetura
 
-AgentCore Identity integrates seamlessly with other AgentCore components:
+AgentCore Identity se integra perfeitamente com outros componentes AgentCore:
 
-- **AgentCore Runtime**: Provides authentication for hosted agents
-- **AgentCore Gateway**: Secures access to tools and external APIs  
-- **AgentCore Memory**: Maintains secure access to user-specific memory stores
-- **Third-Party Services**: Enables secure integration with external APIs and services
+- **AgentCore Runtime**: Fornece autenticação para agentes hospedados
+- **AgentCore Gateway**: Protege acesso a ferramentas e APIs externas
+- **AgentCore Memory**: Mantém acesso seguro a armazenamentos de memória específicos do usuário
+- **Serviços de Terceiros**: Permite integração segura com APIs e serviços externos
 
-## Next Steps
+## Próximos Passos
 
-After completing the tutorials, you can:
-- Integrate AgentCore Identity with your existing identity infrastructure
-- Configure custom OAuth providers and scopes
-- Implement advanced security policies and access controls
-- Deploy production-ready agent authentication workflows
-- Scale your secure agent infrastructure across multiple services and platforms
+Após completar os tutoriais, você pode:
+- Integrar AgentCore Identity com sua infraestrutura de identidade existente
+- Configurar provedores OAuth personalizados e escopos
+- Implementar políticas de segurança avançadas e controles de acesso
+- Implantar fluxos de autenticação de agente prontos para produção
+- Escalar sua infraestrutura de agentes segura em múltiplos serviços e plataformas

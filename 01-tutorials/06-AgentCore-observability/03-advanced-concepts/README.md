@@ -1,62 +1,62 @@
-# Advanced Observability Concepts
+# Conceitos Avançados de Observabilidade
 
-This section covers advanced observability patterns and techniques for Amazon Bedrock AgentCore, helping you implement sophisticated customized monitoring and debugging capabilities.
+Esta seção aborda padrões e técnicas avançadas de observabilidade para o Amazon Bedrock AgentCore, ajudando você a implementar capacidades sofisticadas e personalizadas de monitoramento e depuração.
 
-## Available Tutorials
+## Tutoriais Disponíveis
 
 ### 01-custom-span-creation/
 
 - **Notebook**: `Custom_Span_Creation.ipynb`
-- **Description**: Learn to create custom spans for detailed operation tracing
-- **Features**: Manual span creation, custom attributes
-- **Use Cases**: Fine-grained monitoring, debugging
+- **Descrição**: Aprenda a criar spans personalizados para rastreamento detalhado de operações
+- **Funcionalidades**: Criação manual de spans, atributos personalizados
+- **Casos de Uso**: Monitoramento granular, depuração
 
 ### 02-data-protection/
 
 - **Notebook**: `data_protection.ipynb`
-- **Description**: Implement comprehensive data protection for sensitive information in agent workflows
-- **Features**: Bedrock Guardrails integration, CloudWatch Logs Data Protection, PII detection and masking
-- **Use Cases**: Compliance (GDPR, HIPAA, CCPA), sensitive data handling, privacy protection
+- **Descrição**: Implemente proteção de dados abrangente para informações sensíveis em workflows de agentes
+- **Funcionalidades**: Integração com Bedrock Guardrails, CloudWatch Logs Data Protection, detecção e mascaramento de PII
+- **Casos de Uso**: Conformidade (GDPR, HIPAA, CCPA), tratamento de dados sensíveis, proteção de privacidade
 
-## What You'll Learn
+## O Que Você Vai Aprender
 
-- **Custom Span Creation**: Add detailed tracing to specific operations
-- **Span Attributes**: Enrich traces with custom metadata
-- **Nested Spans**: Create hierarchical trace structures
-- **Performance Monitoring**: Identify bottlenecks in agent workflows
-- **Error Tracking**: Capture and trace exceptions and failures
-- **Data Protection**: Implement sensitive data detection and masking in logs and traces
-- **Compliance Integration**: Configure Bedrock Guardrails and CloudWatch Data Protection
+- **Criação de Spans Personalizados**: Adicionar rastreamento detalhado a operações específicas
+- **Atributos de Span**: Enriquecer traces com metadados personalizados
+- **Spans Aninhados**: Criar estruturas hierárquicas de trace
+- **Monitoramento de Performance**: Identificar gargalos em workflows de agentes
+- **Rastreamento de Erros**: Capturar e rastrear exceções e falhas
+- **Proteção de Dados**: Implementar detecção e mascaramento de dados sensíveis em logs e traces
+- **Integração de Conformidade**: Configurar Bedrock Guardrails e CloudWatch Data Protection
 
-## Getting Started
+## Primeiros Passos
 
-1. Navigate to the tutorial directory
-2. Copy `.env.example` to `.env` and configure:
-   - AWS credentials
-   - CloudWatch log group settings
-   - OpenTelemetry configuration
-3. Enable CloudWatch Transaction Search in your AWS region
-4. Install dependencies: `pip install -r requirements.txt`
-5. Open and run the Jupyter notebook
+1. Navegue até o diretório do tutorial
+2. Copie `.env.example` para `.env` e configure:
+   - Credenciais AWS
+   - Configurações do log group do CloudWatch
+   - Configuração do OpenTelemetry
+3. Habilite o CloudWatch Transaction Search na sua região AWS
+4. Instale as dependências: `pip install -r requirements.txt`
+5. Abra e execute o Jupyter notebook
 
-## Prerequisites
+## Pré-requisitos
 
-- Understanding of basic OpenTelemetry concepts
-- Familiarity with Amazon CloudWatch
-- Experience with agent frameworks (recommended)
-- AWS account with appropriate permissions
+- Compreensão dos conceitos básicos do OpenTelemetry
+- Familiaridade com o Amazon CloudWatch
+- Experiência com frameworks de agentes (recomendado)
+- Conta AWS com permissões apropriadas
 
-## Advanced Patterns Covered
+## Padrões Avançados Abordados
 
-- **Manual Instrumentation**: When and how to add custom spans
-- **Custom Metrics**: Creating domain-specific measurements
-- **Data Protection Policies**: Configuring sensitive information filters
-- **Multi-layer Security**: Combining Guardrails with CloudWatch Data Protection
+- **Instrumentação Manual**: Quando e como adicionar spans personalizados
+- **Métricas Personalizadas**: Criação de medições específicas do domínio
+- **Políticas de Proteção de Dados**: Configuração de filtros de informações sensíveis
+- **Segurança Multicamada**: Combinação de Guardrails com CloudWatch Data Protection
 
-## Cleanup
+## Limpeza
 
-After completing tutorials:
+Após concluir os tutoriais:
 
-1. Delete CloudWatch log groups created during examples
-2. Remove any test resources
-3. Clean up environment configuration files
+1. Exclua os log groups do CloudWatch criados durante os exemplos
+2. Remova quaisquer recursos de teste
+3. Limpe os arquivos de configuração de ambiente

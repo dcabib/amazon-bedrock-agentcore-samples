@@ -1,37 +1,37 @@
-# Additional Security Considerations
+# Considerações de Segurança Adicionais
 
-## Encryption at Rest
+## Criptografia em Repouso
 
-This sample uses AWS-managed and customer-managed KMS encryption:
+Este exemplo usa criptografia KMS gerenciada pela AWS e gerenciada pelo cliente:
 
-**Customer-Managed KMS Key (Included):**
+**Chave KMS Gerenciada pelo Cliente (Incluída):**
 
-- Amazon CloudWatch Logs (Agent and OAuth Callback services)
-- Amazon S3 sessions bucket
+- Amazon CloudWatch Logs (serviços de Agent e OAuth Callback)
+- Bucket S3 de sessões
 
-**AWS-Managed Encryption Keys:**
+**Chaves de Criptografia Gerenciadas pela AWS:**
 
-- Application Load Balancer access logs S3 bucket (ALB only supports SSE-S3)
-- Amazon ECR repositories (auto-created by CDK with default encryption AWS-managed KMS)
+- Bucket S3 de logs de acesso do Application Load Balancer (ALB suporta apenas SSE-S3)
+- Repositórios Amazon ECR (criados automaticamente pelo CDK com criptografia padrão KMS gerenciada pela AWS)
 
-- **Amazon Bedrock AgentCore Identity** token vault: If customer-managed KMS is required, use [`set-token-vault-cmk`](https://docs.aws.amazon.com/cli/latest/reference/bedrock-agentcore-control/set-token-vault-cmk.html)
+- **Amazon Bedrock AgentCore Identity** token vault: Se KMS gerenciada pelo cliente for necessária, use [`set-token-vault-cmk`](https://docs.aws.amazon.com/cli/latest/reference/bedrock-agentcore-control/set-token-vault-cmk.html)
 
-- **AWS Secrets Manager** (SSO credentials): If customer-managed KMS is required, add `--kms-key-id` parameter when creating the secret
+- **AWS Secrets Manager** (credenciais SSO): Se KMS gerenciada pelo cliente for necessária, adicione o parâmetro `--kms-key-id` ao criar o secret
 
-### Network and Monitoring
+### Rede e Monitoramento
 
-- **VPC Flow Logs**: VPC Flow Logs are not enabled in this sample to reduce costs. For production deployments, enable VPC Flow Logs for network traffic monitoring and security analysis.
+- **VPC Flow Logs**: VPC Flow Logs não estão habilitados neste exemplo para reduzir custos. Para implantações de produção, habilite VPC Flow Logs para monitoramento de tráfego de rede e análise de segurança.
 
-- **VPC Endpoints**: This sample does not use VPC endpoints for AWS services (Bedrock, S3, Secrets Manager). For production deployments, consider adding VPC endpoints to avoid routing traffic through NAT gateways and internet gateways, which can reduce costs.
+- **VPC Endpoints**: Este exemplo não usa VPC endpoints para serviços AWS (Bedrock, S3, Secrets Manager). Para implantações de produção, considere adicionar VPC endpoints para evitar rotear tráfego através de NAT gateways e internet gateways, o que pode reduzir custos.
 
-- **WAF and CloudFront**: The ALB is publicly accessible (0.0.0.0/0 ingress on port 443) and protected by OIDC authentication. For production deployments, consider adding AWS WAF for protection against common web exploits (SQL injection, XSS, DDoS) and CloudFront for content delivery, caching, and additional DDoS protection at the edge.
+- **WAF e CloudFront**: O ALB é publicamente acessível (0.0.0.0/0 ingress na porta 443) e protegido por autenticação OIDC. Para implantações de produção, considere adicionar AWS WAF para proteção contra explorações web comuns (injeção SQL, XSS, DDoS) e CloudFront para entrega de conteúdo, cache e proteção adicional contra DDoS na borda.
 
-- **CloudWatch Alarms**: This sample does not include CloudWatch alarms for monitoring. For production deployments, implement CloudWatch alarms on exceptional resource usage and metrics (CPU, memory, error rates, API throttling) to detect and respond to operational and security issues.
+- **CloudWatch Alarms**: Este exemplo não inclui alarmes CloudWatch para monitoramento. Para implantações de produção, implemente alarmes CloudWatch sobre uso excepcional de recursos e métricas (CPU, memória, taxas de erro, throttling de API) para detectar e responder a problemas operacionais e de segurança.
 
-### Access Control
+### Controle de Acesso
 
-- **Amazon S3 Bucket Policies**: S3 bucket policies can be used to further restrict access with IAM condition keys for fine-grained access control based on user identity, IP address, or request attributes.
+- **Políticas de Bucket Amazon S3**: Políticas de bucket S3 podem ser usadas para restringir ainda mais o acesso com chaves de condição IAM para controle de acesso granular baseado em identidade do usuário, endereço IP ou atributos de requisição.
 
-- **KMS Key Administration**: The KMS key policy allows the root account full permissions (`kms:*`). For production deployments, consider restricting key administrative permissions to specific IAM principals or roles in your account to follow the principle of least privilege.
+- **Administração de Chave KMS**: A política de chave KMS permite à conta root permissões completas (`kms:*`). Para implantações de produção, considere restringir permissões administrativas de chave a principals ou roles IAM específicos em sua conta para seguir o princípio de privilégio mínimo.
 
-- **Amazon Bedrock Guardrails**: This sample does not configure Bedrock Guardrails. For production deployments, consider implementing guardrails to filter harmful content, PII, and inappropriate inputs/outputs from the agent based on your requirements.
+- **Amazon Bedrock Guardrails**: Este exemplo não configura Bedrock Guardrails. Para implantações de produção, considere implementar guardrails para filtrar conteúdo prejudicial, PII e inputs/outputs inadequados do agente com base em seus requisitos.

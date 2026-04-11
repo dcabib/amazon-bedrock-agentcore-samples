@@ -1,112 +1,112 @@
-# Running Evaluations with LangGraph
+# Executando Avaliações com LangGraph
 
-## Overview
+## Visão Geral
 
-This tutorial demonstrates how to use AgentCore Evaluations with agents built using [LangGraph](https://www.langchain.com/langgraph). You'll learn to run both on-demand and online evaluations to assess and monitor your LangGraph agent's performance using built-in and custom evaluators.
+Este tutorial demonstra como usar o AgentCore Evaluations com agentes construídos usando [LangGraph](https://www.langchain.com/langgraph). Você aprenderá a executar avaliações sob demanda e online para avaliar e monitorar o desempenho do seu agente LangGraph usando avaliadores integrados e personalizados.
 
-## What You'll Learn
+## O Que Você Vai Aprender
 
-- Running on-demand evaluations on specific LangGraph agent traces
-- Setting up online evaluations for continuous monitoring of LangGraph agents
-- Using the AgentCore Starter Toolkit to manage evaluations
-- Analyzing evaluation results to improve agent quality
+- Executar avaliações sob demanda em traces específicos do agente LangGraph
+- Configurar avaliações online para monitoramento contínuo de agentes LangGraph
+- Usar o AgentCore Starter Toolkit para gerenciar avaliações
+- Analisar resultados de avaliação para melhorar a qualidade do agente
 
-## Prerequisites
+## Pré-requisitos
 
-Before starting these tutorials, ensure you have:
+Antes de iniciar estes tutoriais, certifique-se de ter:
 
-- Completed [Tutorial 00: Prerequisites](../../00-prereqs) and created the LangGraph agent (`eval_agent_langgraph.py`)
-- Completed [Tutorial 01: Creating Custom Evaluators](../../01-creating-custom-evaluators) and created a custom evaluator
-- Your LangGraph agent deployed on AgentCore Runtime
-- Generated at least one session with traces by invoking your agent
-- Python 3.10+ installed
-- AWS credentials configured with appropriate permissions
+- Completado o [Tutorial 00: Pré-requisitos](../../00-prereqs) e criado o agente LangGraph (`eval_agent_langgraph.py`)
+- Completado o [Tutorial 01: Criando Avaliadores Personalizados](../../01-creating-custom-evaluators) e criado um avaliador personalizado
+- Seu agente LangGraph implantado no AgentCore Runtime
+- Gerado pelo menos uma sessão com traces invocando seu agente
+- Python 3.10+ instalado
+- Credenciais AWS configuradas com permissões apropriadas
 
-## Tutorial Structure
+## Estrutura do Tutorial
 
 ### [01-on-demand-eval.ipynb](01-on-demand-eval.ipynb)
 
-**Tutorial Type:** Evaluating LangGraph agent with on-demand evaluators (built-in and custom)
+**Tipo de Tutorial:** Avaliando agente LangGraph com avaliadores sob demanda (integrados e personalizados)
 
-**What You'll Learn:**
+**O Que Você Vai Aprender:**
 
-- How to retrieve session and trace information from your deployed LangGraph agent
-- Initializing the AgentCore Evaluations client using the Starter Toolkit
-- Running on-demand evaluations on specific traces or sessions
-- Using both built-in evaluators (e.g., `Builtin.Correctness`, `Builtin.Helpfulness`) and custom evaluators
-- Interpreting evaluation results including scores, explanations, and token usage
+- Como recuperar informações de sessão e trace do seu agente LangGraph implantado
+- Inicializar o cliente AgentCore Evaluations usando o Starter Toolkit
+- Executar avaliações sob demanda em traces ou sessões específicas
+- Usar avaliadores integrados (ex.: `Builtin.Correctness`, `Builtin.Helpfulness`) e avaliadores personalizados
+- Interpretar resultados de avaliação incluindo pontuações, explicações e uso de tokens
 
-**Key Concepts:**
+**Conceitos-Chave:**
 
-- **Targeted Assessment**: Evaluate specific interactions by providing session or trace IDs
-- **Synchronous Execution**: Get immediate results for your evaluation requests
-- **Flexible Evaluator Selection**: Apply multiple evaluators to the same trace
-- **Investigation Tool**: Perfect for analyzing specific interactions or validating fixes
+- **Avaliação Direcionada**: Avalie interações específicas fornecendo IDs de sessão ou trace
+- **Execução Síncrona**: Obtenha resultados imediatos para suas solicitações de avaliação
+- **Seleção Flexível de Avaliadores**: Aplique múltiplos avaliadores ao mesmo trace
+- **Ferramenta de Investigação**: Perfeita para analisar interações específicas ou validar correções
 
 ### [02-online-eval.ipynb](02-online-eval.ipynb)
 
-**Tutorial Type:** Evaluating LangGraph agent with online evaluators (built-in and custom)
+**Tipo de Tutorial:** Avaliando agente LangGraph com avaliadores online (integrados e personalizados)
 
-**What You'll Learn:**
+**O Que Você Vai Aprender:**
 
-- Creating online evaluation configurations for your LangGraph agent
-- Configuring sampling rates and filtering rules
-- Setting up continuous evaluation with built-in and custom evaluators
-- Monitoring evaluation results in CloudWatch dashboards
-- Managing online evaluation configurations (enable, disable, update, delete)
+- Criar configurações de avaliação online para seu agente LangGraph
+- Configurar taxas de amostragem e regras de filtragem
+- Configurar avaliação contínua com avaliadores integrados e personalizados
+- Monitorar resultados de avaliação em dashboards do CloudWatch
+- Gerenciar configurações de avaliação online (habilitar, desabilitar, atualizar, excluir)
 
-**Key Concepts:**
+**Conceitos-Chave:**
 
-- **Continuous Monitoring**: Automatically evaluate agent performance as interactions occur
-- **Sampling-Based**: Configure percentage-based sampling (e.g., evaluate 10% of sessions)
-- **Real-time Insights**: Track quality trends and catch regressions early
-- **Production-Ready**: Designed for scale with minimal performance impact
+- **Monitoramento Contínuo**: Avalie automaticamente o desempenho do agente conforme as interações ocorrem
+- **Baseado em Amostragem**: Configure amostragem baseada em porcentagem (ex.: avaliar 10% das sessões)
+- **Insights em Tempo Real**: Acompanhe tendências de qualidade e detecte regressões precocemente
+- **Pronto para Produção**: Projetado para escala com impacto mínimo no desempenho
 
-## LangGraph Agent Architecture
+## Arquitetura do Agente LangGraph
 
-The LangGraph agent used in these tutorials includes:
+O agente LangGraph usado nestes tutoriais inclui:
 
-**Tools:**
+**Ferramentas:**
 
-- Math tool for basic calculations
-- Weather tool for weather information
+- Ferramenta de matemática para cálculos básicos
+- Ferramenta de clima para informações meteorológicas
 
-**Model:**
+**Modelo:**
 
-- Anthropic Claude Haiku 4.5 from Amazon Bedrock
+- Anthropic Claude Haiku 4.5 do Amazon Bedrock
 
-**Observability:**
+**Observabilidade:**
 
-- Automatic OTEL instrumentation via AgentCore Runtime
-- Traces available in CloudWatch GenAI Observability Dashboard
+- Instrumentação OTEL automática via AgentCore Runtime
+- Traces disponíveis no Dashboard de Observabilidade GenAI do CloudWatch
 
-## How Evaluations Work with LangGraph Agents
+## Como as Avaliações Funcionam com Agentes LangGraph
 
-1. **Agent Invocation**: Your LangGraph agent processes user requests
-2. **Trace Generation**: AgentCore Observability captures OTEL traces automatically
-3. **Trace Storage**: Traces are stored in CloudWatch Log groups
-4. **Evaluation**:
-   - **On-demand**: You select specific sessions/traces to evaluate
-   - **Online**: AgentCore automatically samples and evaluates based on your configuration
-5. **Results Analysis**: View scores, explanations, and trends in CloudWatch
+1. **Invocação do Agente**: Seu agente LangGraph processa solicitações do usuário
+2. **Geração de Traces**: O AgentCore Observability captura traces OTEL automaticamente
+3. **Armazenamento de Traces**: Os traces são armazenados em grupos de logs do CloudWatch
+4. **Avaliação**:
+   - **Sob demanda**: Você seleciona sessões/traces específicos para avaliar
+   - **Online**: O AgentCore amostra e avalia automaticamente com base na sua configuração
+5. **Análise de Resultados**: Visualize pontuações, explicações e tendências no CloudWatch
 
-## Using the AgentCore Starter Toolkit
+## Usando o AgentCore Starter Toolkit
 
-Both notebooks use the **AgentCore Starter Toolkit** to simplify evaluation workflows:
+Ambos os notebooks usam o **AgentCore Starter Toolkit** para simplificar os fluxos de trabalho de avaliação:
 
 ```python
 from bedrock_agentcore_starter_toolkit import Evaluations
 
-# Initialize the evaluations client
+# Inicializar o cliente de avaliações
 evaluations = Evaluations()
 
-# On-demand evaluation
+# Avaliação sob demanda
 result = evaluations.evaluate_session(
     session_id="your-session-id",
     evaluator_ids=["Builtin.Correctness", "your-custom-evaluator-id"]
 )
 
-# Online evaluation
+# Avaliação online
 config = evaluations.create_online_evaluation(
     config_name="your-config-name",
     sampling_percentage=100,
@@ -114,20 +114,20 @@ config = evaluations.create_online_evaluation(
 )
 ```
 
-## Expected Outcomes
+## Resultados Esperados
 
-After completing these tutorials, you will be able to:
+Após completar estes tutoriais, você será capaz de:
 
-- Evaluate specific LangGraph agent interactions using on-demand evaluations
-- Set up continuous quality monitoring for production LangGraph agents
-- Analyze evaluation results to identify areas for improvement
-- Use both built-in and custom evaluators effectively
-- Monitor agent quality trends over time
+- Avaliar interações específicas do agente LangGraph usando avaliações sob demanda
+- Configurar monitoramento contínuo de qualidade para agentes LangGraph em produção
+- Analisar resultados de avaliação para identificar áreas de melhoria
+- Usar avaliadores integrados e personalizados de forma eficaz
+- Monitorar tendências de qualidade do agente ao longo do tempo
 
-## Next Steps
+## Próximos Passos
 
-After completing these LangGraph-specific tutorials:
+Após completar estes tutoriais específicos do LangGraph:
 
-- Explore the [Strands examples](../01-strands/) to see how evaluations work with different frameworks
-- Proceed to [Tutorial 03: Advanced](../../03-advanced) for advanced evaluation techniques
-- Review your evaluation results in the CloudWatch GenAI Observability Dashboard
+- Explore os [exemplos com Strands](../01-strands/) para ver como as avaliações funcionam com diferentes frameworks
+- Prossiga para o [Tutorial 03: Avançado](../../03-advanced) para técnicas avançadas de avaliação
+- Revise seus resultados de avaliação no Dashboard de Observabilidade GenAI do CloudWatch

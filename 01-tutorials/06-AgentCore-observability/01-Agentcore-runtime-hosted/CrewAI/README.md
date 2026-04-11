@@ -1,44 +1,44 @@
-# CrewAI Agent with Amazon Bedrock AgentCore Runtime and Observability
+# Agente CrewAI com Amazon Bedrock AgentCore Runtime e Observabilidade
 
-This tutorial demonstrates how to deploy a [CrewAI](https://www.crewai.com/) travel agent to Amazon Bedrock AgentCore Runtime with observability through Amazon CloudWatch.
+Este tutorial demonstra como implantar um agente de viagens [CrewAI](https://www.crewai.com/) no Amazon Bedrock AgentCore Runtime com observabilidade através do Amazon CloudWatch.
 
-## Overview
+## Visão Geral
 
-Learn to host a CrewAI agent using Amazon Bedrock models with comprehensive observability with AWS OpenTelemetry instrumentation and Amazon CloudWatch monitoring.
+Aprenda a hospedar um agente CrewAI usando modelos Amazon Bedrock com observabilidade abrangente com instrumentação AWS OpenTelemetry e monitoramento Amazon CloudWatch.
 
-## Prerequisites
+## Pré-requisitos
 
 * Python 3.10+
-* AWS credentials configured with appropriate permissions
+* Credenciais AWS configuradas com permissões apropriadas
 * Amazon Bedrock AgentCore SDK
-* CrewAI framework
-* Amazon CloudWatch access
-* Enable [transaction search](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html) on Amazon CloudWatch
+* Framework CrewAI
+* Acesso ao Amazon CloudWatch
+* Habilitar [transaction search](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html) no Amazon CloudWatch
 
-## Getting Started
+## Primeiros Passos
 
-1. Install dependencies:
+1. Instale as dependências:
    ```bash
    pip install -r requirements.txt
    ```
 
-2. Open the Jupyter notebook: `runtime-with-crewai-and-bedrock-models.ipynb`
+2. Abra o Jupyter notebook: `runtime-with-crewai-and-bedrock-models.ipynb`
 
-3. Follow the tutorial to:
-   - Create and test a CrewAI agent locally
-   - Deploy the agent to AgentCore Runtime
-   - Enable observability with OpenTelemetry
-   - Monitor performance on CloudWatch
+3. Siga o tutorial para:
+   - Criar e testar um agente CrewAI localmente
+   - Implantar o agente no AgentCore Runtime
+   - Habilitar observabilidade com OpenTelemetry
+   - Monitorar o desempenho no CloudWatch
 
-## Key Features
+## Funcionalidades Principais
 
-* CrewAI travel agent with web search capabilities
-* Amazon Bedrock models (Anthropic Claude Haiku 4.5)
-* AgentCore Runtime hosting
-* CloudWatch observability and tracing
+* Agente de viagens CrewAI com capacidades de busca na web
+* Modelos Amazon Bedrock (Anthropic Claude Haiku 4.5)
+* Hospedagem no AgentCore Runtime
+* Observabilidade e rastreamento via CloudWatch
 
-## Cleanup
+## Limpeza
 
-After completing the tutorial:
-1. Remove AgentCore Runtime deployments
-2. Clean up ECR repositories
+Após concluir o tutorial:
+1. Remova os deployments do AgentCore Runtime
+2. Limpe os repositórios ECR

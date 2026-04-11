@@ -1,37 +1,36 @@
-# Prerequisites: Creating sample Agents
+# Pré-requisitos: Criando Agentes de Exemplo
 
-## Overview
+## Visão Geral
 
-Before we can evaluate agents, we need an agent to evaluate. This tutorial sets up two sample agents that we'll use throughout the remaining evaluation tutorials: one using [Strands Agents SDK](https://strandsagents.com/) and the other one using [LangGraph](https://www.langchain.com/langgraph).
+Antes de podermos avaliar agentes, precisamos de um agente para avaliar. Este tutorial configura dois agentes de exemplo que usaremos ao longo dos tutoriais de avaliação restantes: um usando o [Strands Agents SDK](https://strandsagents.com/) e o outro usando [LangGraph](https://www.langchain.com/langgraph).
 
-## The Agents
-The agents created are essentially the same just using two different frameworks to show case the "any framework" proposition of AgentCore.
+## Os Agentes
+Os agentes criados são essencialmente os mesmos, apenas usando dois frameworks diferentes para demonstrar a proposta "qualquer framework" do AgentCore.
 
-The agents created have two key capabilities:
+Os agentes criados possuem duas capacidades principais:
 
-**Code Execution**
-- Uses AgentCore Code Interpreter to run Python code
-- Handles math calculations and data analysis
+**Execução de Código**
+- Usa o AgentCore Code Interpreter para executar código Python
+- Lida com cálculos matemáticos e análise de dados
 
-**Memory**
-- Stores user facts and preferences
-- Retrieves relevant context for personalized responses
+**Memória**
+- Armazena fatos e preferências do usuário
+- Recupera contexto relevante para respostas personalizadas
 
-Both agents uses Anthropic Claude Haiku 4.5 from Amazon Bedrock as the LLM model but with AgentCore you cam use any model of your preference.
+Ambos os agentes usam o Anthropic Claude Haiku 4.5 do Amazon Bedrock como modelo LLM, mas com o AgentCore você pode usar qualquer modelo de sua preferência.
 
-The architecture looks as following:
+A arquitetura é a seguinte:
 
-![Architecture](../images/agent_architecture.png)
+![Arquitetura](../images/agent_architecture.png)
 
-## Pre-requisites
-Before deploying the agent you need:
+## Pré-requisitos
+Antes de implantar o agente, você precisa de:
 * Python 3.10+
-* AWS access
+* Acesso à AWS
 
+## Próximos Passos
+Agora que você tem todos os pré-requisitos necessários, vamos percorrer os tutoriais individuais de avaliação:
 
-## What's Next
-Now that you have all the required pre-requisites, let's go through the individual evaluation tutorials:
-
-- **[Tutorial 01](../01-creating-custom-evaluators)**: Create custom evaluators
-- **[Tutorial 02](../02-running-evaluations)**: Run on-demand and online evaluations
-- **[Tutorial 03](../03-advanced)**: Advanced techniques and dashboards
+- **[Tutorial 01](../01-creating-custom-evaluators)**: Criar avaliadores personalizados
+- **[Tutorial 02](../02-running-evaluations)**: Executar avaliações sob demanda e online
+- **[Tutorial 03](../03-advanced)**: Técnicas avançadas e dashboards

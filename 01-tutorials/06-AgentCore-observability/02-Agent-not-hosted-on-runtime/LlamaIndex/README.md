@@ -1,78 +1,78 @@
-# LlamaIndex Function Agent with AWS Bedrock and OpenTelemetry
+# LlamaIndex Function Agent com AWS Bedrock e OpenTelemetry
 
-This project demonstrates how to create a simple arithmetic agent using LlamaIndex, hosted on AWS Bedrock with OpenTelemetry instrumentation for AgentCore observability tracing.
+Este projeto demonstra como criar um agente aritmético simples usando LlamaIndex, hospedado no AWS Bedrock com instrumentação OpenTelemetry para rastreamento de observabilidade do AgentCore.
 
-## Project Overview
+## Visão Geral do Projeto
 
-This project implements:
-- A Function agent pattern using LlamaIndex.core's FunctionAgent
-- Integration with AWS Bedrock's Claude model for the LLM backend
-- OpenTelemetry instrumentation for observability with AWS CloudWatch
-- Simple arithmetic tools (add and multiply)
-- Session tracking capabilities for correlating traces across multiple agent runs
+Este projeto implementa:
+- Um padrão Function agent usando o FunctionAgent do LlamaIndex.core
+- Integração com o modelo Claude do AWS Bedrock para o backend LLM
+- Instrumentação OpenTelemetry para observabilidade com AWS CloudWatch
+- Ferramentas aritméticas simples (adição e multiplicação)
+- Capacidades de rastreamento de sessão para correlacionar traces entre múltiplas execuções do agente
 
-## Architecture Diagram
+## Diagrama de Arquitetura
 
-The following diagram illustrates the architecture of this LlamaIndex agent implementation with AWS Bedrock and OpenTelemetry:
+O diagrama a seguir ilustra a arquitetura desta implementação do agente LlamaIndex com AWS Bedrock e OpenTelemetry:
 
-![LlamaIndex AgentCore Architecture Diagram](images/llamaindex_agentcore_arch_diagram.png)
+![Diagrama de Arquitetura LlamaIndex AgentCore](images/llamaindex_agentcore_arch_diagram.png)
 
-## Prerequisites
+## Pré-requisitos
 
 - Python 3.9+
-- AWS account with access to Bedrock service (specifically Claude models)
-- AWS credentials configured locally
-- Appropriate IAM permissions for AWS Bedrock and CloudWatch
-- CloudWatch Transaction Search enabled (for viewing traces)
+- Conta AWS com acesso ao serviço Bedrock (especificamente modelos Claude)
+- Credenciais AWS configuradas localmente
+- Permissões IAM apropriadas para AWS Bedrock e CloudWatch
+- CloudWatch Transaction Search habilitado (para visualização de traces)
 
-## Installation
+## Instalação
 
-1. If you've cloned the entire Amazon Bedrock AgentCore Samples repository:
+1. Se você clonou o repositório completo do Amazon Bedrock AgentCore Samples:
 ```bash
 git clone https://github.com/aws-samples/amazon-bedrock-agentcore-samples.git
 cd amazon-bedrock-agentcore-samples/01-tutorials/06-AgentCore-observability/02-Agent-not-hosted-on-runtime/LlamaIndex
 ```
 
-2. Create and activate a virtual environment:
+2. Crie e ative um ambiente virtual:
 ```bash
-# Create a virtual environment
+# Crie um ambiente virtual
 python -m venv venv
 
-# Activate the virtual environment
-# On Windows
+# Ative o ambiente virtual
+# No Windows
 venv\Scripts\activate
-# On macOS/Linux
+# No macOS/Linux
 source venv/bin/activate
 ```
 
-3. Install dependencies:
+3. Instale as dependências:
 ```bash
 pip install -r requirements.txt
 ```
 
-4. When opening the notebook in Jupyter or VS Code:
-   - Select the "venv" kernel from the kernel selector
-   - If the kernel doesn't appear in the list, restart Jupyter or VS Code
+4. Ao abrir o notebook no Jupyter ou VS Code:
+   - Selecione o kernel "venv" no seletor de kernel
+   - Se o kernel não aparecer na lista, reinicie o Jupyter ou VS Code
 
-## Configuration
+## Configuração
 
-### AWS Credentials
+### Credenciais AWS
 
-Ensure your AWS credentials are properly configured with access to AWS Bedrock and CloudWatch:
+Certifique-se de que suas credenciais AWS estão corretamente configuradas com acesso ao AWS Bedrock e CloudWatch:
 
-Run ```aws configure``` in your CLI to correctly configure your Amazon credentials. No need to store them in your .env file
+Execute ```aws configure``` no seu CLI para configurar corretamente suas credenciais Amazon. Não é necessário armazená-las no seu arquivo .env
 
-### OpenTelemetry Configuration
+### Configuração do OpenTelemetry
 
-The project uses the following OpenTelemetry environment variables, which should be set in a `.env` file (use `.env.example` as a template):
+O projeto utiliza as seguintes variáveis de ambiente do OpenTelemetry, que devem ser definidas em um arquivo `.env` (use `.env.example` como modelo):
 
 ```bash
-# Agent Configuration
+# Configuração do Agente
 AGENT_ID=llama-index-function-agent
 SERVICE_NAME=llama-index-bedrock-agent
 BEDROCK_MODEL_ID=global.anthropic.claude-haiku-4-5-20251001-v1:0
 
-# OpenTelemetry Configuration
+# Configuração do OpenTelemetry
 AGENT_OBSERVABILITY_ENABLED=true
 OTEL_PYTHON_DISTRO=aws_distro
 OTEL_PYTHON_CONFIGURATOR=aws_configurator
@@ -80,9 +80,9 @@ OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
 OTEL_TRACES_EXPORTER=otlp
 ```
 
-### CloudWatch Log Group Setup
+### Configuração do Log Group do CloudWatch
 
-Before running the agent, you need to create a log group and log stream in CloudWatch:
+Antes de executar o agente, você precisa criar um log group e um log stream no CloudWatch:
 
 ```python
 import boto3
@@ -92,106 +92,106 @@ cloudwatch_client.create_log_group(logGroupName='agents/llama-index-agent-logs')
 cloudwatch_client.create_log_stream(logGroupName='agents/llama-index-agent-logs', logStreamName='default')
 ```
 
-Then update your `.env` file to include:
+Em seguida, atualize seu arquivo `.env` para incluir:
 
 ```bash
 OTEL_EXPORTER_OTLP_LOGS_HEADERS=x-aws-log-group=agents/llama-index-agent-logs,x-aws-log-stream=default,x-aws-metric-namespace=bedrock-agentcore
 OTEL_RESOURCE_ATTRIBUTES=service.name=agentic-llamaindex-agentcore
 ```
 
-## Usage
+## Uso
 
-### Basic Agent
+### Agente Básico
 
-To run the basic arithmetic agent with OpenTelemetry instrumentation:
+Para executar o agente aritmético básico com instrumentação OpenTelemetry:
 
 ```bash
 opentelemetry-instrument python llama_index_agent.py
 ```
 
-This will execute a simple arithmetic task: `What is (121 + 2) * 5?`
+Isso executará uma tarefa aritmética simples: `What is (121 + 2) * 5?`
 
-### Session-Tracked Agent
+### Agente com Rastreamento de Sessão
 
-To run the agent with session tracking for trace correlation:
+Para executar o agente com rastreamento de sessão para correlação de traces:
 
 ```bash
 opentelemetry-instrument python llama_index_agent_with_session.py --session-id "your-session-id"
 ```
 
-This version allows you to correlate traces across multiple agent runs by using a consistent session ID.
+Esta versão permite correlacionar traces entre múltiplas execuções do agente usando um session ID consistente.
 
-## Jupyter Notebook Tutorial
+## Tutorial em Jupyter Notebook
 
-The repository includes a Jupyter notebook (`LlamaIndex_Observability.ipynb`) that demonstrates:
+O repositório inclui um Jupyter notebook (`LlamaIndex_Observability.ipynb`) que demonstra:
 
-1. Setting up the environment and prerequisites
-2. Creating the necessary CloudWatch log groups
-3. Configuring environment variables
-4. Running the agent with and without session tracking
-5. Understanding the traces in the AWS CloudWatch dashboard
+1. Configuração do ambiente e pré-requisitos
+2. Criação dos log groups necessários no CloudWatch
+3. Configuração das variáveis de ambiente
+4. Execução do agente com e sem rastreamento de sessão
+5. Compreensão dos traces no dashboard do AWS CloudWatch
 
-The notebook serves as an interactive tutorial for setting up and running the agent with proper observability.
+O notebook serve como um tutorial interativo para configurar e executar o agente com observabilidade adequada.
 
-## OpenTelemetry Instrumentation Details
+## Detalhes da Instrumentação OpenTelemetry
 
-This project uses AWS Distro for OpenTelemetry (ADOT) to send telemetry data to AWS CloudWatch. The instrumentation is set up using the `LlamaIndexOpenTelemetry` class from `llama_index.observability.otel`.
+Este projeto utiliza o AWS Distro for OpenTelemetry (ADOT) para enviar dados de telemetria ao AWS CloudWatch. A instrumentação é configurada usando a classe `LlamaIndexOpenTelemetry` do `llama_index.observability.otel`.
 
-Key instrumentation points:
-- Agent initialization
-- LLM calls to AWS Bedrock
-- Tool execution (each tool has its own span)
-- Agent query processing
+Pontos-chave de instrumentação:
+- Inicialização do agente
+- Chamadas LLM ao AWS Bedrock
+- Execução de ferramentas (cada ferramenta possui seu próprio span)
+- Processamento de queries do agente
 
-### Viewing Traces
+### Visualização de Traces
 
-To view the traces:
-1. Ensure CloudWatch Transaction Search is enabled
-2. Navigate to the CloudWatch console
-3. Go to GenAI Observability
-4. Look for traces with your agent's service name (default: `agentic-llamaindex-agentcore`)
+Para visualizar os traces:
+1. Certifique-se de que o CloudWatch Transaction Search está habilitado
+2. Navegue até o console do CloudWatch
+3. Vá para GenAI Observability
+4. Procure traces com o nome de serviço do seu agente (padrão: `agentic-llamaindex-agentcore`)
 
-## Troubleshooting
+## Solução de Problemas
 
-### Common Issues
+### Problemas Comuns
 
-1. **AWS Credentials Not Found**
-   - Ensure AWS credentials are correctly set in your environment
-   - Verify your IAM user has appropriate permissions for Bedrock and CloudWatch
+1. **Credenciais AWS Não Encontradas**
+   - Certifique-se de que as credenciais AWS estão corretamente definidas no seu ambiente
+   - Verifique se seu usuário IAM possui as permissões apropriadas para Bedrock e CloudWatch
 
-2. **OpenTelemetry Traces Not Appearing**
-   - Verify CloudWatch Transaction Search is enabled
-   - Check that the log group specified in `OTEL_EXPORTER_OTLP_LOGS_HEADERS` exists
-   - Ensure AWS region is correctly set
+2. **Traces do OpenTelemetry Não Aparecem**
+   - Verifique se o CloudWatch Transaction Search está habilitado
+   - Confirme que o log group especificado em `OTEL_EXPORTER_OTLP_LOGS_HEADERS` existe
+   - Certifique-se de que a região AWS está corretamente configurada
 
-3. **Bedrock Model Access**
-   - Verify you have access to the Bedrock model specified in `BEDROCK_MODEL_ID`
-   - Check Bedrock model throughput quotas for your account
+3. **Acesso ao Modelo Bedrock**
+   - Verifique se você tem acesso ao modelo Bedrock especificado em `BEDROCK_MODEL_ID`
+   - Confira as cotas de throughput do modelo Bedrock para sua conta
 
-4. **OpenTelemetry Warnings in Jupyter Notebooks**
-   - When running `opentelemetry-instrument` in Jupyter notebook cells, you may see warnings like:
+4. **Avisos do OpenTelemetry em Jupyter Notebooks**
+   - Ao executar `opentelemetry-instrument` em células de Jupyter notebook, você pode ver avisos como:
      ```
      WARNING:opentelemetry.trace:Overriding of current TracerProvider is not allowed
      ```
-     or messages about `SpanDropEvent` and spans exiting with errors.
-   - These warnings are expected in notebook environments and don't affect the agent's functionality or observability data collection
-   - They occur because Jupyter has its own instrumentation context, and running cells multiple times can cause OpenTelemetry to attempt re-registering
-   - You can safely ignore these warnings as long as your agent executes correctly and traces appear in CloudWatch
+     ou mensagens sobre `SpanDropEvent` e spans finalizando com erros.
+   - Esses avisos são esperados em ambientes de notebook e não afetam a funcionalidade do agente ou a coleta de dados de observabilidade
+   - Eles ocorrem porque o Jupyter possui seu próprio contexto de instrumentação, e executar células múltiplas vezes pode fazer o OpenTelemetry tentar se registrar novamente
+   - Você pode ignorar esses avisos com segurança, desde que seu agente execute corretamente e os traces apareçam no CloudWatch
 
-### CloudWatch Log Groups
+### Log Groups do CloudWatch
 
-The OpenTelemetry traces are sent to a CloudWatch log group specified in your environment variables:
+Os traces do OpenTelemetry são enviados para um log group do CloudWatch especificado nas suas variáveis de ambiente:
 ```
 agents/llama-index-agent-logs
 ```
 
-If traces are not appearing, ensure this log group exists and is properly configured in your `.env` file.
+Se os traces não estiverem aparecendo, certifique-se de que este log group existe e está corretamente configurado no seu arquivo `.env`.
 
 
-## Additional Resources
+## Recursos Adicionais
 
-- [LlamaIndex Documentation](https://docs.llamaindex.ai/)
-- [AWS Bedrock Documentation](https://docs.aws.amazon.com/bedrock)
-- [OpenTelemetry Documentation](https://opentelemetry.io/docs/)
+- [Documentação do LlamaIndex](https://docs.llamaindex.ai/)
+- [Documentação do AWS Bedrock](https://docs.aws.amazon.com/bedrock)
+- [Documentação do OpenTelemetry](https://opentelemetry.io/docs/)
 - [AWS Distro for OpenTelemetry (ADOT)](https://aws.amazon.com/otel/)
-- [CloudWatch Transaction Search Documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html)
+- [Documentação do CloudWatch Transaction Search](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html)

@@ -1,124 +1,124 @@
-# Offline Multi-Session Evaluation
+# Avaliação Offline Multi-Sessão
 
-Evaluate deployed AI agent sessions using historical traces from AgentCore Observability. This tool fetches traces from your agent's observability logs, converts them to Strands Evals format, runs evaluations, and logs results back to AgentCore Observability with original trace IDs for dashboard correlation.
+Avalie sessões de agentes de IA implantados usando traces históricos do AgentCore Observability. Esta ferramenta busca traces dos logs de observabilidade do seu agente, converte-os para o formato Strands Evals, executa avaliações e registra os resultados de volta no AgentCore Observability com os IDs de trace originais para correlação no dashboard.
 
-## Use Case
+## Caso de Uso
 
-When you have an AI agent deployed with AgentCore Observability instrumentation, this tool allows you to:
+Quando você tem um agente de IA implantado com instrumentação do AgentCore Observability, esta ferramenta permite que você:
 
-- Run offline evaluations on historical agent interactions
-- Re-evaluate sessions that scored poorly with updated rubrics
-- Test new evaluator configurations against existing traces
-- Compare agent outputs against ground truth (expected responses from SMEs)
-- Perform regression testing to ensure agent changes don't break known-good behavior
-- Correlate evaluation results with original traces in the AgentCore Observability dashboard
+- Execute avaliações offline em interações históricas do agente
+- Reavalie sessões que tiveram pontuação baixa com rubricas atualizadas
+- Teste novas configurações de avaliadores contra traces existentes
+- Compare saídas do agente contra ground truth (respostas esperadas de especialistas)
+- Realize testes de regressão para garantir que mudanças no agente não quebrem comportamentos conhecidos como bons
+- Correlacione resultados de avaliação com traces originais no dashboard do AgentCore Observability
 
-## How It Works
+## Como Funciona
 
-1. **Session Discovery**: Query AgentCore Observability to find agent sessions by time range or by existing evaluation scores
-2. **Trace Fetching**: Retrieve spans for each session using CloudWatch Logs Insights
-3. **Format Conversion**: Map AgentCore Observability spans to Strands Evals Session format (tool calls, agent responses, trajectories)
-4. **Evaluation**: Run evaluators using one of two approaches:
-   - **Rubric-based**: Score against criteria you define (flexible, qualitative)
-   - **Ground Truth**: Compare against expected outputs (reference-based, regression testing)
-5. **Result Logging**: Send evaluation results in EMF format with original trace IDs for dashboard correlation
+1. **Descoberta de Sessões**: Consulte o AgentCore Observability para encontrar sessões de agentes por intervalo de tempo ou por pontuações de avaliação existentes
+2. **Busca de Traces**: Recupere spans para cada sessão usando CloudWatch Logs Insights
+3. **Conversão de Formato**: Mapeie spans do AgentCore Observability para o formato Session do Strands Evals (chamadas de ferramentas, respostas do agente, trajetórias)
+4. **Avaliação**: Execute avaliadores usando uma de duas abordagens:
+   - **Baseada em rubrica**: Pontue contra critérios que você define (flexível, qualitativa)
+   - **Ground Truth**: Compare contra saídas esperadas (baseada em referência, testes de regressão)
+5. **Registro de Resultados**: Envie resultados de avaliação no formato EMF com IDs de trace originais para correlação no dashboard
 
-## Notebook Workflow
+## Fluxo de Trabalho dos Notebooks
 
-![Notebook Workflow](images/notebook_workflow.svg)
+![Fluxo de Trabalho dos Notebooks](images/notebook_workflow.svg)
 
-## Understanding Agent Evaluation
+## Entendendo a Avaliação de Agentes
 
-Agent evaluation goes beyond traditional software testing. While unit tests verify deterministic outputs, agents produce variable responses that require qualitative assessment. Systematic evaluation helps identify failure patterns, measure improvement over time, and ensure consistent quality as you iterate on prompts and tools.
+A avaliação de agentes vai além dos testes de software tradicionais. Enquanto testes unitários verificam saídas determinísticas, agentes produzem respostas variáveis que requerem avaliação qualitativa. A avaliação sistemática ajuda a identificar padrões de falha, medir melhorias ao longo do tempo e garantir qualidade consistente conforme você itera em prompts e ferramentas.
 
-### Two Complementary Approaches
+### Duas Abordagens Complementares
 
-**AgentCore Evaluations** and **Strands Evals** work together seamlessly to provide comprehensive agent quality management:
+**AgentCore Evaluations** e **Strands Evals** trabalham juntos perfeitamente para fornecer gerenciamento abrangente de qualidade de agentes:
 
 | | AgentCore Evaluations | Strands Evals |
 |---|---|---|
-| **Purpose** | Continuous, real-time quality monitoring | Offline batch evaluation and experimentation |
-| **Use Case** | Production monitoring, alerting on quality drops | Testing, regression analysis, rubric development |
-| **Execution** | Fully managed, samples live interactions | On-demand, runs on historical traces |
-| **Built-in Evaluators** | Correctness, helpfulness, tool selection accuracy, safety, goal success rate, context relevance | Output, trajectory, helpfulness, faithfulness, goal success rate, tool accuracy |
-| **Custom Evaluators** | Model-based scoring with custom prompts | Any code-based or LLM-based evaluator |
+| **Propósito** | Monitoramento contínuo de qualidade em tempo real | Avaliação offline em lote e experimentação |
+| **Caso de Uso** | Monitoramento em produção, alertas sobre quedas de qualidade | Testes, análise de regressão, desenvolvimento de rubricas |
+| **Execução** | Totalmente gerenciado, amostra interações ao vivo | Sob demanda, executa em traces históricos |
+| **Avaliadores Integrados** | Correção, utilidade, precisão de seleção de ferramentas, segurança, taxa de sucesso de objetivos, relevância de contexto | Saída, trajetória, utilidade, fidelidade, taxa de sucesso de objetivos, precisão de ferramentas |
+| **Avaliadores Personalizados** | Pontuação baseada em modelo com prompts personalizados | Qualquer avaliador baseado em código ou LLM |
 
-**AgentCore Evaluations** is a fully managed service that continuously monitors agent performance based on real-world behavior. It samples live interactions, scores them against built-in or custom evaluators, and visualizes results in CloudWatch alongside observability insights. Set up alerts when quality metrics drop below thresholds—such as satisfaction declining or politeness scores dropping—to detect and address issues faster.
+**AgentCore Evaluations** é um serviço totalmente gerenciado que monitora continuamente o desempenho do agente com base no comportamento do mundo real. Ele amostra interações ao vivo, pontua-as contra avaliadores integrados ou personalizados e visualiza resultados no CloudWatch junto com insights de observabilidade. Configure alertas quando métricas de qualidade caírem abaixo dos limites — como satisfação diminuindo ou pontuações de polidez caindo — para detectar e resolver problemas mais rapidamente.
 
-**Strands Evals** is a comprehensive evaluation framework providing multiple evaluation types, dynamic simulators for multi-turn conversations, trace-based evaluation via OpenTelemetry, automated experiment generation, and an extensible architecture supporting custom evaluators from any library. See the [Strands Evals documentation](https://strandsagents.com/latest/documentation/docs/user-guide/evals-sdk/quickstart/) for full capabilities.
+**Strands Evals** é um framework de avaliação abrangente que fornece múltiplos tipos de avaliação, simuladores dinâmicos para conversas multi-turno, avaliação baseada em traces via OpenTelemetry, geração automatizada de experimentos e uma arquitetura extensível que suporta avaliadores personalizados de qualquer biblioteca. Veja a [documentação do Strands Evals](https://strandsagents.com/latest/documentation/docs/user-guide/evals-sdk/quickstart/) para capacidades completas.
 
-### This Project
+### Este Projeto
 
-This project uses **Strands Evals for offline evaluation** of traces collected by **AgentCore Observability**, demonstrating two common patterns:
+Este projeto usa **Strands Evals para avaliação offline** de traces coletados pelo **AgentCore Observability**, demonstrando dois padrões comuns:
 
-- **Output Quality**: Does the agent's response correctly and completely address the user's request? Evaluates the final answer regardless of how it was produced.
+- **Qualidade da Saída**: A resposta do agente aborda correta e completamente a solicitação do usuário? Avalia a resposta final independentemente de como foi produzida.
 
-- **Trajectory Quality**: Did the agent use its tools effectively? Evaluates whether the agent selected appropriate tools, used them efficiently, and followed a logical sequence.
+- **Qualidade da Trajetória**: O agente usou suas ferramentas de forma eficaz? Avalia se o agente selecionou ferramentas apropriadas, usou-as eficientemente e seguiu uma sequência lógica.
 
-Results are logged back to AgentCore Observability with original trace IDs, enabling correlation in the dashboard alongside your AgentCore Evaluations results.
+Os resultados são registrados de volta no AgentCore Observability com IDs de trace originais, permitindo correlação no dashboard junto com seus resultados do AgentCore Evaluations.
 
-## Strands Evals Concepts
+## Conceitos do Strands Evals
 
-This tool uses [Strands Evals](https://github.com/strands-agents/strands-evals), a general-purpose evaluation framework for AI agents. Strands Evals uses LLMs as judges to score agent behavior against human-defined criteria. The framework handles the inherent variability in agent responses by quantifying quality on a 0.0 to 1.0 scale with explanations.
+Esta ferramenta usa [Strands Evals](https://github.com/strands-agents/strands-evals), um framework de avaliação de propósito geral para agentes de IA. O Strands Evals usa LLMs como juízes para pontuar o comportamento do agente contra critérios definidos por humanos. O framework lida com a variabilidade inerente nas respostas dos agentes quantificando a qualidade em uma escala de 0.0 a 1.0 com explicações.
 
-**Key insight**: Agents don't produce "correct" or "incorrect" answers—they produce better or worse responses. Strands Evals turns subjective quality assessment into measurable, consistent metrics.
+**Insight principal**: Agentes não produzem respostas "corretas" ou "incorretas" — eles produzem respostas melhores ou piores. O Strands Evals transforma a avaliação subjetiva de qualidade em métricas mensuráveis e consistentes.
 
-Understanding its core concepts helps you customize evaluations effectively.
+Entender seus conceitos principais ajuda você a personalizar avaliações de forma eficaz.
 
-**Session**: Represents a complete user conversation, potentially containing multiple back-and-forth exchanges. In AgentCore Observability, a session groups related interactions by `session.id`.
+**Sessão**: Representa uma conversa completa do usuário, potencialmente contendo múltiplas trocas de ida e volta. No AgentCore Observability, uma sessão agrupa interações relacionadas por `session.id`.
 
-**Trace**: A single user request and the agent's complete response, including all tool calls made to fulfill that request. Each trace has a unique `trace_id` that correlates with AgentCore Observability.
+**Trace**: Uma única solicitação do usuário e a resposta completa do agente, incluindo todas as chamadas de ferramentas feitas para atender àquela solicitação. Cada trace tem um `trace_id` único que se correlaciona com o AgentCore Observability.
 
-**Case**: A test case for evaluation containing the input (user prompt), the actual output (agent response), and metadata (trace_id, tool trajectory). Cases are what evaluators score.
+**Caso**: Um caso de teste para avaliação contendo a entrada (prompt do usuário), a saída real (resposta do agente) e metadados (trace_id, trajetória de ferramentas). Casos são o que os avaliadores pontuam.
 
-**Experiment**: A collection of cases paired with one or more evaluators. Running an experiment produces scores and explanations for each case.
+**Experimento**: Uma coleção de casos pareados com um ou mais avaliadores. Executar um experimento produz pontuações e explicações para cada caso.
 
-## Evaluation Approaches
+## Abordagens de Avaliação
 
-Strands Evals is an extensible LLM-based evaluation framework that supports multiple evaluation approaches. Rather than exact string matching, it uses LLMs as judges to score agent outputs. The framework is designed for flexibility—you can implement virtually any evaluation type.
+O Strands Evals é um framework de avaliação extensível baseado em LLM que suporta múltiplas abordagens de avaliação. Em vez de correspondência exata de strings, ele usa LLMs como juízes para pontuar saídas de agentes. O framework é projetado para flexibilidade — você pode implementar virtualmente qualquer tipo de avaliação.
 
-**Two fundamental evaluation approaches:**
+**Duas abordagens fundamentais de avaliação:**
 
-| Approach | Description | Use When |
+| Abordagem | Descrição | Use Quando |
 |----------|-------------|----------|
-| **Rubric-based** | LLM judges against criteria you define | You want flexible, qualitative assessment |
-| **Ground Truth** | Compare against known-correct answers | You have expected outputs to measure against |
+| **Baseada em Rubrica** | LLM julga contra critérios que você define | Você quer avaliação flexível e qualitativa |
+| **Ground Truth** | Compare contra respostas conhecidas como corretas | Você tem saídas esperadas para medir |
 
-This project demonstrates both approaches in separate notebooks.
+Este projeto demonstra ambas as abordagens em notebooks separados.
 
-### Rubric-based Evaluation (Notebook 02)
+### Avaliação Baseada em Rubrica (Notebook 02)
 
-Define evaluation criteria in a rubric, and the LLM judges each response against your criteria. This approach is ideal when responses can vary but still be "good" in different ways.
+Defina critérios de avaliação em uma rubrica, e o LLM julga cada resposta contra seus critérios. Esta abordagem é ideal quando as respostas podem variar mas ainda ser "boas" de maneiras diferentes.
 
-**OutputEvaluator**: Evaluates the quality of the agent's response. You provide a rubric describing what makes a good response (relevance, accuracy, completeness), and the evaluator uses an LLM to score the output from 0.0 to 1.0 with an explanation.
+**OutputEvaluator**: Avalia a qualidade da resposta do agente. Você fornece uma rubrica descrevendo o que faz uma boa resposta (relevância, precisão, completude), e o avaliador usa um LLM para pontuar a saída de 0.0 a 1.0 com uma explicação.
 
-**TrajectoryEvaluator**: Evaluates how the agent used its tools. You provide a rubric describing good tool usage patterns (appropriate selection, efficiency, logical sequence), and the evaluator scores the tool trajectory from 0.0 to 1.0.
+**TrajectoryEvaluator**: Avalia como o agente usou suas ferramentas. Você fornece uma rubrica descrevendo bons padrões de uso de ferramentas (seleção apropriada, eficiência, sequência lógica), e o avaliador pontua a trajetória de ferramentas de 0.0 a 1.0.
 
-### Ground Truth Evaluation (Notebook 03)
+### Avaliação Ground Truth (Notebook 03)
 
-Compare actual agent outputs against predefined expected responses. This approach is ideal for regression testing, benchmarking, and cases where you have known-correct answers.
+Compare saídas reais do agente contra respostas esperadas predefinidas. Esta abordagem é ideal para testes de regressão, benchmarking e casos onde você tem respostas conhecidas como corretas.
 
-The evaluator compares actual vs expected and scores how well the agent's output matches what a Subject Matter Expert (SME) defined as the correct response. See the [Ground Truth Evaluation](#ground-truth-evaluation) section for details.
+O avaliador compara real vs esperado e pontua quão bem a saída do agente corresponde ao que um Especialista no Assunto (SME) definiu como a resposta correta. Veja a seção [Avaliação Ground Truth](#avaliação-ground-truth) para detalhes.
 
-### Extensibility
+### Extensibilidade
 
-The Strands Evals framework supports custom evaluators beyond what this project demonstrates. Any evaluation that can be expressed as scoring criteria—factual accuracy, safety, domain-specific quality checks, compliance requirements—can be implemented using the LLM-as-judge approach.
+O framework Strands Evals suporta avaliadores personalizados além do que este projeto demonstra. Qualquer avaliação que possa ser expressa como critérios de pontuação — precisão factual, segurança, verificações de qualidade específicas de domínio, requisitos de conformidade — pode ser implementada usando a abordagem LLM-como-juiz.
 
-**How rubrics work**: Your rubric is sent to an LLM along with the agent's output. The LLM acts as a judge, applying your criteria to produce a score and explanation. Well-written rubrics with clear scoring guidance produce more consistent evaluations.
+**Como as rubricas funcionam**: Sua rubrica é enviada a um LLM junto com a saída do agente. O LLM atua como juiz, aplicando seus critérios para produzir uma pontuação e explicação. Rubricas bem escritas com orientação clara de pontuação produzem avaliações mais consistentes.
 
-## Ground Truth Evaluation
+## Avaliação Ground Truth
 
-Ground truth evaluation compares agent outputs against predefined expected responses. This is useful when you have known-correct answers for specific queries and want to measure how closely your agent matches them.
+A avaliação ground truth compara saídas do agente contra respostas esperadas predefinidas. Isso é útil quando você tem respostas conhecidas como corretas para consultas específicas e quer medir quão próximo seu agente corresponde a elas.
 
-![Ground Truth Flow](images/ground_truth_flow.svg)
+![Fluxo Ground Truth](images/ground_truth_flow.svg)
 
-**Key concepts:**
-- **session_id**: Groups all traces from a single user session
-- **trace_id**: Identifies each individual interaction (user prompt + agent response) within a session
+**Conceitos-chave:**
+- **session_id**: Agrupa todos os traces de uma única sessão de usuário
+- **trace_id**: Identifica cada interação individual (prompt do usuário + resposta do agente) dentro de uma sessão
 
-**Two-file approach**: The ground truth notebook uses two files that share the same `session_id`:
+**Abordagem de dois arquivos**: O notebook de ground truth usa dois arquivos que compartilham o mesmo `session_id`:
 
-1. **Traces file** (`demo_traces.json`): Contains actual agent outputs from CloudWatch
+1. **Arquivo de Traces** (`demo_traces.json`): Contém saídas reais do agente do CloudWatch
    ```json
    {
      "session_id": "5B467129-E54A-4F70-908D-CB31818004B5",
@@ -139,7 +139,7 @@ Ground truth evaluation compares agent outputs against predefined expected respo
    }
    ```
 
-2. **Ground truth file** (`demo_ground_truth.json`): SME-created expected outputs
+2. **Arquivo Ground Truth** (`demo_ground_truth.json`): Saídas esperadas criadas pelo SME
    ```json
    {
      "session_id": "5B467129-E54A-4F70-908D-CB31818004B5",
@@ -158,128 +158,128 @@ Ground truth evaluation compares agent outputs against predefined expected respo
    }
    ```
 
-**How it works:**
-1. Notebook fetches traces from CloudWatch (or loads demo file)
-2. SME creates ground truth file with expected outputs for each `trace_id`
-3. Notebook merges by `trace_id`, pairing actual vs expected
-4. Evaluators score each pair
+**Como funciona:**
+1. O notebook busca traces do CloudWatch (ou carrega arquivo de demonstração)
+2. O SME cria arquivo ground truth com saídas esperadas para cada `trace_id`
+3. O notebook mescla por `trace_id`, pareando real vs esperado
+4. Os avaliadores pontuam cada par
 
-**Demo mode**: Run with `USE_DEMO_MODE = True` to test using the provided example files before connecting to your own CloudWatch data.
+**Modo de demonstração**: Execute com `USE_DEMO_MODE = True` para testar usando os arquivos de exemplo fornecidos antes de conectar aos seus próprios dados do CloudWatch.
 
-## Data Flow
+## Fluxo de Dados
 
-The evaluation pipeline transforms AgentCore Observability traces into scored results:
+O pipeline de avaliação transforma traces do AgentCore Observability em resultados pontuados:
 
-![Evaluation Pipeline](images/evaluation_pipeline.svg)
+![Pipeline de Avaliação](images/evaluation_pipeline.svg)
 
-## Project Structure
+## Estrutura do Projeto
 
 ```
-01_session_discovery.ipynb        - Notebook 1: Discover sessions
-02_multi_session_analysis.ipynb   - Notebook 2: Evaluate with custom rubrics
-03_ground_truth_evaluation.ipynb  - Notebook 3: Evaluate against ground truth
-demo_traces.json                  - Example trace data (for demo mode)
-demo_ground_truth.json            - Example ground truth expectations (for demo mode)
-config.py                         - Centralized configuration
-requirements.txt                  - Python dependencies
+01_session_discovery.ipynb        - Notebook 1: Descobrir sessões
+02_multi_session_analysis.ipynb   - Notebook 2: Avaliar com rubricas personalizadas
+03_ground_truth_evaluation.ipynb  - Notebook 3: Avaliar contra ground truth
+demo_traces.json                  - Dados de trace de exemplo (para modo de demonstração)
+demo_ground_truth.json            - Expectativas ground truth de exemplo (para modo de demonstração)
+config.py                         - Configuração centralizada
+requirements.txt                  - Dependências Python
 utils/
-  __init__.py                     - Module exports
-  cloudwatch_client.py            - CloudWatch Logs Insights query client
-  constants.py                    - Constants and evaluator configurations
-  evaluation_cloudwatch_logger.py - EMF logger preserving original trace IDs
-  models.py                       - Data models (Span, TraceData, SessionInfo)
-  session_mapper.py               - AgentCore Observability span to Strands Evals Session mapper
+  __init__.py                     - Exportações do módulo
+  cloudwatch_client.py            - Cliente de consultas CloudWatch Logs Insights
+  constants.py                    - Constantes e configurações de avaliadores
+  evaluation_cloudwatch_logger.py - Logger EMF preservando IDs de trace originais
+  models.py                       - Modelos de dados (Span, TraceData, SessionInfo)
+  session_mapper.py               - Mapeador de spans do AgentCore Observability para Session do Strands Evals
 ```
 
-## Quick Start
+## Início Rápido
 
-### 1. Configure
+### 1. Configurar
 
-Edit `config.py` with your AWS settings:
+Edite `config.py` com suas configurações AWS:
 
 ```python
 AWS_REGION = "us-east-1"
 AWS_ACCOUNT_ID = "123456789012"
-SOURCE_LOG_GROUP = "your-agent-log-group"
-EVAL_RESULTS_LOG_GROUP = "your-eval-log-group"
-EVALUATION_CONFIG_ID = "your-evaluation-config-id"
-SERVICE_NAME = "your-service-name"
+SOURCE_LOG_GROUP = "seu-grupo-de-log-do-agente"
+EVAL_RESULTS_LOG_GROUP = "seu-grupo-de-log-de-avaliacao"
+EVALUATION_CONFIG_ID = "seu-id-de-configuracao-de-avaliacao"
+SERVICE_NAME = "seu-nome-de-servico"
 ```
 
-### 2. Discover Sessions
+### 2. Descobrir Sessões
 
-Run `01_session_discovery.ipynb`:
-- Choose time-based discovery (all sessions in time window) or score-based discovery (sessions by evaluation score)
-- Preview discovered sessions
-- Save to JSON for the evaluation notebooks
+Execute `01_session_discovery.ipynb`:
+- Escolha descoberta baseada em tempo (todas as sessões em janela de tempo) ou descoberta baseada em pontuação (sessões por pontuação de avaliação)
+- Visualize as sessões descobertas
+- Salve em JSON para os notebooks de avaliação
 
-### 3. Evaluate Sessions (Choose One Path)
+### 3. Avaliar Sessões (Escolha Um Caminho)
 
-**Option A: Custom Rubrics** - Run `02_multi_session_analysis.ipynb`:
-- Load discovered sessions (or provide custom session IDs)
-- Customize evaluator rubrics for your use case
-- Run evaluations and view results
-- Results are logged to AgentCore Observability with original trace IDs
+**Opção A: Rubricas Personalizadas** - Execute `02_multi_session_analysis.ipynb`:
+- Carregue sessões descobertas (ou forneça IDs de sessão personalizados)
+- Personalize rubricas de avaliadores para seu caso de uso
+- Execute avaliações e visualize resultados
+- Os resultados são registrados no AgentCore Observability com IDs de trace originais
 
-**Option B: Ground Truth** - Run `03_ground_truth_evaluation.ipynb`:
-- Compare agent outputs against predefined expected responses
-- Useful when you have known-correct answers to evaluate against
-- Supports demo mode with example files (`demo_traces.json`, `demo_ground_truth.json`)
-- Merge your traces with ground truth by `trace_id`
+**Opção B: Ground Truth** - Execute `03_ground_truth_evaluation.ipynb`:
+- Compare saídas do agente contra respostas esperadas predefinidas
+- Útil quando você tem respostas conhecidas como corretas para avaliar
+- Suporta modo de demonstração com arquivos de exemplo (`demo_traces.json`, `demo_ground_truth.json`)
+- Mescle seus traces com ground truth por `trace_id`
 
-## Configuration Reference
+## Referência de Configuração
 
-All settings are in `config.py`. Edit the values directly.
+Todas as configurações estão em `config.py`. Edite os valores diretamente.
 
-| Variable | Description |
+| Variável | Descrição |
 |----------|-------------|
-| `AWS_REGION` | AWS region (e.g., us-east-1) |
-| `AWS_ACCOUNT_ID` | Your AWS account ID |
-| `SOURCE_LOG_GROUP` | AgentCore Observability log group name |
-| `EVAL_RESULTS_LOG_GROUP` | Evaluation results log group name |
-| `EVALUATION_CONFIG_ID` | AgentCore Observability evaluation config ID |
-| `SERVICE_NAME` | Service name for CloudWatch logging |
-| `EVALUATOR_NAME` | Evaluator name for score-based discovery |
-| `LOOKBACK_HOURS` | Hours to look back for sessions (default: 72) |
-| `MAX_SESSIONS` | Maximum sessions to discover (default: 100) |
-| `MIN_SCORE` / `MAX_SCORE` | Score filters for score-based discovery |
-| `MAX_CASES_PER_SESSION` | Max traces to evaluate per session (default: 10) |
+| `AWS_REGION` | Região AWS (ex.: us-east-1) |
+| `AWS_ACCOUNT_ID` | Seu ID de conta AWS |
+| `SOURCE_LOG_GROUP` | Nome do grupo de log do AgentCore Observability |
+| `EVAL_RESULTS_LOG_GROUP` | Nome do grupo de log de resultados de avaliação |
+| `EVALUATION_CONFIG_ID` | ID de configuração de avaliação do AgentCore Observability |
+| `SERVICE_NAME` | Nome do serviço para logging no CloudWatch |
+| `EVALUATOR_NAME` | Nome do avaliador para descoberta baseada em pontuação |
+| `LOOKBACK_HOURS` | Horas para retrospectiva de sessões (padrão: 72) |
+| `MAX_SESSIONS` | Máximo de sessões a descobrir (padrão: 100) |
+| `MIN_SCORE` / `MAX_SCORE` | Filtros de pontuação para descoberta baseada em pontuação |
+| `MAX_CASES_PER_SESSION` | Máximo de traces a avaliar por sessão (padrão: 10) |
 
-## Customization
+## Personalização
 
-### Evaluator Rubrics
+### Rubricas de Avaliadores
 
-In the analysis notebook, customize the rubrics to match your evaluation criteria:
+No notebook de análise, personalize as rubricas para corresponder aos seus critérios de avaliação:
 
 ```python
 output_rubric = """
-Evaluate the agent's response based on:
-1. Relevance: Does it address the user's question?
-2. Accuracy: Is the information correct?
+Avalie a resposta do agente com base em:
+1. Relevância: Ela aborda a pergunta do usuário?
+2. Precisão: As informações estão corretas?
 ...
 """
 ```
 
-### Evaluator Names
+### Nomes de Avaliadores
 
-Set custom evaluator names for CloudWatch metrics:
-
-```python
-OUTPUT_EVALUATOR_NAME = "Custom.YourOutputEvaluator"
-TRAJECTORY_EVALUATOR_NAME = "Custom.YourTrajectoryEvaluator"
-```
-
-### Evaluation Config ID
-
-Set the evaluation config ID in `config.py` to match your AgentCore Observability evaluation configuration:
+Defina nomes personalizados de avaliadores para métricas do CloudWatch:
 
 ```python
-EVALUATION_CONFIG_ID = "your-evaluation-config-id"
+OUTPUT_EVALUATOR_NAME = "Custom.SeuAvaliadorDeSaida"
+TRAJECTORY_EVALUATOR_NAME = "Custom.SeuAvaliadorDeTrajetoria"
 ```
 
-## Requirements
+### ID de Configuração de Avaliação
+
+Defina o ID de configuração de avaliação em `config.py` para corresponder à sua configuração de avaliação do AgentCore Observability:
+
+```python
+EVALUATION_CONFIG_ID = "seu-id-de-configuracao-de-avaliacao"
+```
+
+## Requisitos
 
 - Python 3.9+
-- AWS credentials with CloudWatch Logs access
-- `strands-evals` package
+- Credenciais AWS com acesso ao CloudWatch Logs
+- Pacote `strands-evals`
 - `boto3`

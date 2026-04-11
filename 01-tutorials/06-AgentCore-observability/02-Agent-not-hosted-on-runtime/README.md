@@ -1,50 +1,50 @@
-# Self-Hosted Agent Observability using AgentCore
+# Observabilidade de Agentes Auto-Hospedados usando AgentCore
 
-This section demonstrates AgentCore Observability for popular open-source agent frameworks **not** hosted on Amazon Bedrock AgentCore Runtime. Learn to add comprehensive observability to your existing agents using OpenTelemetry and Amazon CloudWatch.
+Esta seção demonstra a Observabilidade do AgentCore para frameworks de agentes open-source populares **não** hospedados no Amazon Bedrock AgentCore Runtime. Aprenda a adicionar observabilidade abrangente aos seus agentes existentes usando OpenTelemetry e Amazon CloudWatch.
 
-## Available Frameworks
+## Frameworks Disponíveis
 
 ### CrewAI
 - **Notebook**: `CrewAI_Observability.ipynb`
-- **Description**: Autonomous AI agents working in teams
-- **Features**: Multi-agent collaboration with custom instrumentation
+- **Descrição**: Agentes de IA autônomos trabalhando em equipes
+- **Funcionalidades**: Colaboração multi-agente com instrumentação personalizada
 
 ### LangGraph
 - **Notebook**: `Langgraph_Observability.ipynb`
-- **Description**: Stateful, multi-actor LLM applications
-- **Features**: Complex reasoning systems with trace visualization
+- **Descrição**: Aplicações LLM stateful e multi-ator
+- **Funcionalidades**: Sistemas de raciocínio complexo com visualização de traces
 
 ### LlamaIndex
 - **Notebook**: `LlamaIndex_Observability.ipynb`
-- **Description**: LLM-powered agents over data
-- **Features**: Function agents with session tracking
-- **Additional**: Detailed README with architecture diagrams
+- **Descrição**: Agentes alimentados por LLM sobre dados
+- **Funcionalidades**: Function agents com rastreamento de sessão
+- **Adicional**: README detalhado com diagramas de arquitetura
 
 ### Strands Agents
 - **Notebook**: `Strands_Observability.ipynb`
-- **Description**: Model-driven agentic development
-- **Features**: Complex workflow agents with custom spans
+- **Descrição**: Desenvolvimento agêntico orientado por modelos
+- **Funcionalidades**: Agentes de workflow complexo com spans personalizados
 
-## Getting Started
+## Primeiros Passos
 
-1. Choose your framework directory
-2. Install requirements: `pip install -r requirements.txt`
-3. Configure AWS credentials
-4. Copy `.env.example` to `.env` and update variables
-5. Enable CloudWatch Transaction Search
-6. Run the Jupyter notebook
+1. Escolha o diretório do seu framework
+2. Instale as dependências: `pip install -r requirements.txt`
+3. Configure as credenciais AWS
+4. Copie `.env.example` para `.env` e atualize as variáveis
+5. Habilite o CloudWatch Transaction Search
+6. Execute o Jupyter notebook
 
 
-## Prerequisites
+## Pré-requisitos
 
-- AWS account with Bedrock and CloudWatch access with the right permissions
+- Conta AWS com acesso ao Bedrock e CloudWatch com as permissões corretas
 - Python 3.10+
-- AWS CloudWatch Transaction Search enabled
-- Framework-specific dependencies
+- AWS CloudWatch Transaction Search habilitado
+- Dependências específicas do framework
 
-## Cleanup
+## Limpeza
 
-After completing examples:
-1. Delete CloudWatch log groups
-2. Remove any created AWS resources
-3. Clean up local environment files
+Após concluir os exemplos:
+1. Exclua os log groups do CloudWatch
+2. Remova quaisquer recursos AWS criados
+3. Limpe os arquivos de ambiente locais

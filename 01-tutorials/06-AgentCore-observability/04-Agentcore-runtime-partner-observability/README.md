@@ -1,72 +1,71 @@
-# Third-Party Observability Integration
+# Integração de Observabilidade com Terceiros
 
-This section demonstrates how to integrate Amazon Bedrock AgentCore Runtime hosted agents with  third-party observability platforms. Learn to leverage specialized monitoring tools while maintaining the benefits of AgentCore Runtime.
+Esta seção demonstra como integrar agentes hospedados no Amazon Bedrock AgentCore Runtime com plataformas de observabilidade de terceiros. Aprenda a utilizar ferramentas de monitoramento especializadas mantendo os benefícios do AgentCore Runtime.
 
-## Available Integrations
+## Integrações Disponíveis
 
-The publish folder contains:
-- A Jupyter notebook demonstrating AgentCore runtime with various observability solutions
-- A requirements.txt file listing necessary dependencies
+A pasta publish contém:
+- Um notebook Jupyter demonstrando o AgentCore Runtime com várias soluções de observabilidade
+- Um arquivo requirements.txt listando as dependências necessárias
 
-## Getting Started
+## Primeiros Passos
 
-1. Choose your observability platform
-2. Create an account on the respective platform
-3. Obtain API keys and configuration details
-4. Install requirements: `pip install -r requirements.txt`
-5. Configure environment variables in the notebook
-6. Deploy your agent to AgentCore Runtime
-7. Run the notebook to see integrated observability
+1. Escolha sua plataforma de observabilidade
+2. Crie uma conta na respectiva plataforma
+3. Obtenha chaves de API e detalhes de configuração
+4. Instale os requisitos: `pip install -r requirements.txt`
+5. Configure as variáveis de ambiente no notebook
+6. Implante seu agente no AgentCore Runtime
+7. Execute o notebook para ver a observabilidade integrada
 
 
-## Framework Support
+## Suporte a Frameworks
 
-Amazon Bedrock AgentCore supports any agentic framework and model of your choice:
+O Amazon Bedrock AgentCore suporta qualquer framework agêntico e modelo de sua escolha:
 - CrewAI
 - LangGraph
 - LlamaIndex
 - Strands Agents
 
 ### Strands Agents
-[Strands](https://strandsagents.com/latest/) provides built-in telemetry support, making it ideal for demonstrating third-party integrations.
+O [Strands](https://strandsagents.com/latest/) oferece suporte integrado a telemetria, sendo ideal para demonstrar integrações com terceiros.
 
-## Configuration Requirements
+## Requisitos de Configuração
 
-Each platform requires specific configuration:
+Cada plataforma requer configuração específica:
 
 ### Arize
-- API key and Space ID from Arize dashboard
-- Project configuration
+- Chave de API e Space ID do painel Arize
+- Configuração do projeto
 
 ### Braintrust
-- API key from Braintrust dashboard
-- Project configuration
+- Chave de API do painel Braintrust
+- Configuração do projeto
 
 ### Instana
-- Instana key
-- Project configuration
+- Chave do Instana
+- Configuração do projeto
 
 ### Langfuse
-- Public and secret keys
-- Project configuration
+- Chaves pública e secreta
+- Configuração do projeto
 
-## Cleanup
+## Limpeza
 
-After completing examples:
-1. Delete AgentCore Runtime deployments
-2. Remove ECR repositories
-3. Clean up platform-specific resources
-4. Revoke API keys if no longer needed
+Após concluir os exemplos:
+1. Exclua as implantações do AgentCore Runtime
+2. Remova os repositórios ECR
+3. Limpe os recursos específicos da plataforma
+4. Revogue as chaves de API se não forem mais necessárias
 
-## Additional Resources
+## Recursos Adicionais
 
-- [Arize Documentation](https://arize.com/docs/ax)
-- [Braintrust Documentation](https://www.braintrust.dev/docs)
-- [Instana Documentation](https://www.ibm.com/docs/en/instana-observability/1.0.308?topic=overview)
-- [Langfuse Documentation](https://langfuse.com/docs)
-- [AgentCore Runtime Guide](https://docs.aws.amazon.com/bedrock-agentcore/latest/userguide/runtime.html)
+- [Documentação Arize](https://arize.com/docs/ax)
+- [Documentação Braintrust](https://www.braintrust.dev/docs)
+- [Documentação Instana](https://www.ibm.com/docs/en/instana-observability/1.0.308?topic=overview)
+- [Documentação Langfuse](https://langfuse.com/docs)
+- [Guia do AgentCore Runtime](https://docs.aws.amazon.com/bedrock-agentcore/latest/userguide/runtime.html)
 
-# Third-Party Observability for Amazon Bedrock AgentCore Agents
+# Observabilidade de Terceiros para Agentes do Amazon Bedrock AgentCore
 
-This repository contains examples of using agents hosted on Amazon Bedrock AgentCore Runtime with third-party observability tools like Arize, Braintrust, Instana, Langfuse, and others. These examples demonstrate OpenTelemetry integration for monitoring agent performance, tracing LLM interactions, and debugging workflows.
-
+Este repositório contém exemplos de uso de agentes hospedados no Amazon Bedrock AgentCore Runtime com ferramentas de observabilidade de terceiros como Arize, Braintrust, Instana, Langfuse e outros. Estes exemplos demonstram a integração com OpenTelemetry para monitoramento de desempenho de agentes, rastreamento de interações com LLM e depuração de fluxos de trabalho.

@@ -1,101 +1,101 @@
-# Building Production-grade Agents - Continuous Evaluation with Amazon Bedrock AgentCore and Langfuse
+# Construindo Agentes de Nível de Produção - Avaliação Contínua com Amazon Bedrock AgentCore e Langfuse
 
-This project implements a **continuous flywheel for AgentOps** that integrates Amazon Bedrock AgentCore with Langfuse for comprehensive agent development, evaluation, and deployment. The system provides a complete lifecycle management approach for AI agents, from experimentation to production operations.
+Este projeto implementa um **ciclo contínuo para AgentOps** que integra o Amazon Bedrock AgentCore com o Langfuse para desenvolvimento, avaliação e implantação abrangentes de agentes. O sistema fornece uma abordagem completa de gerenciamento de ciclo de vida para agentes de IA, desde a experimentação até as operações em produção.
 
-We first presented this project in Oct 2025 ([pdf slides](https://static.langfuse.com/events/2025_10_continuous_agent_evaluation_with_amazon_bedrock_agentcore_and_langfuse.pdf)).
+Apresentamos este projeto pela primeira vez em outubro de 2025 ([slides em pdf](https://static.langfuse.com/events/2025_10_continuous_agent_evaluation_with_amazon_bedrock_agentcore_and_langfuse.pdf)).
 
-## What We Want to Achieve
+## O Que Queremos Alcançar
 
-Our goal is to implement a **continuous evaluation loop** that enables iterative improvement of AI agents through systematic experimentation, automated testing, and production monitoring. This flywheel approach ensures agents continuously evolve and improve based on real-world performance data.
+Nosso objetivo é implementar um **loop de avaliação contínua** que possibilite a melhoria iterativa de agentes de IA por meio de experimentação sistemática, testes automatizados e monitoramento em produção. Essa abordagem de ciclo contínuo garante que os agentes evoluam e melhorem continuamente com base em dados de desempenho do mundo real.
 
-### The Continuous Flywheel Phases
+### As Fases do Ciclo Contínuo
 
-The system implements a two-phase continuous evaluation loop:
+O sistema implementa um loop de avaliação contínua em duas fases:
 
 ![AgentOps](img/contevalloop.png)
 
-**🔄 Offline Phase (Development & Testing)**
-- **Test Datasets**: Happy path, edge cases, and adversarial inputs
-- **Run Experiments**: Iterate on models, prompts, tools, and logic with safety/regression tests
-- **Evaluate**: Manual annotation and automated evaluations
-- **Deploy**: Move validated agents to production
+**🔄 Fase Offline (Desenvolvimento e Testes)**
+- **Conjuntos de Dados de Teste**: Caminho feliz, casos extremos e entradas adversariais
+- **Executar Experimentos**: Iterar sobre modelos, prompts, ferramentas e lógica com testes de segurança/regressão
+- **Avaliar**: Anotação manual e avaliações automatizadas
+- **Implantar**: Mover agentes validados para produção
 
-**🔄 Online Phase (Production & Monitoring)**
-- **Tracing**: Capture real production data and user interactions
-- **Monitoring**: Online quality evaluations, debugging, and manual review
-- **Feedback Loop**: Add test cases and fix issues based on production insights
+**🔄 Fase Online (Produção e Monitoramento)**
+- **Rastreamento**: Capturar dados reais de produção e interações de usuários
+- **Monitoramento**: Avaliações de qualidade online, depuração e revisão manual
+- **Loop de Feedback**: Adicionar casos de teste e corrigir problemas com base em insights de produção
 
-### AgentOps Lifecycle
+### Ciclo de Vida do AgentOps
 
-The flywheel supports three major lifecycle stages:
+O ciclo contínuo suporta três estágios principais do ciclo de vida:
 
 ![AgentOps](img/agentops.png)
 
-1. **Experimentation & HPO** - Explore and optimize agent configurations
-2. **QA & Testing with CI/CD** - Automated quality assurance and testing
-3. **Production Operations** - Live deployment with continuous monitoring
+1. **Experimentação e HPO** - Explorar e otimizar configurações de agentes
+2. **QA e Testes com CI/CD** - Garantia de qualidade e testes automatizados
+3. **Operações em Produção** - Implantação ao vivo com monitoramento contínuo
 
-This creates a self-improving system where production insights feed back into development, driving continuous agent enhancement.
+Isso cria um sistema de automelhoria onde insights de produção alimentam o desenvolvimento, impulsionando a melhoria contínua dos agentes.
 
-Notes:
+Notas:
 
-The AgentOps lifecycle implements a multi-environment setup (DEV, TST, PRD) to ensure proper infrastructure environment separation while fulfilling data privacy requirements. All agent executions are performed in a remote AWS cloud environment using Amazon Bedrock AgentCore and other services. This cloud-based approach enables all steps to be executed in a copy of the productive target environment, while providing secure and easy access to remote tools and application components that may not be reachable from local environments in an enterprise-grade setup. 
+O ciclo de vida do AgentOps implementa uma configuração multi-ambiente (DEV, TST, PRD) para garantir a separação adequada de infraestrutura entre ambientes, ao mesmo tempo em que cumpre os requisitos de privacidade de dados. Todas as execuções de agentes são realizadas em um ambiente remoto na nuvem AWS usando o Amazon Bedrock AgentCore e outros serviços. Essa abordagem baseada em nuvem permite que todos os passos sejam executados em uma cópia do ambiente alvo de produção, proporcionando acesso seguro e fácil a ferramentas remotas e componentes de aplicação que podem não ser acessíveis a partir de ambientes locais em uma configuração de nível empresarial.
 
-## Project Structure
+## Estrutura do Projeto
 
 ```
 .
 ├── agents/
-│   ├── strands_claude.py          # Strands-based agent implementation with MCP tools
-│   └── requirements.txt            # Agent dependencies (uv, boto3, strands-agents, etc.)
+│   ├── strands_claude.py          # Implementação do agente baseado em Strands com ferramentas MCP
+│   └── requirements.txt            # Dependências do agente (uv, boto3, strands-agents, etc.)
 ├── utils/
-│   ├── agent.py                    # Agent deployment, invocation, and lifecycle management
-│   ├── langfuse.py                 # Langfuse experiment runner and evaluation functions
-│   └── aws.py                      # AWS utilities (SSM parameter store, etc.)
+│   ├── agent.py                    # Implantação, invocação e gerenciamento de ciclo de vida do agente
+│   ├── langfuse.py                 # Executor de experimentos e funções de avaliação do Langfuse
+│   └── aws.py                      # Utilitários AWS (SSM Parameter Store, etc.)
 ├── experimentation/
-│   ├── hpo.py                      # Hyperparameter optimization script
-│   ├── hpo_config.json             # HPO configuration (models and prompts)
-│   └── hpo_config_tmp.json         # Temporary HPO configuration
+│   ├── hpo.py                      # Script de otimização de hiperparâmetros
+│   ├── hpo_config.json             # Configuração de HPO (modelos e prompts)
+│   └── hpo_config_tmp.json         # Configuração temporária de HPO
 ├── simulation/
-│   ├── simulate_users.py           # User interaction simulation and load testing
-│   └── load_config.json            # Test prompts and scenarios
+│   ├── simulate_users.py           # Simulação de interação de usuários e teste de carga
+│   └── load_config.json            # Prompts e cenários de teste
 ├── cicd/
-│   ├── deploy_agent.py             # CI/CD agent deployment script
-│   ├── delete_agent.py             # CI/CD agent cleanup script
-│   ├── check_factuality.py         # Factuality validation and quality checks
-│   ├── hp_config.json              # CI/CD hyperparameter configuration
-│   └── tst.py                      # Testing utilities
-├── Dockerfile                      # Container configuration for agent deployment
-├── requirements.txt                # Project dependencies
-└── README.md                       # This file
+│   ├── deploy_agent.py             # Script de implantação de agente CI/CD
+│   ├── delete_agent.py             # Script de limpeza de agente CI/CD
+│   ├── check_factuality.py         # Validação de factualidade e verificações de qualidade
+│   ├── hp_config.json              # Configuração de hiperparâmetros CI/CD
+│   └── tst.py                      # Utilitários de teste
+├── Dockerfile                      # Configuração de container para implantação do agente
+├── requirements.txt                # Dependências do projeto
+└── README.md                       # Este arquivo
 ```
 
-## Setup
+## Configuração
 
-### Dependencies
+### Dependências
 
-Install the required Python packages:
+Instale os pacotes Python necessários:
 
 ```bash
-# Install project dependencies
+# Instalar dependências do projeto
 pip install -r requirements.txt
 ```
 
-### AWS Configuration
+### Configuração AWS
 
-Proper AWS configuration underpins the entire flywheel. Treat every step as security-critical and follow the principle of least privilege when granting access.
+A configuração adequada da AWS é a base de todo o ciclo. Trate cada etapa como crítica para segurança e siga o princípio de menor privilégio ao conceder acesso.
 
-#### AWS Account Setup
+#### Configuração da Conta AWS
 
-1. **AWS Account**: Use an account that already has Amazon Bedrock AgentCore enabled. If your org uses Control Tower/Landing Zone, request access through the standard intake process.
-2. **AWS CLI**: Install and configure the AWS CLI with appropriate permissions.
-3. **AWS Region**: Configure your preferred AWS region (default: us-west-2).
+1. **Conta AWS**: Use uma conta que já tenha o Amazon Bedrock AgentCore habilitado. Se sua organização usa Control Tower/Landing Zone, solicite acesso pelo processo padrão de entrada.
+2. **AWS CLI**: Instale e configure o AWS CLI com as permissões apropriadas.
+3. **Região AWS**: Configure sua região AWS preferida (padrão: us-west-2).
 
-#### AWS IAM Permissions
+#### Permissões IAM da AWS
 
-Create two scoped IAM principals: one for local experimentation and one for CI/CD. Start by reviewing the AWS-managed policy [BedrockAgentCoreFullAccess](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/security-iam-awsmanpol.html) to understand the full surface. For production use, copy only the permissions you need from the [AgentCore IAM reference](https://docs.aws.amazon.com/IAM/latest/UserGuide/list_amazonbedrockagentcore.html) so that access remains least-privilege.
+Crie dois principals IAM com escopo definido: um para experimentação local e outro para CI/CD. Comece revisando a política gerenciada pela AWS [BedrockAgentCoreFullAccess](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/security-iam-awsmanpol.html) para entender toda a superfície. Para uso em produção, copie apenas as permissões necessárias da [referência IAM do AgentCore](https://docs.aws.amazon.com/IAM/latest/UserGuide/list_amazonbedrockagentcore.html) para que o acesso permaneça com menor privilégio.
 
-The baseline policy below covers the actions required for this repository (create/update/delete and invoke AgentCore runtimes plus gateway targets), image pushes to ECR, and reads from SSM Parameter Store. Replace the account IDs/regions with your own and, when possible, scope the `Resource` entries to specific `runtime` or `runtime-endpoint` ARNs as documented in the service authorization reference.
+A política base abaixo cobre as ações necessárias para este repositório (criar/atualizar/excluir e invocar runtimes do AgentCore, além de targets do gateway), push de imagens para o ECR e leituras do SSM Parameter Store. Substitua os IDs de conta/regiões pelos seus e, quando possível, defina o escopo das entradas `Resource` para ARNs específicos de `runtime` ou `runtime-endpoint` conforme documentado na referência de autorização do serviço.
 
 ```json
 {
@@ -158,24 +158,24 @@ The baseline policy below covers the actions required for this repository (creat
 }
 ```
 
-##### IAM user for Experimentation & HPO (local manual execution)
+##### Usuário IAM para Experimentação e HPO (execução manual local)
 
-- Attach the baseline policy above.
-- Provide programmatic access keys so that `experimentation/hpo.py` and `utils/agent.py` can authenticate.
-- Rotate these keys when handing over to another engineer or finishing a major experiment wave.
+- Anexe a política base acima.
+- Forneça chaves de acesso programático para que `experimentation/hpo.py` e `utils/agent.py` possam se autenticar.
+- Faça a rotação dessas chaves ao transferir para outro engenheiro ou ao finalizar uma grande onda de experimentos.
 
-##### IAM user/role for QA & Testing (GitHub Actions CI/CD)
+##### Usuário/role IAM para QA e Testes (CI/CD do GitHub Actions)
 
-- Attach the same baseline policy plus `AmazonSSMReadOnlyAccess` if your security team prefers AWS-managed policies.
-- Store the generated access key/secret as `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` GitHub repository secrets.
+- Anexe a mesma política base mais `AmazonSSMReadOnlyAccess` se sua equipe de segurança preferir políticas gerenciadas pela AWS.
+- Armazene a chave de acesso/segredo gerada como secrets `AWS_ACCESS_KEY_ID` e `AWS_SECRET_ACCESS_KEY` no repositório GitHub.
 
-##### Amazon Bedrock API key
+##### Chave de API do Amazon Bedrock
 
-Bedrock AgentCore leverages your account permissions, but remote evaluations from Langfuse Cloud call the Bedrock ChatCompletions API directly. Follow the [Bedrock API key guide](https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html) and store the resulting key in Langfuse (see Langfuse Configuration below).
+O Bedrock AgentCore utiliza as permissões da sua conta, mas avaliações remotas do Langfuse Cloud chamam a API ChatCompletions do Bedrock diretamente. Siga o [guia de chaves de API do Bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html) e armazene a chave resultante no Langfuse (veja Configuração do Langfuse abaixo).
 
-#### AWS Systems Manager Parameters
+#### Parâmetros do AWS Systems Manager
 
-Use SSM Parameter Store to centralize sensitive Langfuse credentials so that both local scripts and CI/CD workloads can fetch them securely. The following foundation keeps secrets in one place and auditable:
+Use o SSM Parameter Store para centralizar credenciais sensíveis do Langfuse para que tanto scripts locais quanto workloads de CI/CD possam obtê-las com segurança. A seguinte base mantém os segredos em um único lugar e auditável:
 
 ```bash
 aws ssm put-parameter --name "/langfuse/LANGFUSE_PROJECT_NAME" --value "your-project-name" --type "String"
@@ -184,89 +184,89 @@ aws ssm put-parameter --name "/langfuse/LANGFUSE_PUBLIC_KEY" --value "your-publi
 aws ssm put-parameter --name "/langfuse/LANGFUSE_HOST" --value "https://us.cloud.langfuse.com" --type "String"
 ```
 
-- `LANGFUSE_PROJECT_NAME`: must match the value shown in your Langfuse project settings (case sensitive).
-- `LANGFUSE_SECRET_KEY`: used only by trusted backends (CI/CD, AgentCore lambdas); always store it as `SecureString`.
-- `LANGFUSE_PUBLIC_KEY`: consumed by SDKs that merely need authenticated ingestion calls.
-- `LANGFUSE_HOST`: choose the Langfuse region that holds your project.
+- `LANGFUSE_PROJECT_NAME`: deve corresponder ao valor mostrado nas configurações do seu projeto Langfuse (sensível a maiúsculas/minúsculas).
+- `LANGFUSE_SECRET_KEY`: usado apenas por backends confiáveis (CI/CD, lambdas do AgentCore); sempre armazene como `SecureString`.
+- `LANGFUSE_PUBLIC_KEY`: consumido por SDKs que apenas precisam de chamadas de ingestão autenticadas.
+- `LANGFUSE_HOST`: escolha a região do Langfuse que hospeda seu projeto.
 
-`utils/aws.py` fetches these parameters at runtime, so no additional configuration files are needed.
+`utils/aws.py` obtém esses parâmetros em tempo de execução, portanto nenhum arquivo de configuração adicional é necessário.
 
-### Langfuse Configuration
+### Configuração do Langfuse
 
-Langfuse acts as the system of record for evaluations, datasets, and annotation queues. Make sure the configuration below matches what you stored in Parameter Store.
+O Langfuse atua como o sistema de registro para avaliações, conjuntos de dados e filas de anotação. Certifique-se de que a configuração abaixo corresponda ao que você armazenou no Parameter Store.
 
-#### Langfuse Account Setup
+#### Configuração da Conta Langfuse
 
-1. **Create Account**: Sign up at https://langfuse.com (cloud) or deploy Langfuse OSS if you need self-hosting.
-2. **Create Project**: From the dashboard, create a project dedicated to this flywheel.
-3. **Get API Keys**: Copy the public key, secret key, and project name from the [project settings](https://langfuse.com/faq/all/where-are-langfuse-api-keys) and populate the SSM parameters described above.
+1. **Criar Conta**: Cadastre-se em https://langfuse.com (nuvem) ou implante o Langfuse OSS se precisar de auto-hospedagem.
+2. **Criar Projeto**: No painel, crie um projeto dedicado a este ciclo.
+3. **Obter Chaves de API**: Copie a chave pública, chave secreta e nome do projeto das [configurações do projeto](https://langfuse.com/faq/all/where-are-langfuse-api-keys) e preencha os parâmetros SSM descritos acima.
 
-#### Configure the LLM connection to Amazon Bedrock
+#### Configurar a conexão LLM com o Amazon Bedrock
 
-- In Langfuse, open **Settings → LLM Connections** and create a connection using the Bedrock ChatCompletions endpoint. Documentation: https://langfuse.com/docs/administration/llm-connection
-- Provide the Bedrock API key created earlier and list the model identifiers you plan to use.
-- This connection lets Langfuse remote evaluators call Bedrock directly.
+- No Langfuse, abra **Settings → LLM Connections** e crie uma conexão usando o endpoint ChatCompletions do Bedrock. Documentação: https://langfuse.com/docs/administration/llm-connection
+- Forneça a chave de API do Bedrock criada anteriormente e liste os identificadores de modelo que você planeja usar.
+- Essa conexão permite que os avaliadores remotos do Langfuse chamem o Bedrock diretamente.
 
-#### Default model for remote LLM-as-a-Judge evaluations
+#### Modelo padrão para avaliações remotas LLM-as-a-Judge
 
-- Navigate to **Settings → Evaluations** and set the default model for LLMaaJ to the Bedrock model that offers the right balance of intelligence, latency and cost. Detailed steps: https://langfuse.com/docs/evaluation/evaluation-methods/llm-as-a-judge#set-the-default-model
-- You can override the default per evaluator, but setting it globally avoids accidental use of the wrong model when running evaluations.
+- Navegue até **Settings → Evaluations** e defina o modelo padrão para LLMaaJ como o modelo Bedrock que oferece o melhor equilíbrio entre inteligência, latência e custo. Passos detalhados: https://langfuse.com/docs/evaluation/evaluation-methods/llm-as-a-judge#set-the-default-model
+- Você pode substituir o padrão por avaliador, mas defini-lo globalmente evita o uso acidental do modelo errado ao executar avaliações.
 
-#### Langfuse dataset setup
+#### Configuração do conjunto de dados do Langfuse
 
-Create the golden dataset `strands-ai-mcp-agent-evaluation` (or a name of your choice). The snippet below matches what `Langfuse().create_dataset` expects:
+Crie o conjunto de dados golden `strands-ai-mcp-agent-evaluation` (ou um nome de sua escolha). O trecho abaixo corresponde ao que `Langfuse().create_dataset` espera:
 
 ```python
-# Example: Creating a dataset in Langfuse
+# Exemplo: Criando um conjunto de dados no Langfuse
 from langfuse import Langfuse
 
 langfuse = Langfuse()
 
-# Create a dataset
+# Criar um conjunto de dados
 dataset = langfuse.create_dataset(
     name="strands-ai-mcp-agent-evaluation",
     description="Evaluation dataset for MCP agent testing"
 )
 
-# Add items to the dataset
+# Adicionar itens ao conjunto de dados
 dataset.create_item(
     input={"question": "What is Langfuse and how does it help monitor LLM applications?"},
     expected_output="Langfuse is an observability platform for LLM applications that provides comprehensive monitoring, tracing, and evaluation capabilities for LLM-based systems."
 )
 ```
 
-### GitHub Configuration
+### Configuração do GitHub
 
-#### Repository Setup
+#### Configuração do Repositório
 
-1. **Fork Repository**: Fork this repository to your GitHub account
-2. **Clone Locally**: Clone your forked repository to your local machine
-3. **Set Up CI/CD**: The CI/CD pipeline is automatically configured in `.github/workflows/`
+1. **Fork do Repositório**: Faça um fork deste repositório para sua conta GitHub
+2. **Clone Local**: Clone seu repositório forkado para sua máquina local
+3. **Configurar CI/CD**: O pipeline de CI/CD é configurado automaticamente em `.github/workflows/`
 
-#### GitHub Secrets
+#### Secrets do GitHub
 
-Set up the following secrets in your GitHub repository settings:
+Configure os seguintes secrets nas configurações do seu repositório GitHub:
 
-- `AWS_ACCESS_KEY_ID` - Your AWS access key
-- `AWS_SECRET_ACCESS_KEY` - Your AWS secret key
-- `AWS_REGION` - Your AWS region (e.g., us-west-2)
+- `AWS_ACCESS_KEY_ID` - Sua chave de acesso AWS
+- `AWS_SECRET_ACCESS_KEY` - Sua chave secreta AWS
+- `AWS_REGION` - Sua região AWS (ex.: us-west-2)
 
-#### CI/CD Pipeline
+#### Pipeline de CI/CD
 
-The GitHub Actions workflow will automatically:
-- Deploy agents for testing
-- Run evaluations
-- Deploy to production (if quality gates pass)
-- Clean up test resources
+O workflow do GitHub Actions irá automaticamente:
+- Implantar agentes para teste
+- Executar avaliações
+- Implantar em produção (se os gates de qualidade forem aprovados)
+- Limpar recursos de teste
 
-## Golden Dataset
+## Conjunto de Dados Golden
 
-The repository includes a ready-to-import dataset file at `dataset.json`. Each entry contains exactly two properties:
+O repositório inclui um arquivo de conjunto de dados pronto para importação em `dataset.json`. Cada entrada contém exatamente duas propriedades:
 
-- `input`: An object that mirrors the payload you send to the agent.
-- `expected_output`: The original ground-truth structure captured from production traces (trajectory hints, search terms, and reference facts). 
+- `input`: Um objeto que espelha o payload que você envia ao agente.
+- `expected_output`: A estrutura original de verdade base capturada de traces de produção (dicas de trajetória, termos de busca e fatos de referência).
 
-Example entry from the file:
+Exemplo de entrada do arquivo:
 ```json
 {
   "input": {
@@ -286,7 +286,7 @@ Example entry from the file:
 }
 ```
 
-Use the snippet below to create the `strands-ai-mcp-agent-evaluation` dataset in Langfuse and populate it directly from `dataset.json`:
+Use o trecho abaixo para criar o conjunto de dados `strands-ai-mcp-agent-evaluation` no Langfuse e preenchê-lo diretamente a partir de `dataset.json`:
 
 ```python
 from pathlib import Path
@@ -308,29 +308,29 @@ for item in items:
     )
 ```
 
-## Usage
+## Uso
 
-1. **Experimentation & HPO** - Explore and optimize agent configurations
-2. **QA & Testing with CI/CD** - Automated quality assurance and testing
-3. **Production Operations** - Live deployment with continuous monitoring
+1. **Experimentação e HPO** - Explorar e otimizar configurações de agentes
+2. **QA e Testes com CI/CD** - Garantia de qualidade e testes automatizados
+3. **Operações em Produção** - Implantação ao vivo com monitoramento contínuo
 
-### 1. Experimentation & HPO phase
+### 1. Fase de Experimentação e HPO
 
-The HPO script tests different model and prompt combinations with comprehensive evaluation:
+O script de HPO testa diferentes combinações de modelo e prompt com avaliação abrangente:
 
 ```bash
 python experimentation/hpo.py
 ```
 
-This will:
-1. **Deploy Phase**: Deploy agents with different model and prompt combinations
-2. **Evaluation Phase**: Run Langfuse experiments on each deployed agent
-3. **Cleanup Phase**: Delete all deployed agents and ECR repositories
-4. **Reporting**: Generate comprehensive results summary
+Isso irá:
+1. **Fase de Implantação**: Implantar agentes com diferentes combinações de modelo e prompt
+2. **Fase de Avaliação**: Executar experimentos do Langfuse em cada agente implantado
+3. **Fase de Limpeza**: Excluir todos os agentes implantados e repositórios ECR
+4. **Relatórios**: Gerar resumo abrangente dos resultados
 
-#### HPO Configuration
+#### Configuração de HPO
 
-Edit `experimentation/hpo_config.json` to customize the optimization:
+Edite `experimentation/hpo_config.json` para personalizar a otimização:
 
 ```json
 {
@@ -345,122 +345,122 @@ Edit `experimentation/hpo_config.json` to customize the optimization:
 }
 ```
 
-This example includes two hyperparameter dimensions: system prompts and models. You can configure additional dimensions by:
+Este exemplo inclui duas dimensões de hiperparâmetros: prompts de sistema e modelos. Você pode configurar dimensões adicionais:
 
-1. **Expanding the configuration file** (`experimentation/hpo_config.json`)
-2. **Parameterizing the agent code** (`agents/strands_claude.py`)
-3. **Ensuring hyperparameters are set** during agent deployment (`utils/agent.py`)
+1. **Expandindo o arquivo de configuração** (`experimentation/hpo_config.json`)
+2. **Parametrizando o código do agente** (`agents/strands_claude.py`)
+3. **Garantindo que os hiperparâmetros sejam definidos** durante a implantação do agente (`utils/agent.py`)
 
-This modular approach allows you to easily add new hyperparameters and test different combinations systematically.
+Essa abordagem modular permite que você adicione facilmente novos hiperparâmetros e teste diferentes combinações sistematicamente.
 
-For evaluation, the system leverages offline remote evaluators in Langfuse on your golden dataset. Langfuse provides a comprehensive set of pre-built evaluators maintained by both Langfuse and Ragas teams. You can also build custom evaluators to meet your specific requirements.
+Para avaliação, o sistema utiliza avaliadores remotos offline no Langfuse sobre seu conjunto de dados golden. O Langfuse fornece um conjunto abrangente de avaliadores pré-construídos mantidos pelas equipes do Langfuse e do Ragas. Você também pode construir avaliadores personalizados para atender aos seus requisitos específicos.
 
-### Setting Up Evaluators
+### Configurando Avaliadores
 
-To configure evaluators for your experiment proceed as follows:
+Para configurar avaliadores para seu experimento, proceda da seguinte forma:
 
-![Creating Evaluators](img/create-evals.gif)
+![Criando Avaliadores](img/create-evals.gif)
 
-### Available Evaluator Types
+### Tipos de Avaliadores Disponíveis
 
-- **Langfuse-managed**: Evaluators provided and maintained by Langfuse
-- **Ragas-managed**: Evaluators provided and maintained by Ragas
-- **Custom metrics**: Define domain-specific evaluation criteria
+- **Gerenciados pelo Langfuse**: Avaliadores fornecidos e mantidos pelo Langfuse
+- **Gerenciados pelo Ragas**: Avaliadores fornecidos e mantidos pelo Ragas
+- **Métricas personalizadas**: Defina critérios de avaliação específicos do domínio
 
-After running a hyperparameter optimization iteration, you can access and analyze the results to determine the optimal configuration:
+Após executar uma iteração de otimização de hiperparâmetros, você pode acessar e analisar os resultados para determinar a configuração ideal:
 
-### Viewing HPO Results
+### Visualizando Resultados de HPO
 
-The HPO results per dataset can be viewed as follows:
+Os resultados de HPO por conjunto de dados podem ser visualizados da seguinte forma:
 
-![Viewing HPO Results](img/dataset-run.gif)
+![Visualizando Resultados de HPO](img/dataset-run.gif)
 
-### Selecting the Best Configuration
+### Selecionando a Melhor Configuração
 
-- **Review the comprehensive results summary** generated by the HPO script
-- **Compare performance metrics** across all tested combinations
-- **Consider trade-offs** between accuracy, speed, and cost
-- **Validate results** with additional testing if needed
-- **Pick the optimal configuration** for production
+- **Revise o resumo abrangente dos resultados** gerado pelo script de HPO
+- **Compare as métricas de desempenho** em todas as combinações testadas
+- **Considere os trade-offs** entre precisão, velocidade e custo
+- **Valide os resultados** com testes adicionais, se necessário
+- **Escolha a configuração ideal** para produção
 
-### 2. QA & Testing with CI/CD
+### 2. QA e Testes com CI/CD
 
-After selecting the optimal hyperparameter configuration from the experimentation phase, the system moves towards production deployment. However, before going live, comprehensive automated quality assurance and testing ensure everything works correctly in a controlled environment.
+Após selecionar a configuração ideal de hiperparâmetros da fase de experimentação, o sistema avança para a implantação em produção. No entanto, antes de entrar em operação, garantia de qualidade e testes automatizados abrangentes asseguram que tudo funcione corretamente em um ambiente controlado.
 
-![CI/CD Pipeline](img/cicd.png)
+![Pipeline de CI/CD](img/cicd.png)
 
-#### Automated CI/CD Pipeline
+#### Pipeline de CI/CD Automatizado
 
-The CI/CD pipeline is triggered automatically when code is pushed to the Git repository. The pipeline configuration can be found in `.github/workflows`, with individual steps defined in the `cicd/` directory.
+O pipeline de CI/CD é acionado automaticamente quando o código é enviado ao repositório Git. A configuração do pipeline pode ser encontrada em `.github/workflows`, com etapas individuais definidas no diretório `cicd/`.
 
-**Pipeline Workflow:**
+**Fluxo do Pipeline:**
 
-1. **Code Push Trigger**: Git push to the repository initiates the CI/CD pipeline
-2. **Agent Deployment**: Deploy an ephemeral agent to AWS Bedrock AgentCore for testing
-3. **Local Evaluation**: Execute comprehensive evaluation against the golden dataset
-4. **Quality Gate**: Validate results against predefined quality thresholds
-5. **Production Deployment**: Deploy to production only if quality standards are met
-6. **Cleanup**: Tear down the ephemeral test agent
+1. **Gatilho de Push de Código**: Push no Git para o repositório inicia o pipeline de CI/CD
+2. **Implantação do Agente**: Implantar um agente efêmero no AWS Bedrock AgentCore para teste
+3. **Avaliação Local**: Executar avaliação abrangente contra o conjunto de dados golden
+4. **Gate de Qualidade**: Validar resultados contra limites de qualidade predefinidos
+5. **Implantação em Produção**: Implantar em produção apenas se os padrões de qualidade forem atendidos
+6. **Limpeza**: Desmontar o agente de teste efêmero
 
-#### Local Evaluation Strategy
+#### Estratégia de Avaliação Local
 
-The QA phase uses a different evaluation approach compared to the experimentation phase:
+A fase de QA usa uma abordagem de avaliação diferente em comparação com a fase de experimentação:
 
-- **Dataset Flexibility**: The golden dataset for QA can differ from the experimentation dataset, allowing for more comprehensive testing scenarios
-- **Local Execution**: Evaluations run locally within the CI/CD pipeline rather than on the Langfuse cloud platform
-- **Synchronous Results**: Local execution provides immediate, synchronous results without external platform dependencies
-- **AutoEvals Integration**: Uses AutoEvals evaluators for local execution, as Langfuse platform evaluators aren't accessible in the CI/CD environment
+- **Flexibilidade do Conjunto de Dados**: O conjunto de dados golden para QA pode diferir do conjunto de dados de experimentação, permitindo cenários de teste mais abrangentes
+- **Execução Local**: As avaliações são executadas localmente dentro do pipeline de CI/CD em vez de na plataforma de nuvem do Langfuse
+- **Resultados Síncronos**: A execução local fornece resultados imediatos e síncronos sem dependências de plataformas externas
+- **Integração com AutoEvals**: Usa avaliadores AutoEvals para execução local, já que os avaliadores da plataforma Langfuse não são acessíveis no ambiente de CI/CD
 
-#### Quality Assurance Process
+#### Processo de Garantia de Qualidade
 
-The evaluation process ensures production readiness:
+O processo de avaliação garante a prontidão para produção:
 
-1. **Ephemeral Agent Testing**: Deploy a temporary agent instance specifically for testing
-2. **Comprehensive Evaluation**: Run the full evaluation suite against the golden dataset
-3. **Quality Threshold Validation**: Verify that all metrics meet the predefined quality bar
-4. **Automated Decision Making**: Only proceed to production deployment if quality standards are satisfied
-5. **Resource Cleanup**: Automatically tear down the test agent after evaluation completion
+1. **Teste de Agente Efêmero**: Implantar uma instância temporária do agente especificamente para teste
+2. **Avaliação Abrangente**: Executar o conjunto completo de avaliações contra o conjunto de dados golden
+3. **Validação do Limite de Qualidade**: Verificar se todas as métricas atendem ao padrão de qualidade predefinido
+4. **Tomada de Decisão Automatizada**: Prosseguir para implantação em produção apenas se os padrões de qualidade forem satisfeitos
+5. **Limpeza de Recursos**: Desmontar automaticamente o agente de teste após a conclusão da avaliação
 
-This approach guarantees that only thoroughly tested and validated configurations reach production, maintaining high quality and reliability standards.
+Essa abordagem garante que apenas configurações completamente testadas e validadas cheguem à produção, mantendo altos padrões de qualidade e confiabilidade.
 
-### 3. Production Operations
+### 3. Operações em Produção
 
-Once the agent is successfully deployed to production, the focus shifts to achieving operational excellence in a  automated manner and closing the flywheel loop for continuous improvement. This phase ensures the agent performs optimally in real-world scenarios while maintaining high quality standards.
+Uma vez que o agente é implantado com sucesso em produção, o foco muda para alcançar excelência operacional de maneira automatizada e fechar o loop do ciclo contínuo para melhoria contínua. Esta fase garante que o agente tenha desempenho ideal em cenários do mundo real, mantendo altos padrões de qualidade.
 
-#### Live Evaluation and Monitoring
+#### Avaliação e Monitoramento ao Vivo
 
-The production environment implements comprehensive live evaluation and monitoring systems:
+O ambiente de produção implementa sistemas abrangentes de avaliação e monitoramento ao vivo:
 
-**Live Evaluators Setup:**
-- **Configuration**: Similar to dataset evaluators from the experimentation phase, but configured for live production data
-- **Evaluation Types**: Primarily evaluations without ground truth, focusing on quality metrics and performance indicators
-- **Sampling Strategy**: Enable sampling to evaluate a subset of production traffic for cost efficiency
-- **Model Selection**: Use smaller, faster models for latency-critical evaluations
+**Configuração de Avaliadores ao Vivo:**
+- **Configuração**: Semelhante aos avaliadores de conjunto de dados da fase de experimentação, mas configurados para dados de produção ao vivo
+- **Tipos de Avaliação**: Principalmente avaliações sem verdade base, focando em métricas de qualidade e indicadores de desempenho
+- **Estratégia de Amostragem**: Habilitar amostragem para avaliar um subconjunto do tráfego de produção para eficiência de custos
+- **Seleção de Modelo**: Usar modelos menores e mais rápidos para avaliações críticas em latência
 
-#### Continuous Learning and Improvement
+#### Aprendizado e Melhoria Contínuos
 
-Setting up human annotation queues in the production phase creates a feedback loop for continuous agent improvement. Annotation queues in Langfuse can be set up as follows:
+Configurar filas de anotação humana na fase de produção cria um loop de feedback para melhoria contínua do agente. As filas de anotação no Langfuse podem ser configuradas da seguinte forma:
 
-![Setting up Annotation Queues](img/annotations-gif.gif)
+![Configurando Filas de Anotação](img/annotations-gif.gif)
 
-This creates the foundation for iterative improvement: 
-- Production insights feed back into the experimentation phase
-- New test cases are derived from real-world scenarios
-- Agent configurations are continuously refined based on production performance
-- Quality standards are maintained through ongoing evaluation
+Isso cria a base para melhoria iterativa:
+- Insights de produção alimentam a fase de experimentação
+- Novos casos de teste são derivados de cenários do mundo real
+- Configurações de agentes são continuamente refinadas com base no desempenho em produção
+- Padrões de qualidade são mantidos por meio de avaliação contínua
 
-#### Production Traffic Simulation
+#### Simulação de Tráfego de Produção
 
-To test and validate production scenarios, the system includes a comprehensive user simulator:
+Para testar e validar cenários de produção, o sistema inclui um simulador de usuários abrangente:
 
-**User Simulator Usage:**
+**Uso do Simulador de Usuários:**
 
 ```python
-# Example: Running the user simulator
+# Exemplo: Executando o simulador de usuários
 python simulation/simulate_users.py
 ```
 
-**Configuration Setup:**
+**Configuração:**
 
 ```json
 {
@@ -481,29 +481,26 @@ python simulation/simulate_users.py
 }
 ```
 
-**Simulator Features:**
-- **Load Testing**: Simulate high-volume production traffic
-- **Edge Case Testing**: Include harmful or edge case prompts for safety validation
-- **Performance Monitoring**: Track response times and success rates
-- **Error Handling**: Comprehensive error detection and reporting
-- **Scalability Testing**: Validate agent performance under various load conditions
+**Recursos do Simulador:**
+- **Teste de Carga**: Simular tráfego de produção de alto volume
+- **Teste de Casos Extremos**: Incluir prompts prejudiciais ou de casos extremos para validação de segurança
+- **Monitoramento de Desempenho**: Rastrear tempos de resposta e taxas de sucesso
+- **Tratamento de Erros**: Detecção e relatório abrangentes de erros
+- **Teste de Escalabilidade**: Validar o desempenho do agente sob várias condições de carga
 
-**Customization Options:**
-- Modify `simulation/load_config.json` to add custom test scenarios
-- Update `AGENT_ARN` in `simulate_users.py` to target specific production agents
+**Opções de Personalização:**
+- Modifique `simulation/load_config.json` para adicionar cenários de teste personalizados
+- Atualize `AGENT_ARN` em `simulate_users.py` para direcionar agentes de produção específicos
 
-This production operations approach ensures continuous improvement while maintaining high performance and reliability standards in real-world environments.
+Essa abordagem de operações em produção garante melhoria contínua, mantendo altos padrões de desempenho e confiabilidade em ambientes do mundo real.
 
-## Contributing
+## Contribuindo
 
-Feel free to extend the evaluators, add new experiment types, or improve the agent implementation. Areas for contribution:
-- Additional evaluation metrics and evaluators
-- New simulation scenarios and test cases
-- Enhanced CI/CD pipeline features
-- Additional MCP tool integrations
-- Performance optimizations
+Sinta-se à vontade para estender os avaliadores, adicionar novos tipos de experimentos ou melhorar a implementação do agente. Áreas para contribuição:
+- Métricas e avaliadores de avaliação adicionais
+- Novos cenários de simulação e casos de teste
+- Recursos aprimorados do pipeline de CI/CD
+- Integrações adicionais de ferramentas MCP
+- Otimizações de desempenho
 
-Contributions will be reviewed based on the concept of PRs. 
-
-
-
+As contribuições serão revisadas com base no conceito de PRs.

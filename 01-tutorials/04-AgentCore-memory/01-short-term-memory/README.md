@@ -1,80 +1,80 @@
-# AgentCore Memory: Short-Term Memory
+# AgentCore Memory: Memória de Curto Prazo
 
-## Overview
+## Visão Geral
 
-Short-term memory in Amazon Bedrock AgentCore provides immediate conversation context and session-based information management. It enables AI agents to maintain continuity within a single interaction or closely related sessions, ensuring coherent and contextually aware responses throughout a conversation.
+A memória de curto prazo no Amazon Bedrock AgentCore fornece contexto de conversa imediato e gerenciamento de informações baseado em sessão. Ela permite que agentes de IA mantenham continuidade dentro de uma única interação ou sessões intimamente relacionadas, garantindo respostas coerentes e contextualmente conscientes ao longo de uma conversa.
 
-## What is Short-Term Memory?
+## O que é Memória de Curto Prazo?
 
-Short-term memory focuses on:
+A memória de curto prazo foca em:
 
-- **Session Continuity**: Maintaining context within a single conversation session
-- **Immediate Context**: Preserving recent conversation history for coherent responses
-- **Temporary State**: Managing transient information that's relevant for the current interaction
-- **Conversation Flow**: Ensuring smooth transitions between topics within a session
+- **Continuidade de Sessão**: Manter o contexto dentro de uma única sessão de conversa
+- **Contexto Imediato**: Preservar o histórico recente da conversa para respostas coerentes
+- **Estado Temporário**: Gerenciar informações transitórias relevantes para a interação atual
+- **Fluxo de Conversa**: Garantir transições suaves entre tópicos dentro de uma sessão
 
-## How Short-Term Memory Works in AgentCore
+## Como a Memória de Curto Prazo Funciona no AgentCore
 
-### Event Storage
+### Armazenamento de Eventos
 
-AgentCore Memory stores complete conversation events in raw form, providing immediate access to:
+O AgentCore Memory armazena eventos completos de conversa em formato bruto, fornecendo acesso imediato a:
 
-- Last `k` User messages and agent responses
-- Conversation metadata (timestamps, session IDs, actor IDs)
-- Branching conversation paths for complex interactions
+- Últimas `k` mensagens do usuário e respostas do agente
+- Metadados da conversa (timestamps, IDs de sessão, IDs de ator)
+- Caminhos de conversa ramificados para interações complexas
 
-### Session Management
+### Gerenciamento de Sessão
 
-Short-term memory operates at the session level:
+A memória de curto prazo opera no nível da sessão:
 
-- Each conversation session maintains its own context
-- Related sessions can share context through session grouping
-- Automatic cleanup of expired session data (based on the configured TTL)
+- Cada sessão de conversa mantém seu próprio contexto
+- Sessões relacionadas podem compartilhar contexto através de agrupamento de sessões
+- Limpeza automática de dados de sessão expirados (baseado no TTL configurado)
 
-### Real-Time Access
+### Acesso em Tempo Real
 
-Unlike long-term memory strategies that process in the background, short-term memory provides:
+Diferente das estratégias de memória de longo prazo que processam em segundo plano, a memória de curto prazo fornece:
 
-- Immediate retrieval of recent conversation history
-- Conversation Continuation when a session discontinues or the agent fails.
-- Real-time context updates as conversations progress
-- Low-latency access to session-specific information
+- Recuperação imediata do histórico recente da conversa
+- Continuação da conversa quando uma sessão é descontinuada ou o agente falha
+- Atualizações de contexto em tempo real conforme as conversas progridem
+- Acesso de baixa latência a informações específicas da sessão
 
-## Best Practices
+## Melhores Práticas
 
-1. **Context Window Management**: Monitor context usage to prevent overflow
-2. **Session Boundaries**: Clearly define when sessions begin and end
-3. **Memory Cleanup**: Implement appropriate cleanup policies for expired sessions
-4. **Error Handling**: Handle memory retrieval failures gracefully
-5. **Performance Optimization**: Use efficient querying patterns (e.g. via Summary Strategy in long term) for large conversation histories
+1. **Gerenciamento da Janela de Contexto**: Monitore o uso de contexto para evitar estouro
+2. **Limites de Sessão**: Defina claramente quando as sessões começam e terminam
+3. **Limpeza de Memória**: Implemente políticas de limpeza apropriadas para sessões expiradas
+4. **Tratamento de Erros**: Trate falhas de recuperação de memória de forma elegante
+5. **Otimização de Performance**: Use padrões de consulta eficientes (ex.: via Estratégia de Resumo em longo prazo) para grandes históricos de conversa
 
-## Integration with Frameworks
+## Integração com Frameworks
 
-Short-term memory integrates seamlessly with popular agentic frameworks:
+A memória de curto prazo se integra perfeitamente com frameworks agênticos populares:
 
-- **Strands Agent**: Native integration with conversation hooks
-- **LangGraph**: State management integration
-- **Custom Frameworks**: Direct API access for flexible implementation
+- **Strands Agent**: Integração nativa com hooks de conversa
+- **LangGraph**: Integração com gerenciamento de estado
+- **Frameworks Customizados**: Acesso direto à API para implementação flexível
 
-## Available Sample Notebooks
+## Notebooks de Exemplo Disponíveis
 
-Explore these hands-on examples to learn short-term memory implementation:
+Explore estes exemplos práticos para aprender a implementação de memória de curto prazo:
 
-| Framework     | Use Case        | Description                                                                                            | Notebook                                                                                                                   | Architecture                                                           |
-| ------------- | --------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Strands Agent | Personal Agent  | AI assistant that maintains conversation context and remembers user interactions within a session      | [personal-agent.ipynb](./01-single-agent/with-strands-agent/personal-agent.ipynb)                                          | [View](./01-single-agent/with-strands-agent/architecture.png)          |
-| LangGraph     | Fitness Coach   | Personal fitness coach that tracks workout progress and maintains context throughout training sessions | [personal-fitness-coach.ipynb](./01-single-agent/with-langgraph-agent/personal-fitness-coach.ipynb)                        | [View](./01-single-agent/with-langgraph-agent/images/architecture.png) |
-| LangGraph     | Support Agent   | Customer support agent with human-in-the-loop capabilities for complex issue resolution                | [support-agent-human-in-the-loop.ipynb](./01-single-agent/with-langgraph-agent/support-agent-human-in-the-loop.ipynb)      | [View](./01-single-agent/with-langgraph-agent/images/architecture.png) |
-| LangGraph     | Math Agent      | Mathematical problem-solving agent with multi-step persistence for complex calculations                | [math-agent-with-multi-step-persistence.ipynb](./01-single-agent/with-langgraph-agent/math-agent-with-checkpointing.ipynb) | [View](./01-single-agent/with-langgraph-agent/images/architecture.png) |
-| Strands Agent | Travel Planning | Collaborative agents that share context while planning complex travel itineraries                      | [travel-planning-agent.ipynb](./02-multi-agent/with-strands-agent/travel-planning-agent.ipynb)                             | [View](./02-multi-agent/with-strands-agent/architecture.png)           |
+| Framework     | Caso de Uso              | Descrição                                                                                              | Notebook                                                                                                                   | Arquitetura                                                            |
+| ------------- | ------------------------ | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Strands Agent | Agente Pessoal           | Assistente de IA que mantém contexto de conversa e lembra interações do usuário dentro de uma sessão   | [personal-agent.ipynb](./01-single-agent/with-strands-agent/personal-agent.ipynb)                                          | [Ver](./01-single-agent/with-strands-agent/architecture.png)           |
+| LangGraph     | Coach de Fitness         | Coach de fitness pessoal que acompanha progresso de treino e mantém contexto ao longo das sessões      | [personal-fitness-coach.ipynb](./01-single-agent/with-langgraph-agent/personal-fitness-coach.ipynb)                        | [Ver](./01-single-agent/with-langgraph-agent/images/architecture.png)  |
+| LangGraph     | Agente de Suporte        | Agente de suporte ao cliente com capacidades human-in-the-loop para resolução de problemas complexos   | [support-agent-human-in-the-loop.ipynb](./01-single-agent/with-langgraph-agent/support-agent-human-in-the-loop.ipynb)      | [Ver](./01-single-agent/with-langgraph-agent/images/architecture.png)  |
+| LangGraph     | Agente de Matemática     | Agente de resolução de problemas matemáticos com persistência multi-etapa para cálculos complexos      | [math-agent-with-multi-step-persistence.ipynb](./01-single-agent/with-langgraph-agent/math-agent-with-checkpointing.ipynb) | [Ver](./01-single-agent/with-langgraph-agent/images/architecture.png)  |
+| Strands Agent | Planejamento de Viagens  | Agentes colaborativos que compartilham contexto ao planejar itinerários de viagem complexos             | [travel-planning-agent.ipynb](./02-multi-agent/with-strands-agent/travel-planning-agent.ipynb)                             | [Ver](./02-multi-agent/with-strands-agent/architecture.png)            |
 
-## Getting Started
+## Primeiros Passos
 
-1. Choose a sample that matches your use case
-2. Navigate to the sample folder
-3. Install requirements: `pip install -r requirements.txt`
-4. Open the Jupyter notebook and follow the step-by-step implementation
+1. Escolha um exemplo que corresponda ao seu caso de uso
+2. Navegue até a pasta do exemplo
+3. Instale os requisitos: `pip install -r requirements.txt`
+4. Abra o Jupyter notebook e siga a implementação passo a passo
 
-## Next Steps
+## Próximos Passos
 
-Once you're comfortable with short-term memory, explore [Long-Term Memory](../02-long-term-memory/) to learn about persistent memory strategies that work across multiple conversations and sessions.
+Quando estiver confortável com a memória de curto prazo, explore a [Memória de Longo Prazo](../02-long-term-memory/) para aprender sobre estratégias de memória persistente que funcionam em múltiplas conversas e sessões.

@@ -1,43 +1,42 @@
-# Overview
+# Visão Geral
 
-Amazon Bedrock AgentCore Evaluations helps you optimize your agent's quality based on real-world interactions.
+O Amazon Bedrock AgentCore Evaluations ajuda você a otimizar a qualidade do seu agente com base em interações do mundo real.
 
-## Key Features
+## Principais Funcionalidades
 
-While AgentCore Observability provides operational insights into agent health, AgentCore Evaluations focuses on agent decision quality and performance outcomes.
+Enquanto o AgentCore Observability fornece insights operacionais sobre a saúde do agente, o AgentCore Evaluations foca na qualidade das decisões do agente e nos resultados de desempenho.
 
-It provides built-in and custom evaluators with both on-demand and online evaluation capabilities.
+Ele oferece avaliadores integrados e personalizados com capacidades de avaliação sob demanda e online.
 
-### Built-in and Custom Evaluators
+### Avaliadores Integrados e Personalizados
 
-AgentCore Evaluations offers 13 built-in evaluators for critical dimensions like correctness, helpfulness, and safety, plus the ability to create custom evaluators for business-specific requirements.
+O AgentCore Evaluations oferece 13 avaliadores integrados para dimensões críticas como correção, utilidade e segurança, além da capacidade de criar avaliadores personalizados para requisitos específicos do negócio.
 
-Test your agents during development and deployment using the on-demand evaluations API, or monitor production agents with the online evaluations API.
+Teste seus agentes durante o desenvolvimento e implantação usando a API de avaliações sob demanda, ou monitore agentes em produção com a API de avaliações online.
 
-### On-demand Evaluations
+### Avaliações Sob Demanda
 
-Run synchronous, on-demand evaluations using built-in and custom metrics on individual traces.
+Execute avaliações síncronas e sob demanda usando métricas integradas e personalizadas em traces individuais.
 
-The system uses OpenTelemetry (OTEL) traces to perform scoring and returns a response that includes:
-- Score value
-- Explanation for the score
-- Token usage
+O sistema usa traces OpenTelemetry (OTEL) para realizar a pontuação e retorna uma resposta que inclui:
+- Valor da pontuação
+- Explicação da pontuação
+- Uso de tokens
 
-Online Evaluations
+Avaliações Online
 
-In production, you need continuous performance monitoring across all interactions without manually evaluating each trace. A statistical sample is often sufficient for generating meaningful performance metrics.
+Em produção, você precisa de monitoramento contínuo de desempenho em todas as interações sem avaliar manualmente cada trace. Uma amostra estatística geralmente é suficiente para gerar métricas de desempenho significativas.
 
-AgentCore Evaluations' online capabilities enable automatic sampling and evaluation:
+As capacidades online do AgentCore Evaluations permitem amostragem e avaliação automáticas:
 
-- Define your sample size and trace selection criteria
-- Choose your evaluation metrics (built-in or custom)
-- AgentCore Evaluations handles the rest, generating the performance data you need to monitor your agent at scale
+- Defina o tamanho da amostra e os critérios de seleção de traces
+- Escolha suas métricas de avaliação (integradas ou personalizadas)
+- O AgentCore Evaluations cuida do resto, gerando os dados de desempenho necessários para monitorar seu agente em escala
 
-## Tutorials overview
+## Visão Geral dos Tutoriais
 
-In these tutorials we will cover the following functionality:
-- [Pre-requisites](00-prereqs): Creating a sample agent to use during the evaluation tutorials
-- [Create a custom evaluator](01-creating-custom-evaluators): Learn about built-in and custom metrics, and create a custom metric for evaluating your agents
-- [Using on-demand  and online evaluations](02-running-evaluations): Learn how to use on-demand and online evaluations to build, optimize, and monitor your agent at scale
-- [Advanced](03-advanced): Explore advanced capabilities including using the boto3 SDK to query Amazon CloudWatch logs for on-demand evaluation, and creating local dashboards to visualize experiments with different agent configuration
-
+Nestes tutoriais, cobriremos as seguintes funcionalidades:
+- [Pré-requisitos](00-prereqs): Criando um agente de exemplo para usar durante os tutoriais de avaliação
+- [Criar um avaliador personalizado](01-creating-custom-evaluators): Aprenda sobre métricas integradas e personalizadas, e crie uma métrica personalizada para avaliar seus agentes
+- [Usando avaliações sob demanda e online](02-running-evaluations): Aprenda como usar avaliações sob demanda e online para construir, otimizar e monitorar seu agente em escala
+- [Avançado](03-advanced): Explore capacidades avançadas incluindo o uso do SDK boto3 para consultar logs do Amazon CloudWatch para avaliação sob demanda, e criação de dashboards locais para visualizar experimentos com diferentes configurações de agente

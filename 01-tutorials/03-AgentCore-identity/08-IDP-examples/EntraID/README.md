@@ -1,89 +1,89 @@
-# Microsoft Entra ID Integration with Amazon Bedrock AgentCore
+# Integração do Microsoft Entra ID com Amazon Bedrock AgentCore
 
-This repository contains three comprehensive notebooks demonstrating how to integrate Microsoft Entra ID (formerly Azure Active Directory) with Amazon Bedrock AgentCore for various authentication and authorization scenarios.
+Este repositório contém três notebooks abrangentes demonstrando como integrar o Microsoft Entra ID (anteriormente Azure Active Directory) com o Amazon Bedrock AgentCore para vários cenários de autenticação e autorização.
 
-## What is Microsoft Entra ID?
+## O que é Microsoft Entra ID?
 
-Microsoft Entra ID is Microsoft's cloud-based identity and access management service that serves as the central identity provider for Microsoft 365, Azure, and other SaaS applications.
+Microsoft Entra ID é o serviço de gerenciamento de identidade e acesso baseado em nuvem da Microsoft que serve como provedor de identidade central para Microsoft 365, Azure e outras aplicações SaaS.
 
-### Key Features:
-- **Single Sign-On (SSO)** - Users authenticate once to access multiple applications
-- **Multi-Factor Authentication (MFA)** - Enhanced security through additional verification methods  
-- **Conditional Access** - Policy-based access control based on user, device, location, and risk
-- **Application Integration** - Supports modern authentication protocols like OAuth 2.0, OpenID Connect, and SAML
+### Recursos Principais:
+- **Single Sign-On (SSO)** - Usuários se autenticam uma vez para acessar múltiplas aplicações
+- **Multi-Factor Authentication (MFA)** - Segurança aprimorada através de métodos adicionais de verificação
+- **Conditional Access** - Controle de acesso baseado em políticas com base em usuário, dispositivo, localização e risco
+- **Application Integration** - Suporta protocolos de autenticação modernos como OAuth 2.0, OpenID Connect e SAML
 
-### Integration with AgentCore
+### Integração com AgentCore
 
 
-Microsoft Entra ID can be used as an identity provider with AgentCore Identity to:
-- Authenticate users before they can invoke agents (inbound authentication)
-- Authorize agents to access protected resources on behalf of users (outbound authentication)
-- Secure AgentCore Gateway endpoints with JWT-based authorization
+Microsoft Entra ID pode ser usado como provedor de identidade com AgentCore Identity para:
+- Autenticar usuários antes que possam invocar agentes (autenticação de entrada)
+- Autorizar agentes a acessar recursos protegidos em nome dos usuários (autenticação de saída)
+- Proteger endpoints do AgentCore Gateway com autorização baseada em JWT
 
-## Example Notebooks Overview
+## Visão Geral dos Notebooks de Exemplo
 
-This learning path includes three practical notebooks that demonstrate different integration patterns:
+Este caminho de aprendizado inclui três notebooks práticos que demonstram diferentes padrões de integração:
 
 ### 1. Step By Step MS EntraID and 3LO Outbound for Tools.ipynb
 
-**Purpose**: Demonstrates how to use Entra ID for **outbound authentication** where AgentCore Runtime deployed agents access external resources (Microsoft OneNote) on behalf of authenticated users.
+**Propósito**: Demonstra como usar o Entra ID para **autenticação de saída** onde agentes implantados no AgentCore Runtime acessam recursos externos (Microsoft OneNote) em nome de usuários autenticados.
 
-**What you'll learn**:
-- Setting up Entra ID tenant and application registration
-- Creating AgentCore OAuth2 credential providers
-- Implementing 3-legged OAuth (3LO) flow for user delegation
-- Building agents and deploying on AgentCore Runtime to create and manage OneNote notebooks
+**O que você aprenderá**:
+- Configurar tenant Entra ID e registro de aplicação
+- Criar provedores de credenciais OAuth2 do AgentCore
+- Implementar fluxo OAuth de 3 etapas (3LO) para delegação de usuário
+- Construir agentes e implantar no AgentCore Runtime para criar e gerenciar notebooks OneNote
 
-**Key Integration Pattern**: 
-- User authenticates with Entra ID
-- AgentCore Runtime receives delegated permissions to access OneNote API
-- AgentCore Runtime agent tools performs actions on user's behalf
+**Padrão de Integração Principal**:
+- Usuário se autentica com Entra ID
+- AgentCore Runtime recebe permissões delegadas para acessar a API do OneNote
+- Ferramentas do agente AgentCore Runtime executam ações em nome do usuário
 
 
-**Tools Created**:
-- `create_notebook` - Creates new OneNote notebooks
-- `create_notebook_section` - Adds sections to notebooks  
-- `add_content_to_notebook_section` - Creates pages with content
+**Ferramentas Criadas**:
+- `create_notebook` - Cria novos notebooks OneNote
+- `create_notebook_section` - Adiciona seções aos notebooks
+- `add_content_to_notebook_section` - Cria páginas com conteúdo
 
 ### 2. Step by Step Entra ID for Inbound Auth.ipynb
 
-**Purpose**: Shows how to use Entra ID for **inbound authentication** to protect AgentCore Runtime agent endpoints, ensuring only authenticated users can invoke agents.
+**Propósito**: Mostra como usar o Entra ID para **autenticação de entrada** para proteger endpoints de agentes do AgentCore Runtime, garantindo que apenas usuários autenticados possam invocar agentes.
 
-**What you'll learn**:
-- Configuring custom JWT authorizers with Entra ID
-- Using MSAL (Microsoft Authentication Library) for device code flow
-- Protecting AgentCore Runtime endpoints with bearer tokens
-- Managing session-based conversations with authenticated users
+**O que você aprenderá**:
+- Configurar autorizadores JWT personalizados com Entra ID
+- Usar MSAL (Microsoft Authentication Library) para fluxo de código de dispositivo
+- Proteger endpoints do AgentCore Runtime com tokens bearer
+- Gerenciar conversas baseadas em sessão com usuários autenticados
 
-**Key Integration Pattern**:
-- Users must authenticate with Entra ID before accessing AgentCore Runtime agents endpoints
-- Bearer tokens validate user identity on each request
-- Agents remain protected behind authentication layer
+**Padrão de Integração Principal**:
+- Usuários devem se autenticar com Entra ID antes de acessar endpoints de agentes do AgentCore Runtime
+- Tokens bearer validam a identidade do usuário em cada requisição
+- Agentes permanecem protegidos por trás da camada de autenticação
 
 
 ### 3. Step by Step Entra ID with AgentCore Gateway.ipynb
 
-**Purpose**: Demonstrates using Entra ID to secure **AgentCore Gateway** endpoints with machine-to-machine (M2M) authentication using client credentials flow.
+**Propósito**: Demonstra o uso do Entra ID para proteger endpoints do **AgentCore Gateway** com autenticação máquina-para-máquina (M2M) usando fluxo de credenciais de cliente.
 
-**What you'll learn**:
-- Setting up Entra ID app roles for API protection
-- Configuring AgentCore Gateway with custom JWT authorization
-- Creating Lambda functions as MCP (Model Context Protocol) tools
-- Using client credentials flow for service-to-service authentication
+**O que você aprenderá**:
+- Configurar funções de aplicativo Entra ID para proteção de API
+- Configurar AgentCore Gateway com autorização JWT personalizada
+- Criar funções Lambda como ferramentas MCP (Model Context Protocol)
+- Usar fluxo de credenciais de cliente para autenticação serviço-a-serviço
 
-**Key Integration Pattern**:
-- Applications authenticate using client credentials (no user interaction)
-- Gateway validates JWT tokens against Entra ID
-- Lambda functions exposed as standardized MCP tools
+**Padrão de Integração Principal**:
+- Aplicações se autenticam usando credenciais de cliente (sem interação do usuário)
+- Gateway valida tokens JWT com Entra ID
+- Funções Lambda expostas como ferramentas MCP padronizadas
 
 
 
-## Support and Documentation
+## Suporte e Documentação
 
-- [Microsoft Entra ID Documentation](https://learn.microsoft.com/en-us/entra/)
-- [Amazon Bedrock AgentCore Documentation](https://docs.aws.amazon.com/bedrock-agentcore/)
-- [OAuth 2.0 Specification](https://oauth.net/2/)
+- [Documentação Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/)
+- [Documentação Amazon Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/)
+- [Especificação OAuth 2.0](https://oauth.net/2/)
 
-## Note
+## Nota
 
-Microsoft Entra ID is not an AWS service. Please refer to Microsoft Entra ID documentation for costs and licensing related to Entra ID usage.
+Microsoft Entra ID não é um serviço AWS. Consulte a documentação do Microsoft Entra ID para custos e licenciamento relacionados ao uso do Entra ID.

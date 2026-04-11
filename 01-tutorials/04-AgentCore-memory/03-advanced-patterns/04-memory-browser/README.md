@@ -1,28 +1,28 @@
-# AgentCore Memory Dashboard
+# Painel AgentCore Memory
 
-A lightweight React + FastAPI dashboard for browsing AWS Bedrock AgentCore Memory data.
+Um painel leve em React + FastAPI para navegar pelos dados do AWS Bedrock AgentCore Memory.
 
-**📦 Repository Size**: ~2MB (dependencies excluded - see setup instructions below)
+**📦 Tamanho do Repositório**: ~2MB (dependências excluídas - veja instruções de configuração abaixo)
 
-## ✨ Key Features
+## ✨ Funcionalidades Principais
 
-- **Dynamic Configuration**: Memory ID, Actor ID, and Session ID entered through UI
-- **Short-Term Memory**: Query conversation events and turns
-- **Long-Term Memory**: Browse facts, preferences, and summaries
-- **Real-time Search**: Content filtering with live results
+- **Configuração Dinâmica**: ID de Memória, ID de Ator e ID de Sessão inseridos pela interface
+- **Memória de Curto Prazo**: Consultar eventos e turnos de conversa
+- **Memória de Longo Prazo**: Navegar por fatos, preferências e resumos
+- **Busca em Tempo Real**: Filtragem de conteúdo com resultados ao vivo
 
 
 
-## 📋 Prerequisites
+## 📋 Pré-requisitos
 
 - **Node.js** 16+
 - **Python** 3.8+
-- **AWS CLI** configured with credentials
-- **AWS Bedrock AgentCore Memory** access
+- **AWS CLI** configurado com credenciais
+- Acesso ao **AWS Bedrock AgentCore Memory**
 
-## 🔑 AWS Credentials Setup
+## 🔑 Configuração de Credenciais AWS
 
-### Step 1: Install AWS CLI
+### Passo 1: Instalar AWS CLI
 ```bash
 # macOS
 brew install awscli
@@ -33,55 +33,55 @@ unzip awscliv2.zip
 sudo ./aws/install
 
 # Windows
-# Download and run the AWS CLI MSI installer from AWS website
+# Baixe e execute o instalador MSI do AWS CLI no site da AWS
 ```
 
-### Step 2: Configure AWS Credentials
-Choose one of these methods:
+### Passo 2: Configurar Credenciais AWS
+Escolha um destes métodos:
 
-#### Option A: AWS Configure (Recommended)
+#### Opção A: AWS Configure (Recomendado)
 ```bash
 aws configure
 ```
-Enter your:
+Insira:
 - AWS Access Key ID
-- AWS Secret Access Key  
-- Default region (e.g., `us-east-1`)
-- Default output format (e.g., `json`)
+- AWS Secret Access Key
+- Região padrão (ex.: `us-east-1`)
+- Formato de saída padrão (ex.: `json`)
 
-#### Option B: Environment Variables
+#### Opção B: Variáveis de Ambiente
 ```bash
-export AWS_ACCESS_KEY_ID=your-access-key-id
-export AWS_SECRET_ACCESS_KEY=your-secret-access-key
+export AWS_ACCESS_KEY_ID=seu-access-key-id
+export AWS_SECRET_ACCESS_KEY=sua-secret-access-key
 export AWS_DEFAULT_REGION=us-east-1
 ```
 
-#### Option C: AWS Credentials File
-Create `~/.aws/credentials`:
+#### Opção C: Arquivo de Credenciais AWS
+Crie `~/.aws/credentials`:
 ```ini
 [default]
-aws_access_key_id = your-access-key-id
-aws_secret_access_key = your-secret-access-key
+aws_access_key_id = seu-access-key-id
+aws_secret_access_key = sua-secret-access-key
 ```
 
-Create `~/.aws/config`:
+Crie `~/.aws/config`:
 ```ini
 [default]
 region = us-east-1
 output = json
 ```
 
-### Step 3: Verify AWS Access
+### Passo 3: Verificar Acesso AWS
 ```bash
-# Test AWS connection
+# Testar conexão AWS
 aws sts get-caller-identity
 
-# Test Bedrock access
+# Testar acesso ao Bedrock
 aws bedrock list-foundation-models --region us-east-1
 ```
 
-### Step 4: Required IAM Permissions
-Your AWS user/role needs these permissions:
+### Passo 4: Permissões IAM Necessárias
+Seu usuário/role AWS precisa destas permissões:
 ```json
 {
     "Version": "2012-10-17",
@@ -101,141 +101,141 @@ Your AWS user/role needs these permissions:
 }
 ```
 
-## 🚀 Quick Start Guide
+## 🚀 Guia de Início Rápido
 
-### Step 1: Clone and Setup
+### Passo 1: Clonar e Configurar
 ```bash
-# Clone the repository
+# Clonar o repositório
 git clone <repository-url>
 cd 01-tutorials/04-AgentCore-memory/03-advanced-patterns/04-memory-browser
 
-# Install frontend dependencies (this will download ~200MB of packages)
+# Instalar dependências do frontend (isso baixará ~200MB de pacotes)
 npm install
 ```
 
-**Note**: 
-- 📦 **Dependencies not included**: `node_modules` and `backend/venv` are excluded from the repository
-- 🔧 **First-time setup**: Run `npm install` to download all frontend dependencies
-- ✅ **Frontend `.env`**: Already configured with default settings
-- ❌ **Backend `.env`**: Needs to be created (see Step 2)
+**Nota**: 
+- 📦 **Dependências não incluídas**: `node_modules` e `backend/venv` estão excluídos do repositório
+- 🔧 **Primeira configuração**: Execute `npm install` para baixar todas as dependências do frontend
+- ✅ **`.env` do Frontend**: Já configurado com valores padrão
+- ❌ **`.env` do Backend**: Precisa ser criado (veja Passo 2)
 
-### Step 2: Configure Environment Variables
+### Passo 2: Configurar Variáveis de Ambiente
 
-#### Backend Configuration
-Copy the example file and customize:
+#### Configuração do Backend
+Copie o arquivo de exemplo e customize:
 ```bash
-# Copy the example file
+# Copiar o arquivo de exemplo
 cp backend/.env.example backend/.env
 
-# Edit backend/.env and set your AWS profile (if needed)
-# AWS_PROFILE=your-profile-name
+# Editar backend/.env e definir seu perfil AWS (se necessário)
+# AWS_PROFILE=seu-nome-de-perfil
 ```
 
-The `backend/.env` file should contain:
+O arquivo `backend/.env` deve conter:
 ```env
-# AWS Configuration (region will be auto-detected from AWS CLI/profile if not set)
+# Configuração AWS (região será detectada automaticamente do AWS CLI/perfil se não definida)
 # AWS_REGION=us-east-1
 
-# Server Configuration
-# Security: Use 127.0.0.1 for local development (recommended)
-# Only use 0.0.0.0 if you need to access from other machines on your network
+# Configuração do Servidor
+# Segurança: Use 127.0.0.1 para desenvolvimento local (recomendado)
+# Use 0.0.0.0 apenas se precisar acessar de outras máquinas na sua rede
 BACKEND_HOST=127.0.0.1
 BACKEND_PORT=8000
 DEBUG=true
 
-# CORS Configuration
+# Configuração CORS
 ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 
-# Optional: AWS Profile (if using multiple profiles)
-# AWS_PROFILE=your-profile-name
+# Opcional: Perfil AWS (se usando múltiplos perfis)
+# AWS_PROFILE=seu-nome-de-perfil
 ```
 
-**Security Note**: The backend now binds to `127.0.0.1` (localhost only) by default for security. This prevents exposure to all network interfaces. If you need to access the backend from other machines on your network, set `BACKEND_HOST=0.0.0.0` in your `.env` file, but be aware this exposes the service to your entire network.
+**Nota de Segurança**: O backend agora se vincula a `127.0.0.1` (apenas localhost) por padrão para segurança. Isso evita exposição a todas as interfaces de rede. Se você precisar acessar o backend de outras máquinas na sua rede, defina `BACKEND_HOST=0.0.0.0` no seu arquivo `.env`, mas esteja ciente de que isso expõe o serviço a toda sua rede.
 
-**Note**: AWS region is automatically detected from your AWS CLI configuration. Only set `AWS_REGION` if you need to override the default.
+**Nota**: A região AWS é automaticamente detectada da sua configuração AWS CLI. Defina `AWS_REGION` apenas se precisar sobrescrever o padrão.
 
-#### Frontend Configuration  
-The frontend `.env` file is already configured with default values. You can modify it if needed:
+#### Configuração do Frontend
+O arquivo `.env` do frontend já está configurado com valores padrão. Você pode modificá-lo se necessário:
 ```env
-# Backend API URL
+# URL da API do Backend
 REACT_APP_BACKEND_URL=http://localhost:8000
 
-# Dashboard Settings
+# Configurações do Painel
 REACT_APP_MAX_MEMORY_ENTRIES=50
 REACT_APP_REFRESH_INTERVAL=5000
 ```
 
-### Step 3: Install Backend Dependencies
+### Passo 3: Instalar Dependências do Backend
 ```bash
-# Navigate to backend directory
+# Navegar até o diretório do backend
 cd backend
 
-# Create Python virtual environment (isolated Python packages)
+# Criar ambiente virtual Python (pacotes Python isolados)
 python3 -m venv venv
 
-# Activate virtual environment
-# On macOS/Linux:
+# Ativar ambiente virtual
+# No macOS/Linux:
 source venv/bin/activate
-# On Windows:
+# No Windows:
 # venv\Scripts\activate
 
-# Install Python dependencies (~50MB of packages)
+# Instalar dependências Python (~50MB de pacotes)
 pip install -r requirements.txt
 
-# Return to project root
+# Retornar à raiz do projeto
 cd ..
 ```
 
-**Note**: The virtual environment (`backend/venv/`) is excluded from the repository to keep it lightweight.
+**Nota**: O ambiente virtual (`backend/venv/`) está excluído do repositório para mantê-lo leve.
 
-### Step 4: Start the Application
+### Passo 4: Iniciar a Aplicação
 
-#### Option A: Start Both Services Together (Recommended)
+#### Opção A: Iniciar Ambos os Serviços Juntos (Recomendado)
 ```bash
-# From project root directory
+# Da raiz do projeto
 npm run dev
 ```
-This will start both the backend (FastAPI) and frontend (React) simultaneously.
+Isso iniciará tanto o backend (FastAPI) quanto o frontend (React) simultaneamente.
 
-#### Option B: Start Services Separately
+#### Opção B: Iniciar Serviços Separadamente
 ```bash
-# Terminal 1: Start backend
+# Terminal 1: Iniciar backend
 npm run start-backend
 
-# Terminal 2: Start frontend  
+# Terminal 2: Iniciar frontend  
 npm start
 ```
 
 
 
-### Step 5: Access the Dashboard
+### Passo 5: Acessar o Painel
 - **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8000
-- **API Documentation**: http://localhost:8000/docs
+- **API do Backend**: http://localhost:8000
+- **Documentação da API**: http://localhost:8000/docs
 
-### Step 6: Configure Memory Access
-1. Open the dashboard at http://localhost:3000
-2. Enter your **Memory ID** and **Actor ID** in the header
-3. Click **Configure** to validate access
-4. Start querying your AgentCore Memory data!
+### Passo 6: Configurar Acesso à Memória
+1. Abra o painel em http://localhost:3000
+2. Insira seu **ID de Memória** e **ID de Ator** no cabeçalho
+3. Clique em **Configurar** para validar o acesso
+4. Comece a consultar seus dados do AgentCore Memory!
 
-## 📊 Dashboard Features
+## 📊 Funcionalidades do Painel
 
-### Short-Term Memory
-- Query conversation events and turns
-- Filter by content, event type, and role
+### Memória de Curto Prazo
+- Consultar eventos e turnos de conversa
+- Filtrar por conteúdo, tipo de evento e papel
 
-### Long-Term Memory  
-- **User Input Required**: Memory ID and Namespace (entered via UI)
-- Namespace-based querying with content filtering
-- Browse facts, preferences, and summaries
+### Memória de Longo Prazo
+- **Entrada do Usuário Necessária**: ID de Memória e Namespace (inseridos pela interface)
+- Consulta baseada em namespace com filtragem de conteúdo
+- Navegar por fatos, preferências e resumos
 
-## 🔧 Troubleshooting
+## 🔧 Resolução de Problemas
 
-### Common Issues
-- **Backend won't start**: Check Python virtual environment is activated
-- **Frontend can't connect**: Verify backend is running on port 8000
-- **AWS permission errors**: Run `aws sts get-caller-identity` to verify credentials
-- **Memory ID not found**: Check Memory ID exists and you have proper permissions
+### Problemas Comuns
+- **Backend não inicia**: Verifique se o ambiente virtual Python está ativado
+- **Frontend não conecta**: Verifique se o backend está rodando na porta 8000
+- **Erros de permissão AWS**: Execute `aws sts get-caller-identity` para verificar credenciais
+- **ID de Memória não encontrado**: Verifique se o ID de Memória existe e você tem as permissões adequadas
 
 ---

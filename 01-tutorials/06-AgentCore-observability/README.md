@@ -1,11 +1,11 @@
-# AgentCore Observability 
+# Observabilidade do AgentCore
 
-This repository demonstrates how to implement AgentCore observability for Agents using Amazon CloudWatch and other providers. It provides examples for both Amazon Bedrock AgentCore Runtime hosted agents and agents hosted non on runtime with popular open-source agent frameworks.
+Este repositório demonstra como implementar a observabilidade do AgentCore para Agentes usando o Amazon CloudWatch e outros provedores. Ele fornece exemplos tanto para agentes hospedados no Amazon Bedrock AgentCore Runtime quanto para agentes hospedados fora do runtime com frameworks populares de agentes open-source.
 
 
 
-For more details on AgentCore Observability, please refer to [this](https://aws.amazon.com/blogs/machine-learning/build-trustworthy-ai-agents-with-amazon-bedrock-agentcore-observability/) blog post.
-## Project Structure
+Para mais detalhes sobre a Observabilidade do AgentCore, consulte este [post](https://aws.amazon.com/blogs/machine-learning/build-trustworthy-ai-agents-with-amazon-bedrock-agentcore-observability/) no blog.
+## Estrutura do Projeto
 
 ```
 06-AgentCore-observability/
@@ -76,71 +76,71 @@ For more details on AgentCore Observability, please refer to [this](https://aws.
 └── README.md
 ```
 
-## Overview
+## Visão Geral
 
-This repository provides examples and tools to help developers implement observability for GenAI applications. AgentCore Observability helps developers trace, debug, and monitor agent performance in production through unified operational dashboards. With support for OpenTelemetry compatible telemetry and detailed visualizations of each step of the agent workflow, Amazon CloudWatch GenAI Observability enables developers to easily gain visibility into agent behavior and maintain standards at scale.
+Este repositório fornece exemplos e ferramentas para ajudar desenvolvedores a implementar observabilidade para aplicações GenAI. A Observabilidade do AgentCore ajuda desenvolvedores a rastrear, depurar e monitorar o desempenho de agentes em produção por meio de dashboards operacionais unificados. Com suporte para telemetria compatível com OpenTelemetry e visualizações detalhadas de cada etapa do fluxo de trabalho do agente, o Amazon CloudWatch GenAI Observability permite que desenvolvedores obtenham facilmente visibilidade sobre o comportamento dos agentes e mantenham padrões em escala.
 
-## Contents
+## Conteúdo
 
-Demonstrates examples using the popular Agent dveelopment fraemworks: 
+Demonstra exemplos usando os frameworks populares de desenvolvimento de Agentes:
 
-- **Strands Agents**: Build LLM applications with complex workflows using model-driven agentic development
-- **CrewAI**: Create autonomous AI agents that work together in roles to accomplish tasks
-- **LangGraph**: Extend LangChain with stateful, multi-actor applications for complex reasoning systems
-- **LlamaIndex**: LLM-powered agents over data with workflows
+- **Strands Agents**: Construa aplicações LLM com fluxos de trabalho complexos usando desenvolvimento agêntico orientado por modelos
+- **CrewAI**: Crie agentes de IA autônomos que trabalham juntos em papéis para realizar tarefas
+- **LangGraph**: Estenda o LangChain com aplicações stateful e multi-ator para sistemas de raciocínio complexos
+- **LlamaIndex**: Agentes alimentados por LLM sobre dados com workflows
 
 
-### 1. Bedrock AgentCore Runtime Hosted (01-Agentcore-runtime-hosted)
+### 1. Hospedado no Bedrock AgentCore Runtime (01-Agentcore-runtime-hosted)
 
-Examples demonstrating observability for Agents hosted on Amazon Bedrock AgentCore Runtime using Amazon OpenTelemetry Python Instrumentation and Amazon CloudWatch.
+Exemplos demonstrando observabilidade para Agentes hospedados no Amazon Bedrock AgentCore Runtime usando Amazon OpenTelemetry Python Instrumentation e Amazon CloudWatch.
 
-### 2. Agent Not Hosted on Runtime (02-Agent-not-hosted-on-runtime)
+### 2. Agente Não Hospedado no Runtime (02-Agent-not-hosted-on-runtime)
 
-Examples showcasing observability for popular open-source agent frameworks not hosted on Amazon Bedrock AgentCore Runtime:
+Exemplos mostrando observabilidade para frameworks populares de agentes open-source não hospedados no Amazon Bedrock AgentCore Runtime:
 
-### 3. Advanced Concepts (03-advanced-concepts)
+### 3. Conceitos Avançados (03-advanced-concepts)
 
-Advanced observability patterns and techniques:
+Padrões e técnicas avançadas de observabilidade:
 
-- **Custom Span Creation**: Learn how to create custom spans for detailed tracing and monitoring of specific operations within your agent workflows
+- **Custom Span Creation**: Aprenda como criar custom spans para rastreamento detalhado e monitoramento de operações específicas dentro dos fluxos de trabalho do seu agente
 
-### 4. Partner Observability (04-Agentcore-runtime-partner-observability)
+### 4. Observabilidade com Parceiros (04-Agentcore-runtime-partner-observability)
 
-Examples of using agents hosted on Amazon Bedrock AgentCore Runtime with third-party observability tools:
+Exemplos de uso de agentes hospedados no Amazon Bedrock AgentCore Runtime com ferramentas de observabilidade de terceiros:
 
-- **Arize**: AI and Agent engineering platform
-- **Braintrust**: AI evaluation and monitoring platform
-- **Instana**: Real-Time APM and Observability Platform
-- **Langfuse**: LLM observability and analytics
+- **Arize**: Plataforma de engenharia de IA e Agentes
+- **Braintrust**: Plataforma de avaliação e monitoramento de IA
+- **Instana**: Plataforma de APM e Observabilidade em Tempo Real
+- **Langfuse**: Observabilidade e analytics para LLM
 
-### 5. Lambda AgentCore Invocation (05-Lambda-AgentCore-invocation)
+### 5. Invocação do AgentCore via Lambda (05-Lambda-AgentCore-invocation)
 
-Learn how to invoke AgentCore Runtime agents from AWS Lambda functions with full CloudWatch observability:
+Aprenda como invocar agentes do AgentCore Runtime a partir de funções AWS Lambda com observabilidade completa no CloudWatch:
 
-- **Lambda Integration**: Deploy serverless functions that invoke hosted agents
-- **MCP Multi-Server**: Use multiple MCP servers (AWS Docs + CDK) in a single agent
-- **CloudWatch GenAI Observability**: Monitor agent behavior and performance in production
+- **Integração com Lambda**: Implante funções serverless que invocam agentes hospedados
+- **MCP Multi-Server**: Use múltiplos servidores MCP (AWS Docs + CDK) em um único agente
+- **CloudWatch GenAI Observability**: Monitore o comportamento e o desempenho dos agentes em produção
 
-## Getting Started
+## Primeiros Passos
 
-1. Navigate to the directory of the framework you want to explore
-2. Install the requirements.
-3. Configure your AWS credentials
-4. Copy the `.env.example` file to `.env` and update the variables
-5. Open and run the Jupyter notebook
+1. Navegue até o diretório do framework que deseja explorar
+2. Instale os requisitos.
+3. Configure suas credenciais AWS
+4. Copie o arquivo `.env.example` para `.env` e atualize as variáveis
+5. Abra e execute o Jupyter notebook
 
-## Prerequisites
+## Pré-requisitos
 
-- AWS account with appropriate permissions
+- Conta AWS com permissões apropriadas
 - Python 3.10+
-- Jupyter notebook environment
-- AWS CLI configured with your credentials
-- Enable Transaction Search
+- Ambiente Jupyter notebook
+- AWS CLI configurado com suas credenciais
+- Habilitar Transaction Search
 
-## Clean Up
+## Limpeza
 
-Please delete the Log groups and associated resources created on Amazon CloudWatch after completing the examples to avoid unnecessary charges.
+Por favor, exclua os Log groups e recursos associados criados no Amazon CloudWatch após concluir os exemplos para evitar cobranças desnecessárias.
 
-## License
+## Licença
 
-This project is licensed under the terms specified in the repository.
+Este projeto é licenciado sob os termos especificados no repositório.

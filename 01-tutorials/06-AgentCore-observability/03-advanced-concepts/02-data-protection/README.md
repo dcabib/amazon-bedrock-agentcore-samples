@@ -1,63 +1,63 @@
-# Amazon Bedrock AgentCore Observability: Data Protection
+# Observabilidade do Amazon Bedrock AgentCore: Proteção de Dados
 
-## Overview
+## Visão Geral
 
-In this tutorial, we will learn how to implement comprehensive data protection in agentic AI applications using Amazon Bedrock Guardrails and Amazon CloudWatch Logs Data Protection policies. This tutorial demonstrates how to protect sensitive data throughout the agent's lifecycle, from input processing to output generation and logging.
+Neste tutorial, aprenderemos como implementar proteção de dados abrangente em aplicações de IA agêntica usando Amazon Bedrock Guardrails e políticas de Amazon CloudWatch Logs Data Protection. Este tutorial demonstra como proteger dados sensíveis ao longo de todo o ciclo de vida do agente, desde o processamento de entrada até a geração de saída e logging.
 
-We will focus on creating a defense-in-depth strategy for securing your AI applications by combining multiple layers of protection that work in tandem to safeguard personally identifiable information (PII), financial data, health records, and other confidential information.
+Vamos focar na criação de uma estratégia de defesa em profundidade para proteger suas aplicações de IA, combinando múltiplas camadas de proteção que trabalham em conjunto para salvaguardar informações de identificação pessoal (PII), dados financeiros, registros de saúde e outras informações confidenciais.
 
-### Tutorial Details
+### Detalhes do Tutorial
 
-| Information         | Details                                                                          |
+| Informação          | Detalhes                                                                         |
 |:--------------------|:---------------------------------------------------------------------------------|
-| Tutorial type       | Observability & Security                                                         |
-| Agent type          | Single                                                                           |
-| Agentic Framework   | Strands Agents                                                                   |
-| LLM model           | Anthropic Claude Haiku 4.5                                                     |
-| Tutorial components | Data Protection, Bedrock Guardrails, CloudWatch Logs Data Protection           |
-| Tutorial vertical   | Cross-vertical                                                                   |
-| Example complexity  | Advanced                                                                         |
-| SDK used            | Amazon BedrockAgentCore Python SDK and boto3                                    |
+| Tipo de tutorial    | Observabilidade & Segurança                                                      |
+| Tipo de agente      | Single                                                                           |
+| Framework agêntico  | Strands Agents                                                                   |
+| Modelo LLM          | Anthropic Claude Haiku 4.5                                                     |
+| Componentes do tutorial | Data Protection, Bedrock Guardrails, CloudWatch Logs Data Protection       |
+| Vertical do tutorial| Cross-vertical                                                                   |
+| Complexidade do exemplo | Avançado                                                                     |
+| SDK utilizado       | Amazon BedrockAgentCore Python SDK e boto3                                      |
 
-### Tutorial Architecture
+### Arquitetura do Tutorial
 
-In this tutorial, we will demonstrate how to implement data protection mechanisms for agents deployed on AgentCore runtime. We'll use a customer support agent that processes sensitive information and show how to protect this data using multiple layers of security.
+Neste tutorial, demonstraremos como implementar mecanismos de proteção de dados para agentes implantados no AgentCore runtime. Usaremos um agente de suporte ao cliente que processa informações sensíveis e mostraremos como proteger esses dados usando múltiplas camadas de segurança.
 
-The example includes:
-- A Strands Agent with customer support capabilities
-- Amazon Bedrock Guardrails for content filtering
-- CloudWatch Logs Data Protection for log masking
-- Sensitive information detection and handling
+O exemplo inclui:
+- Um Strands Agent com capacidades de suporte ao cliente
+- Amazon Bedrock Guardrails para filtragem de conteúdo
+- CloudWatch Logs Data Protection para mascaramento de logs
+- Detecção e tratamento de informações sensíveis
 
-### Tutorial Key Features
+### Funcionalidades Principais do Tutorial
 
-* **Multi-layered Data Protection**: Implementing Bedrock Guardrails and CloudWatch Logs Data Protection
-* **Sensitive Information Detection**: Automatically detecting PII, financial data, and other confidential information
-* **Agent Security**: Protecting sensitive data in agent interactions and traces
-* **Compliance Support**: Meeting privacy regulations (GDPR, HIPAA, CCPA) requirements
-* **Defense-in-Depth Strategy**: Creating comprehensive security for agentic AI applications
+* **Proteção de Dados Multicamada**: Implementação de Bedrock Guardrails e CloudWatch Logs Data Protection
+* **Detecção de Informações Sensíveis**: Detecção automática de PII, dados financeiros e outras informações confidenciais
+* **Segurança do Agente**: Proteção de dados sensíveis em interações e traces do agente
+* **Suporte à Conformidade**: Atendimento aos requisitos de regulamentações de privacidade (GDPR, HIPAA, CCPA)
+* **Estratégia de Defesa em Profundidade**: Criação de segurança abrangente para aplicações de IA agêntica
 
-## What You'll Learn
+## O Que Você Vai Aprender
 
-In this hands-on tutorial, you'll explore:
+Neste tutorial prático, você explorará:
 
-- How to detect sensitive information in Agent interactions and CloudWatch Logs and Traces
-- Amazon Bedrock Guardrails: How to configure sensitive information filters to prevent AI agents from processing or generating sensitive content
-- CloudWatch Logs Data Protection: How to automatically detect and mask sensitive data in application logs
-- AgentCore Integration: How to implement these protective measures within agentic workflows
+- Como detectar informações sensíveis em interações de Agentes e em CloudWatch Logs e Traces
+- Amazon Bedrock Guardrails: Como configurar filtros de informações sensíveis para impedir que agentes de IA processem ou gerem conteúdo sensível
+- CloudWatch Logs Data Protection: Como detectar e mascarar automaticamente dados sensíveis em logs de aplicação
+- Integração com AgentCore: Como implementar essas medidas de proteção dentro de workflows agênticos
 
-## Why This Matters
+## Por Que Isso Importa
 
-Without proper safeguards, agentic AI systems can:
+Sem as devidas salvaguardas, sistemas de IA agêntica podem:
 
-- Inadvertently expose sensitive customer data in responses or logs
-- Process or retain information that violates privacy regulations
-- Generate outputs containing PII that shouldn't be shared
-- Create compliance and security vulnerabilities in your application infrastructure
+- Expor inadvertidamente dados sensíveis de clientes em respostas ou logs
+- Processar ou reter informações que violam regulamentações de privacidade
+- Gerar saídas contendo PII que não deveriam ser compartilhadas
+- Criar vulnerabilidades de conformidade e segurança na infraestrutura da sua aplicação
 
-## Files in this Tutorial
+## Arquivos neste Tutorial
 
-- `data_protection.ipynb` - Main tutorial notebook with step-by-step instructions
-- `requirements.txt` - Python dependencies required for the tutorial
-- `data/` - Sample data files including customer support conversation examples
-- `images/` - Architecture diagrams and visual aids for the tutorial
+- `data_protection.ipynb` - Notebook principal do tutorial com instruções passo a passo
+- `requirements.txt` - Dependências Python necessárias para o tutorial
+- `data/` - Arquivos de dados de exemplo incluindo exemplos de conversas de suporte ao cliente
+- `images/` - Diagramas de arquitetura e recursos visuais para o tutorial

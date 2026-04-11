@@ -1,111 +1,111 @@
-# AgentCore Memory: Long-Term Memory Strategies
+# AgentCore Memory: Estratégias de Memória de Longo Prazo
 
-## Overview
+## Visão Geral
 
-Long-term memory in Amazon Bedrock AgentCore enables AI agents to maintain persistent information across multiple conversations and sessions. Unlike short-term memory that focuses on immediate context, long-term memory extracts, processes, and stores meaningful information that can be retrieved and applied in future interactions, creating truly personalized and intelligent agent experiences.
+A memória de longo prazo no Amazon Bedrock AgentCore permite que agentes de IA mantenham informações persistentes em múltiplas conversas e sessões. Diferente da memória de curto prazo que foca no contexto imediato, a memória de longo prazo extrai, processa e armazena informações significativas que podem ser recuperadas e aplicadas em interações futuras, criando experiências de agentes verdadeiramente personalizadas e inteligentes.
 
-## What is Long-Term Memory?
+## O que é Memória de Longo Prazo?
 
-Long-term memory provides:
+A memória de longo prazo fornece:
 
-- **Cross-Session Persistence**: Information that survives beyond individual conversations
-- **Intelligent Extraction**: Automatic identification and storage of important facts, preferences, and patterns
-- **Semantic Understanding**: Vector-based storage that enables natural language retrieval
-- **Personalization**: User-specific information that enables tailored experiences
-- **Knowledge Accumulation**: Continuous learning and information building over time
+- **Persistência Entre Sessões**: Informações que sobrevivem além de conversas individuais
+- **Extração Inteligente**: Identificação e armazenamento automáticos de fatos, preferências e padrões importantes
+- **Compreensão Semântica**: Armazenamento baseado em vetores que permite recuperação por linguagem natural
+- **Personalização**: Informações específicas do usuário que permitem experiências sob medida
+- **Acúmulo de Conhecimento**: Aprendizado contínuo e construção de informações ao longo do tempo
 
-## How Long-Term Memory Strategies Work
+## Como as Estratégias de Memória de Longo Prazo Funcionam
 
-Long-term memory operates through **Memory Strategies** that define what information to extract and how to process it. The system works automatically in the background:
+A memória de longo prazo opera através de **Estratégias de Memória** que definem quais informações extrair e como processá-las. O sistema funciona automaticamente em segundo plano:
 
-### Processing Pipeline
+### Pipeline de Processamento
 
-1. **Conversation Analysis**: Saved conversations are analyzed based on configured strategies
-2. **Information Extraction**: Important data (facts, preferences, summaries) is extracted using AI models
-3. **Structured Storage**: Extracted information is organized in namespaces for efficient retrieval
-4. **Semantic Indexing**: Information is vectorized for natural language search capabilities
-5. **Consolidation**: Similar information is merged and refined over time
+1. **Análise de Conversa**: Conversas salvas são analisadas com base nas estratégias configuradas
+2. **Extração de Informações**: Dados importantes (fatos, preferências, resumos) são extraídos usando modelos de IA
+3. **Armazenamento Estruturado**: Informações extraídas são organizadas em namespaces para recuperação eficiente
+4. **Indexação Semântica**: Informações são vetorizadas para capacidades de busca por linguagem natural
+5. **Consolidação**: Informações similares são mescladas e refinadas ao longo do tempo
 
-**Processing Time**: Typically takes ~1 minute after conversations are saved, with no additional code required.
+**Tempo de Processamento**: Tipicamente leva ~1 minuto após as conversas serem salvas, sem necessidade de código adicional.
 
-### Behind the Scenes
+### Nos Bastidores
 
-- **AI-Powered Extraction**: Uses foundation models to understand and extract relevant information
-- **Vector Embeddings**: Creates semantic representations for similarity-based retrieval
-- **Namespace Organization**: Structures information using configurable path-like hierarchies
-- **Automatic Consolidation**: Merges and refines similar information to prevent duplication
-- **Incremental Learning**: Continuously improves extraction quality based on conversation patterns
+- **Extração com IA**: Usa modelos de base para entender e extrair informações relevantes
+- **Embeddings Vetoriais**: Cria representações semânticas para recuperação baseada em similaridade
+- **Organização por Namespace**: Estrutura informações usando hierarquias configuráveis do tipo caminho
+- **Consolidação Automática**: Mescla e refina informações similares para evitar duplicação
+- **Aprendizado Incremental**: Melhora continuamente a qualidade da extração com base em padrões de conversa
 
-## Long-Term Memory Strategy Types
+## Tipos de Estratégia de Memória de Longo Prazo
 
-AgentCore Memory supports four distinct strategy types for long-term information storage:
+O AgentCore Memory suporta quatro tipos distintos de estratégia para armazenamento de informações de longo prazo:
 
-### 1. Semantic Memory Strategy
+### 1. Estratégia de Memória Semântica
 
-Stores factual information extracted from conversations using vector embeddings for similarity search.
+Armazena informações factuais extraídas de conversas usando embeddings vetoriais para busca por similaridade.
 
 ```python
 {
     "semanticMemoryStrategy": {
         "name": "FactExtractor",
-        "description": "Extracts and stores factual information",
+        "description": "Extrai e armazena informações factuais",
         "namespaces": ["support/user/{actorId}/facts/"]
     }
 }
 ```
 
-**Best for**: Storing product information, technical details, or any factual data that needs to be retrieved through natural language queries.
+**Melhor para**: Armazenar informações de produtos, detalhes técnicos ou quaisquer dados factuais que precisem ser recuperados através de consultas em linguagem natural.
 
-### 2. Summary Memory Strategy
+### 2. Estratégia de Memória de Resumo
 
-Creates and maintains summaries of conversations to preserve context for long interactions.
+Cria e mantém resumos de conversas para preservar contexto em interações longas.
 
 ```python
 {
     "summaryMemoryStrategy": {
         "name": "ConversationSummary",
-        "description": "Maintains conversation summaries",
+        "description": "Mantém resumos de conversas",
         "namespaces": ["support/summaries/{sessionId}/"]
     }
 }
 ```
 
-**Best for**: Providing context in follow-up conversations and maintaining continuity across long interactions.
+**Melhor para**: Fornecer contexto em conversas de acompanhamento e manter continuidade em interações longas.
 
-### 3. User Preference Memory Strategy
+### 3. Estratégia de Memória de Preferências do Usuário
 
-Tracks user-specific preferences and settings to personalize interactions.
+Rastreia preferências e configurações específicas do usuário para personalizar interações.
 
 ```python
 {
     "userPreferenceMemoryStrategy": {
         "name": "UserPreferences",
-        "description": "Captures user preferences and settings",
+        "description": "Captura preferências e configurações do usuário",
         "namespaces": ["support/user/{actorId}/preferences"/]
     }
 }
 ```
 
-**Best for**: Storing communication preferences, product preferences, or any user-specific settings.
+**Melhor para**: Armazenar preferências de comunicação, preferências de produtos ou quaisquer configurações específicas do usuário.
 
-### 4. Custom Memory Strategy
+### 4. Estratégia de Memória Customizada
 
-Allows customization of prompts for extraction and consolidation, providing flexibility for specialized use cases.
+Permite customização de prompts para extração e consolidação, fornecendo flexibilidade para casos de uso especializados.
 
 ```python
 {
     "customMemoryStrategy": {
         "name": "CustomExtractor",
-        "description": "Custom memory extraction logic",
+        "description": "Lógica de extração de memória customizada",
         "namespaces": ["user/custom/{actorId}/"],
         "configuration": {
-            "semanticOverride": { # You can also override Summary or User Preferences.
+            "semanticOverride": { # Você também pode sobrescrever Summary ou User Preferences.
                 "extraction": {
-                    "appendToPrompt": "Extract specific information based on custom criteria",
+                    "appendToPrompt": "Extrair informações específicas baseadas em critérios customizados",
                     "modelId": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
                 },
                 "consolidation": {
-                    "appendToPrompt": "Consolidate extracted information in a specific format",
+                    "appendToPrompt": "Consolidar informações extraídas em um formato específico",
                     "modelId": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
                 }
             }
@@ -114,73 +114,73 @@ Allows customization of prompts for extraction and consolidation, providing flex
 }
 ```
 
-**Best for**: Specialized extraction needs that don't fit the standard strategies.
+**Melhor para**: Necessidades de extração especializadas que não se encaixam nas estratégias padrão.
 
-## Understanding Namespaces
+## Entendendo Namespaces
 
-Namespaces organize memory records within strategies using a path-like structure. They can include variables that are dynamically replaced:
+Namespaces organizam registros de memória dentro de estratégias usando uma estrutura do tipo caminho. Eles podem incluir variáveis que são dinamicamente substituídas:
 
-- `support/facts/{sessionId}`: Organizes facts by session
-- `user/{actorId}/preferences`: Stores user preferences by actor ID
-- `meetings/{memoryId}/summaries/{sessionId}`: Groups summaries by memory
+- `support/facts/{sessionId}`: Organiza fatos por sessão
+- `user/{actorId}/preferences`: Armazena preferências do usuário por ID de ator
+- `meetings/{memoryId}/summaries/{sessionId}`: Agrupa resumos por memória
 
-The `{actorId}`, `{sessionId}`, and `{memoryId}` variables are automatically replaced with actual values when storing and retrieving memories.
+As variáveis `{actorId}`, `{sessionId}` e `{memoryId}` são automaticamente substituídas por valores reais ao armazenar e recuperar memórias.
 
-## Example: How It Works in Practice
+## Exemplo: Como Funciona na Prática
 
-Let's say a user tells your customer support agent: _"I'm vegetarian and I really enjoy Italian cuisine. Please don't call me after 6 PM."_
+Digamos que um usuário diga ao seu agente de suporte ao cliente: _"Sou vegetariano e gosto muito de culinária italiana. Por favor, não me ligue depois das 18h."_
 
-After you save this conversation, the configured strategies automatically:
+Depois que você salvar essa conversa, as estratégias configuradas automaticamente:
 
-**Semantic Strategy** extracts:
+**Estratégia Semântica** extrai:
 
-- "User is vegetarian"
-- "User enjoys Italian cuisine"
+- "Usuário é vegetariano"
+- "Usuário gosta de culinária italiana"
 
-**User Preference Strategy** captures:
+**Estratégia de Preferências do Usuário** captura:
 
-- "Dietary preference: vegetarian"
-- "Cuisine preference: Italian"
-- "Contact preference: no calls after 6 PM"
+- "Preferência alimentar: vegetariano"
+- "Preferência culinária: italiana"
+- "Preferência de contato: sem ligações após 18h"
 
-**Summary Strategy** creates:
+**Estratégia de Resumo** cria:
 
-- "User discussed dietary restrictions and contact preferences"
+- "Usuário discutiu restrições alimentares e preferências de contato"
 
-All of this happens automatically in the background - you only need to save the conversation and the strategies handle the rest.
+Tudo isso acontece automaticamente em segundo plano - você só precisa salvar a conversa e as estratégias cuidam do resto.
 
-## Available Sample Notebooks
+## Notebooks de Exemplo Disponíveis
 
-Explore these hands-on examples to learn long-term memory strategy implementation:
+Explore estes exemplos práticos para aprender a implementação de estratégias de memória de longo prazo:
 
-| Integration Method        | Use Case            | Description                                                                             | Notebook                                                                                                       | Architecture                                                                               |
-| ------------------------- | ------------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Strands Agent Hooks       | Customer Support    | Complete support system with semantic and preference memory strategies                  | [customer-support.ipynb](./01-single-agent/using-strands-agent-hooks/customer-support/customer-support.ipynb)  | [View](./01-single-agent/using-strands-agent-hooks/customer-support/architecture.png)      |
-| Strands Agent Hooks       | Math Assistant      | Math tutor assistant that remembers user learning preferences and progress              | [math-assistant.ipynb](./01-single-agent/using-strands-agent-hooks/simple-math-assistant/math-assistant.ipynb) | [View](./01-single-agent/using-strands-agent-hooks/simple-math-assistant/architecture.png) |
-| LangGraph Agent Hooks     | Nutrition Assistant | Nutrition advisor that saves user dietary preferences and health goals for personalized recommendations | [nutrition-assistant-with-user-preference-saving.ipynb](./01-single-agent/using-langgraph-agent-hooks/nutrition-assistant-with-user-preference-saving.ipynb) | [View](./01-single-agent/using-langgraph-agent-hooks/architecture.png) |
-| Strands Agent Memory Tool | Culinary Assistant  | Food recommendation agent that learns dietary preferences and cooking styles            | [culinary-assistant.ipynb](./01-single-agent/using-strands-agent-memory-tool/culinary-assistant.ipynb)         | [View](./01-single-agent/using-strands-agent-memory-tool/architecture.png)                 |
-| Multi-Agent               | Agent Collaboration | Travel Assistant with multiple agents sharing and utilizing long-term memory strategies | [travel-booking-assistant.ipynb](./02-multi-agent/with-strands-agent/travel-booking-assistant.ipynb)           | [View](./02-multi-agent/with-strands-agent/architecture.png)                               |
+| Método de Integração              | Caso de Uso              | Descrição                                                                                               | Notebook                                                                                                       | Arquitetura                                                                                |
+| --------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Hooks do Strands Agent            | Suporte ao Cliente       | Sistema de suporte completo com estratégias de memória semântica e de preferências                      | [customer-support.ipynb](./01-single-agent/using-strands-agent-hooks/customer-support/customer-support.ipynb)  | [Ver](./01-single-agent/using-strands-agent-hooks/customer-support/architecture.png)       |
+| Hooks do Strands Agent            | Assistente de Matemática | Assistente tutor de matemática que lembra preferências de aprendizagem e progresso do usuário           | [math-assistant.ipynb](./01-single-agent/using-strands-agent-hooks/simple-math-assistant/math-assistant.ipynb) | [Ver](./01-single-agent/using-strands-agent-hooks/simple-math-assistant/architecture.png)  |
+| Hooks do LangGraph Agent          | Assistente de Nutrição   | Consultor de nutrição que salva preferências alimentares e metas de saúde do usuário para recomendações personalizadas | [nutrition-assistant-with-user-preference-saving.ipynb](./01-single-agent/using-langgraph-agent-hooks/nutrition-assistant-with-user-preference-saving.ipynb) | [Ver](./01-single-agent/using-langgraph-agent-hooks/architecture.png) |
+| Ferramenta de Memória do Strands Agent | Assistente Culinário | Agente de recomendação de alimentos que aprende preferências alimentares e estilos de culinária         | [culinary-assistant.ipynb](./01-single-agent/using-strands-agent-memory-tool/culinary-assistant.ipynb)         | [Ver](./01-single-agent/using-strands-agent-memory-tool/architecture.png)                  |
+| Multi-Agente                      | Colaboração de Agentes   | Assistente de Viagens com múltiplos agentes compartilhando e utilizando estratégias de memória de longo prazo | [travel-booking-assistant.ipynb](./02-multi-agent/with-strands-agent/travel-booking-assistant.ipynb)      | [Ver](./02-multi-agent/with-strands-agent/architecture.png)                                |
 
-## Getting Started
+## Primeiros Passos
 
-1. Choose a sample that matches your use case
-2. Navigate to the sample folder
-3. Install requirements: `pip install -r requirements.txt`
-4. Open the Jupyter notebook and follow the step-by-step implementation
+1. Escolha um exemplo que corresponda ao seu caso de uso
+2. Navegue até a pasta do exemplo
+3. Instale os requisitos: `pip install -r requirements.txt`
+4. Abra o Jupyter notebook e siga a implementação passo a passo
 
-## Best Practices
+## Melhores Práticas
 
-1. **Strategy Selection**: Choose appropriate strategies based on your use case requirements
-2. **Namespace Design**: Plan namespace hierarchies for efficient information organization
-3. **Extraction Tuning**: Customize extraction prompts for domain-specific information
-4. **Performance Monitoring**: Track memory extraction quality and retrieval performance
-5. **Privacy Considerations**: Implement appropriate data retention and privacy policies
+1. **Seleção de Estratégia**: Escolha estratégias apropriadas com base nos requisitos do seu caso de uso
+2. **Design de Namespace**: Planeje hierarquias de namespace para organização eficiente de informações
+3. **Ajuste de Extração**: Customize prompts de extração para informações específicas do domínio
+4. **Monitoramento de Performance**: Acompanhe a qualidade da extração de memória e a performance de recuperação
+5. **Considerações de Privacidade**: Implemente políticas apropriadas de retenção de dados e privacidade
 
-## Next Steps
+## Próximos Passos
 
-After mastering long-term memory strategies, explore:
+Após dominar as estratégias de memória de longo prazo, explore:
 
-- Combining short-term and long-term memory for comprehensive agent experiences
-- Advanced custom strategy configurations
-- Multi-agent memory sharing patterns
-- Production deployment considerations
+- Combinar memória de curto e longo prazo para experiências abrangentes de agentes
+- Configurações avançadas de estratégias customizadas
+- Padrões de compartilhamento de memória multi-agente
+- Considerações para implantação em produção

@@ -1,45 +1,45 @@
-# Amazon ECS with AgentCore Identity and 3LO
+# Amazon ECS com AgentCore Identity e 3LO
 
-This sample demonstrates how to build an AI agent on Amazon ECS Fargate that uses **[Amazon Bedrock AgentCore Identity](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity-getting-started.html)** for the **Authorization Code Grant (3-legged OAuth) Flow**. The agent can securely access external services (like GitHub) on behalf of authenticated users.
+Este exemplo demonstra como construir um agente de IA no Amazon ECS Fargate que usa **[Amazon Bedrock AgentCore Identity](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity-getting-started.html)** para o **Fluxo Authorization Code Grant (OAuth de 3 etapas)**. O agente pode acessar com segurança serviços externos (como GitHub) em nome de usuários autenticados.
 
-## Architecture
+## Arquitetura
 
-![Architecture Diagram](sample-agent-3lo-architecture.drawio.png)
-
-
-1. The requests arrive at the Amazon Application Load Balancer, which authenticates the user using the [ALB OIDC authentication flow](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/listener-authenticate-users.html) with [Microsoft Entra ID](https://learn.microsoft.com/en-gb/entra/fundamentals/what-is-entra) as the Identity Provider, though any OIDC-compliant Identity Provider is supported. The traffic is encrypted using HTTPS, which requires a public hosted zone on Amazon Route 53 and a certificate from Amazon Certificate Manager. An A record (alias) in the hosted zone routes the traffic to the load balancer. The load balancer fronts the ECS cluster with two services: the Agentic Workload and the OAuth Callback. The load balancer passes the `x-amzn-oidc-data` header, which contains the user claims in JSON Web Token (JWT) format, allowing the unique identification of the user through the `sub` field.
-2. The Agentic Workload is a [FastAPI](https://fastapi.tiangolo.com/) server with the `/invocations` method, which takes a `sessionId` and `message` as input and passes them to an agent implemented using Strands Agents, though any agent SDK such as LangChain or LangGraph can be used, as the request intake is handled by the FastAPI server independently of the agent SDK. The agent invokes the LLM on Amazon Bedrock, stores the session in an Amazon S3 bucket using the user's `sub` claim as a key prefix to ensure session isolation between users, and has tools to perform actions on the user's behalf on GitHub, which requires the user's access token.
-3. Amazon Bedrock AgentCore Identity (AC Identity) provides a workload identity for the agentic workload and the OAuth provider configuration for GitHub, which includes the well-known configuration of GitHub and the credentials for the registered app on GitHub. This allows the agent to retrieve the access token from the AC Identity Token Vault. If the access token is not available, has expired, or has been revoked, AC Identity returns an authorization URL that includes the callback URL pointing to the callback service and a session ID bound to the user to identify the flow.
-4. The callback service processes the callback URL once the authorization by the user has been granted in GitHub. It takes the session id from the callback URL and the `sub` from the `x-amzn-oidc-data` header to complete OAuth flow.
-5. The end user invokes the agentic workload through the `/docs` endpoint, which renders the OpenAPI spec as HTML, serving as a minimal UI sufficient for demo purposes.
-
-Logs are captured in Amazon CloudWatch, and access logs for both the load balancer and the S3 bucket are stored in a dedicated S3 bucket. The container images for the ECS services are stored in and pulled from Amazon ECR. A set of basic AWS WAF rules is attached to the load balancer to provide baseline protection against common web exploits. All data is encrypted using an Amazon KMS customer managed key (CMK), except for the access logs bucket, which uses Amazon S3 managed encryption (SSE-S3) as required by the service
+![Diagrama de Arquitetura](sample-agent-3lo-architecture.drawio.png)
 
 
-### Authorization Code Grant Flow
+1. As requisições chegam no Amazon Application Load Balancer, que autentica o usuário usando o [fluxo de autenticação OIDC do ALB](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/listener-authenticate-users.html) com [Microsoft Entra ID](https://learn.microsoft.com/en-gb/entra/fundamentals/what-is-entra) como Provedor de Identidade, embora qualquer Provedor de Identidade compatível com OIDC seja suportado. O tráfego é criptografado usando HTTPS, que requer uma zona hospedada pública no Amazon Route 53 e um certificado do Amazon Certificate Manager. Um registro A (alias) na zona hospedada roteia o tráfego para o load balancer. O load balancer fica na frente do cluster ECS com dois serviços: a Carga de Trabalho Agêntica e o OAuth Callback. O load balancer passa o cabeçalho `x-amzn-oidc-data`, que contém as reivindicações do usuário em formato JSON Web Token (JWT), permitindo a identificação única do usuário através do campo `sub`.
+2. A Carga de Trabalho Agêntica é um servidor [FastAPI](https://fastapi.tiangolo.com/) com o método `/invocations`, que recebe um `sessionId` e `message` como entrada e os passa para um agente implementado usando Strands Agents, embora qualquer SDK de agente como LangChain ou LangGraph possa ser usado, já que a ingestão de requisição é tratada pelo servidor FastAPI independentemente do SDK do agente. O agente invoca o LLM no Amazon Bedrock, armazena a sessão em um bucket Amazon S3 usando a reivindicação `sub` do usuário como prefixo de chave para garantir isolamento de sessão entre usuários, e tem ferramentas para realizar ações em nome do usuário no GitHub, o que requer o token de acesso do usuário.
+3. Amazon Bedrock AgentCore Identity (AC Identity) fornece uma identidade de carga de trabalho para a carga de trabalho agêntica e a configuração do provedor OAuth para GitHub, que inclui a configuração well-known do GitHub e as credenciais para a aplicação registrada no GitHub. Isso permite que o agente recupere o token de acesso do AC Identity Token Vault. Se o token de acesso não estiver disponível, tiver expirado ou tiver sido revogado, AC Identity retorna uma URL de autorização que inclui a URL de callback apontando para o serviço de callback e um ID de sessão vinculado ao usuário para identificar o fluxo.
+4. O serviço de callback processa a URL de callback uma vez que a autorização pelo usuário tenha sido concedida no GitHub. Ele pega o id de sessão da URL de callback e o `sub` do cabeçalho `x-amzn-oidc-data` para completar o fluxo OAuth.
+5. O usuário final invoca a carga de trabalho agêntica através do endpoint `/docs`, que renderiza a especificação OpenAPI como HTML, servindo como uma UI mínima suficiente para fins de demonstração.
 
-When the agent needs to access an external service on behalf of a user, see [OAuth 2.0 authorization URL session binding](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/oauth2-authorization-url-session-binding.html):
+Logs são capturados no Amazon CloudWatch, e logs de acesso tanto para o load balancer quanto para o bucket S3 são armazenados em um bucket S3 dedicado. As imagens de container para os serviços ECS são armazenadas e extraídas do Amazon ECR. Um conjunto de regras básicas do AWS WAF é anexado ao load balancer para fornecer proteção baseline contra explorações web comuns. Todos os dados são criptografados usando uma chave gerenciada pelo cliente (CMK) do Amazon KMS, exceto o bucket de logs de acesso, que usa criptografia gerenciada pelo Amazon S3 (SSE-S3) conforme requerido pelo serviço
 
-1. Agent requests an access token from AgentCore Identity
-2. If no valid token exists, AgentCore returns an authorization URL
-3. User clicks the URL and authenticates with the external service (e.g., GitHub)
-4. External service redirects to the OAuth Callback Service endpoint
-5. OAuth Callback Service completes the flow by calling `complete_resource_token_auth()` to bind the token to the user
-6. Subsequent agent requests automatically receive the user's access token
 
-## Key Concepts
+### Fluxo Authorization Code Grant
 
-- **Workload Access Token**: A token (workloadIdentityToken) used for authentication that represents the workload identity and the user
-- **Session URI**: Tracks the authorization flow state across multiple requests and responses during the OAuth2 authentication process
-- **Token Vault**: Secure storage where OAuth tokens are stored
-- **Callback Service**: Confirms the user authentication session for obtaining OAuth2.0 tokens for a resource
+Quando o agente precisa acessar um serviço externo em nome de um usuário, veja [vinculação de sessão de URL de autorização OAuth 2.0](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/oauth2-authorization-url-session-binding.html):
 
-## Flow Phases
+1. Agente solicita um token de acesso do AgentCore Identity
+2. Se nenhum token válido existir, AgentCore retorna uma URL de autorização
+3. Usuário clica na URL e se autentica com o serviço externo (ex.: GitHub)
+4. Serviço externo redireciona para o endpoint do OAuth Callback Service
+5. OAuth Callback Service completa o fluxo chamando `complete_resource_token_auth()` para vincular o token ao usuário
+6. Requisições subsequentes do agente recebem automaticamente o token de acesso do usuário
 
-1. **Get workload access token**: The workload obtains a token from AgentCore Identity that represents both the workload and the user
-2. **Request OAuth authorization**: The workload requests an OAuth token, receiving an authorization URL
-3. **User authorizes with OAuth provider**: The user grants permission for the workload to access their resources on the 3rd party tool
-4. **Complete authorization via callback**: The callback service confirms the user authentication session and completes the token binding
+## Conceitos Chave
+
+- **Workload Access Token**: Um token (workloadIdentityToken) usado para autenticação que representa a identidade da carga de trabalho e o usuário
+- **Session URI**: Rastreia o estado do fluxo de autorização através de múltiplas requisições e respostas durante o processo de autenticação OAuth2
+- **Token Vault**: Armazenamento seguro onde tokens OAuth são armazenados
+- **Callback Service**: Confirma a sessão de autenticação do usuário para obter tokens OAuth2.0 para um recurso
+
+## Fases do Fluxo
+
+1. **Obter workload access token**: A carga de trabalho obtém um token do AgentCore Identity que representa tanto a carga de trabalho quanto o usuário
+2. **Solicitar autorização OAuth**: A carga de trabalho solicita um token OAuth, recebendo uma URL de autorização
+3. **Usuário autoriza com provedor OAuth**: O usuário concede permissão para a carga de trabalho acessar seus recursos na ferramenta de terceiros
+4. **Completar autorização via callback**: O serviço de callback confirma a sessão de autenticação do usuário e completa a vinculação do token
 
 ```mermaid
 sequenceDiagram
@@ -80,83 +80,83 @@ sequenceDiagram
     Callback-->>User: Authorization complete
 ```
 
-For more detailed flow diagrams, see:
-- [Inbound Authentication Flow](docs/inbound.md) - ALB OIDC authentication with Entra ID
-- [Outbound Authorization Flow](docs/outbound.md) - GitHub OAuth with AgentCore Identity
+Para diagramas de fluxo mais detalhados, veja:
+- [Fluxo de Autenticação de Entrada](docs/inbound.md) - Autenticação OIDC do ALB com Entra ID
+- [Fluxo de Autorização de Saída](docs/outbound.md) - OAuth do GitHub com AgentCore Identity
 
-## Prerequisites
+## Pré-requisitos
 
-Before deploying this sample, ensure you have:
+Antes de implantar este exemplo, garanta que você tem:
 
-- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) v2.27+ configured with appropriate credentials
-- [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting-started.html) v2 installed (`npm install -g aws-cdk`)
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) v2.27+ configurada com credenciais apropriadas
+- [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting-started.html) v2 instalado (`npm install -g aws-cdk`)
 - [uv](https://docs.astral.sh/uv/)
 - [Python 3.12+](https://www.python.org/downloads/)
-- [Docker](https://docs.docker.com/get-docker/) for building container images
-- An [Amazon Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html) hosted zone for your domain
-- Access to [Amazon Bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/getting-started.html) with the Claude model enabled
-- An OIDC-compliant Identity Provider (IdP) for user authentication
+- [Docker](https://docs.docker.com/get-docker/) para construir imagens de container
+- Uma [Amazon Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html) zona hospedada para seu domínio
+- Acesso ao [Amazon Bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/getting-started.html) com o modelo Claude habilitado
+- Um Provedor de Identidade (IdP) compatível com OIDC para autenticação de usuário
 
-### OIDC Identity Provider
+### Provedor de Identidade OIDC
 
-This sample requires OIDC credentials to work correctly.
+Este exemplo requer credenciais OIDC para funcionar corretamente.
 
-#### Optional: Create an Entra ID OAuth Application if you don't have a OIDC Identity Provider at hand
+#### Opcional: Criar uma Aplicação OAuth do Entra ID se você não tiver um Provedor de Identidade OIDC disponível
 
-Create an OAuth application in your Entra ID (Azure AD) tenant:
+Crie uma aplicação OAuth no seu tenant Entra ID (Azure AD):
 
-1. **Open Entra ID**: Go to [portal.azure.com](https://portal.azure.com) and search for "Microsoft Entra ID"
-2. **App Registrations**: On the left sidebar, click Manage > App registrations
-3. **New Registration**: Click on New registration
-4. **Configure the registration**:
-   - **Name**: `AWS-ALB-SingleTenant` (or your preferred name)
-   - **Supported Account Types**: Select "Single tenant only"
+1. **Abrir Entra ID**: Vá para [portal.azure.com](https://portal.azure.com) e pesquise por "Microsoft Entra ID"
+2. **App Registrations**: Na barra lateral esquerda, clique em Manage > App registrations
+3. **New Registration**: Clique em New registration
+4. **Configure o registro**:
+   - **Name**: `AWS-ALB-SingleTenant` (ou seu nome preferido)
+   - **Supported Account Types**: Selecione "Single tenant only"
    - **Redirect URI**:
-     - Select "Web" from the dropdown
-     - Enter: `https://agent-3lo.<your-domain>/oauth2/idpresponse`
-5. **Register**: Click the Register button at the bottom
+     - Selecione "Web" do dropdown
+     - Insira: `https://agent-3lo.<seu-dominio>/oauth2/idpresponse`
+5. **Register**: Clique no botão Register na parte inferior
 
-6. After registration, go to Certificates & secrets
-7. Click on New client secret
-8. Add a description and set expiration
-9. Click Add and copy the secret value immediately (you won't be able to see it again)
+6. Após o registro, vá para Certificates & secrets
+7. Clique em New client secret
+8. Adicione uma descrição e defina expiração
+9. Clique em Add e copie o valor do secret imediatamente (você não poderá vê-lo novamente)
 
-At the end, you should have a TENANT_ID, a CLIENT_ID, and a CLIENT_SECRET.
+No final, você deverá ter um TENANT_ID, um CLIENT_ID e um CLIENT_SECRET.
 
-Note that the OIDC Identity Provider endpoints depend on your Tenant ID. The exact pattern is provided by the [Well Known Configuration of Entra ID](https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration). For more details follow the guide [Find your app's OpenID configuration document URI](https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc#find-your-apps-openid-configuration-document-uri)
+Note que os endpoints do Provedor de Identidade OIDC dependem do seu Tenant ID. O padrão exato é fornecido pela [Well Known Configuration do Entra ID](https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration). Para mais detalhes, siga o guia [Find your app's OpenID configuration document URI](https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc#find-your-apps-openid-configuration-document-uri)
 
-You may use this in configuration step below.
+Você pode usar isso na etapa de configuração abaixo.
 
-##### Store OIDC Client Credentials
+##### Armazenar Credenciais do Cliente OIDC
 
-Store the client secret and id from the previous step in AWS Secrets Manager:
+Armazene o client secret e id da etapa anterior no AWS Secrets Manager:
 
 ```shell
 aws secretsmanager create-secret --name "agent-oauth/credentials" \
---secret-string '{"client_id":"<your-client-id>","client_secret":"<your-client-secret>"}' \
---region <your-deployment-region>
+--secret-string '{"client_id":"<seu-client-id>","client_secret":"<seu-client-secret>"}' \
+--region <sua-regiao-de-implantacao>
 ```
 
-### GitHub OAuth App (for AgentCore Identity)
+### Aplicação OAuth do GitHub (para AgentCore Identity)
 
-Create a GitHub OAuth App and register it with AgentCore Identity by following the [GitHub identity provider setup guide](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity-idp-github.html).
+Crie uma Aplicação OAuth do GitHub e registre-a com AgentCore Identity seguindo o [guia de configuração do provedor de identidade GitHub](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity-idp-github.html).
 
-## Configuration
+## Configuração
 
-Some defaults are set in `config.py`. The DNS and OIDC credentials are configured via the `.env` file as explained below.
+Alguns padrões são definidos em `config.py`. As credenciais DNS e OIDC são configuradas via arquivo `.env` conforme explicado abaixo.
 
-`config.py` key settings:
+Configurações chave do `config.py`:
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `aws_region` | Region for main stack (ECS, ALB) | `eu-west-1` |
-| `identity_aws_region` | Region for AgentCore Identity | `eu-central-1` |
-| `suffix` | Suffix for resource naming | `sample` |
-| `inference_profile_id` | Bedrock inference profile | `eu.anthropic.claude-haiku-4-5-20251001-v1:0` |
+| Parâmetro | Descrição | Padrão |
+|-----------|-----------|--------|
+| `aws_region` | Região para stack principal (ECS, ALB) | `eu-west-1` |
+| `identity_aws_region` | Região para AgentCore Identity | `eu-central-1` |
+| `suffix` | Sufixo para nomenclatura de recursos | `sample` |
+| `inference_profile_id` | Perfil de inferência Bedrock | `eu.anthropic.claude-haiku-4-5-20251001-v1:0` |
 
-### OIDC Configuration
+### Configuração OIDC
 
-Create a `.env` file in the project root with your IdP's endpoints. These values can be found in your IdP's `.well-known/openid-configuration` endpoint:
+Crie um arquivo `.env` na raiz do projeto com os endpoints do seu IdP. Estes valores podem ser encontrados no endpoint `.well-known/openid-configuration` do seu IdP:
 
 ```shell
 cat <<EOF > .env
@@ -187,65 +187,65 @@ EOF
 
 </details>
 
-### Amazon Route 53 Hosted Zone
+### Zona Hospedada Amazon Route 53
 
-You need an [Amazon Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html) hosted zone for your domain. Add the following to your `.env` file:
+Você precisa de uma [Amazon Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html) zona hospedada para seu domínio. Adicione o seguinte ao seu arquivo `.env`:
 
 ```shell
 cat <<EOF >> .env
-DNS_DOMAIN_NAME=your-domain.example.com
-DNS_HOSTED_ZONE_ID=YOUR-HOSTED-ZONE-ID
+DNS_DOMAIN_NAME=seu-dominio.example.com
+DNS_HOSTED_ZONE_ID=SEU-HOSTED-ZONE-ID
 EOF
 ```
 
 
-## Deployment
+## Implantação
 
-Use the deployment script which validates prerequisites and deploys the stacks:
+Use o script de implantação que valida pré-requisitos e implanta as stacks:
 
 ```shell
-# Install dependencies
+# Instalar dependências
 uv sync --all-groups
 
-# Run deployment script
+# Executar script de implantação
 ./deploy_sample.sh
 ```
 
-After deployment, access your agent at `https://agent-3lo.<your-domain>`
+Após a implantação, acesse seu agente em `https://agent-3lo.<seu-dominio>`
 
-## Testing 
+## Testes
 
-We provide a couple of tests in [tests](./tests/). Note that we use [Moto](https://docs.getmoto.org/en/latest/) to mock [boto3](https://docs.aws.amazon.com/boto3/latest/) API calls. Note that we patch certain API calls ourselves as they are not implemented in Moto yet, see `mock_bedrock_api_call` in the [conftest.py](./tests/conftest.py).
+Fornecemos alguns testes em [tests](./tests/). Note que usamos [Moto](https://docs.getmoto.org/en/latest/) para simular chamadas de API do [boto3](https://docs.aws.amazon.com/boto3/latest/). Note que fazemos patch de certas chamadas de API nós mesmos pois elas ainda não estão implementadas no Moto, veja `mock_bedrock_api_call` no [conftest.py](./tests/conftest.py).
 
-You can run the test with the command `uv run pytest tests`.
+Você pode executar o teste com o comando `uv run pytest tests`.
 
-## Security
+## Segurança
 
-- All secrets are stored in AWS Secrets Manager with dynamic references
-- HTTPS is enforced via ALB with ACM certificates
-- OIDC IdP handles user authentication via ALB
-- AgentCore Identity manages OAuth tokens securely per user
-- AWS KMS encryption for Amazon CloudWatch Logs and sensitive data
-- Amazon VPC with private subnets for Amazon ECS tasks
+- Todos os secrets são armazenados no AWS Secrets Manager com referências dinâmicas
+- HTTPS é imposto via ALB com certificados ACM
+- IdP OIDC manipula autenticação de usuário via ALB
+- AgentCore Identity gerencia tokens OAuth com segurança por usuário
+- Criptografia AWS KMS para Amazon CloudWatch Logs e dados sensíveis
+- Amazon VPC com subnets privadas para tarefas Amazon ECS
 
-## Additional Security Considerations
+## Considerações de Segurança Adicionais
 
-See [Security Considerations](security_considerations.md)
+Veja [Considerações de Segurança](security_considerations.md)
 
-## Cleanup
+## Limpeza
 
-To remove all deployed resources:
+Para remover todos os recursos implantados:
 
 ```shell
 uv run cdk destroy --all
 ```
 
-**Note:** You may need to manually delete:
+**Nota:** Você pode precisar deletar manualmente:
 
-- Amazon S3 bucket contents (if not empty)
-- Amazon CloudWatch log groups
-- AWS Secrets Manager secrets
+- Conteúdos do bucket Amazon S3 (se não estiver vazio)
+- Grupos de log do Amazon CloudWatch
+- Secrets do AWS Secrets Manager
 
-## License
+## Licença
 
-This library is licensed under the MIT-0 License. See the [LICENSE](LICENSE) file.
+Esta biblioteca é licenciada sob a Licença MIT-0. Veja o arquivo [LICENSE](LICENSE).

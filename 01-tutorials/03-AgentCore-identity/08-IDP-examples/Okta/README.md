@@ -1,51 +1,51 @@
-# Okta Integration with Amazon Bedrock AgentCore
+# Integração do Okta com Amazon Bedrock AgentCore
 
-This repository contains comprehensive notebooks demonstrating how to integrate Okta with Amazon Bedrock AgentCore for various authentication and authorization scenarios.
+Este repositório contém notebooks abrangentes demonstrando como integrar o Okta com o Amazon Bedrock AgentCore para vários cenários de autenticação e autorização.
 
-## What is Okta?
+## O que é Okta?
 
-Okta is a cloud-based identity and access management service that provides secure identity solutions for enterprises, enabling seamless authentication and authorization across applications and services.
+Okta é um serviço de gerenciamento de identidade e acesso baseado em nuvem que fornece soluções de identidade seguras para empresas, possibilitando autenticação e autorização contínuas em aplicações e serviços.
 
-### Key Features:
-- **Single Sign-On (SSO)** - Users authenticate once to access multiple applications
-- **Multi-Factor Authentication (MFA)** - Enhanced security through additional verification methods  
-- **Adaptive Authentication** - Risk-based authentication policies based on user behavior and context
-- **Universal Directory** - Centralized user management and profile synchronization
-- **API Access Management** - OAuth 2.0 and OpenID Connect support for API security
+### Recursos Principais:
+- **Single Sign-On (SSO)** - Usuários se autenticam uma vez para acessar múltiplas aplicações
+- **Multi-Factor Authentication (MFA)** - Segurança aprimorada através de métodos adicionais de verificação
+- **Adaptive Authentication** - Políticas de autenticação baseadas em risco com base no comportamento e contexto do usuário
+- **Universal Directory** - Gerenciamento centralizado de usuários e sincronização de perfis
+- **API Access Management** - Suporte OAuth 2.0 e OpenID Connect para segurança de API
 
-### Integration with AgentCore
+### Integração com AgentCore
 
-Okta can be used as an identity provider with AgentCore Identity to:
-- Authenticate users before they can invoke agents (inbound authentication)
-- Authorize agents to access protected resources on behalf of users (outbound authentication)
-- Secure AgentCore Gateway endpoints with JWT-based authorization
+Okta pode ser usado como provedor de identidade com AgentCore Identity para:
+- Autenticar usuários antes que possam invocar agentes (autenticação de entrada)
+- Autorizar agentes a acessar recursos protegidos em nome dos usuários (autenticação de saída)
+- Proteger endpoints do AgentCore Gateway com autorização baseada em JWT
 
-## Example Notebooks Overview
+## Visão Geral dos Notebooks de Exemplo
 
-This learning path includes practical notebooks that demonstrate different integration patterns:
+Este caminho de aprendizado inclui notebooks práticos que demonstram diferentes padrões de integração:
 
 ### 1. Step by Step Okta for Inbound Auth.ipynb
 
-**Purpose**: Shows how to use Okta for **inbound authentication** to protect AgentCore Runtime agent endpoints, ensuring only authenticated users can invoke agents.
+**Propósito**: Mostra como usar o Okta para **autenticação de entrada** para proteger endpoints de agentes do AgentCore Runtime, garantindo que apenas usuários autenticados possam invocar agentes.
 
-**What you'll learn**:
-- Setting up Okta tenant and application configuration
-- Creating AgentCore OAuth2 credential providers
-- Implementing OAuth 2.0 flows for user authentication and delegation
-- Building and deploying agents on AgentCore Runtime with Okta integration
-- Managing user sessions
+**O que você aprenderá**:
+- Configurar tenant Okta e configuração de aplicação
+- Criar provedores de credenciais OAuth2 do AgentCore
+- Implementar fluxos OAuth 2.0 para autenticação e delegação de usuário
+- Construir e implantar agentes no AgentCore Runtime com integração Okta
+- Gerenciar sessões de usuário
 
-**Key Integration Pattern**:
-- Users must authenticate with Okta before accessing AgentCore Runtime agents endpoints
-- Bearer tokens validate user identity on each request
-- Agents remain protected behind authentication layer
+**Padrão de Integração Principal**:
+- Usuários devem se autenticar com Okta antes de acessar endpoints de agentes do AgentCore Runtime
+- Tokens bearer validam a identidade do usuário em cada requisição
+- Agentes permanecem protegidos por trás da camada de autenticação
 
-## Support and Documentation
+## Suporte e Documentação
 
-- [Okta Developer Documentation](https://developer.okta.com/)
-- [Amazon Bedrock AgentCore Documentation](https://docs.aws.amazon.com/bedrock-agentcore/)
-- [OAuth 2.0 and OpenID Connect](https://developer.okta.com/docs/concepts/oauth-openid/)
+- [Documentação Okta Developer](https://developer.okta.com/)
+- [Documentação Amazon Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/)
+- [OAuth 2.0 e OpenID Connect](https://developer.okta.com/docs/concepts/oauth-openid/)
 
-## Note
+## Nota
 
-Okta is not an AWS service. Please refer to Okta documentation for costs and licensing related to Okta usage.
+Okta não é um serviço AWS. Consulte a documentação do Okta para custos e licenciamento relacionados ao uso do Okta.

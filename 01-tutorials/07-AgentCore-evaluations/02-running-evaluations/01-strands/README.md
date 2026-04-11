@@ -1,108 +1,108 @@
-# Running Evaluations with Strands Agents
+# Executando Avaliações com Strands Agents
 
-## Overview
+## Visão Geral
 
-This tutorial demonstrates how to use AgentCore Evaluations with agents built using the [Strands Agents SDK](https://strandsagents.com/). You'll learn to run both on-demand and online evaluations to assess and monitor your Strands agent's performance using built-in and custom evaluators.
+Este tutorial demonstra como usar o AgentCore Evaluations com agentes construídos usando o [Strands Agents SDK](https://strandsagents.com/). Você aprenderá a executar avaliações sob demanda e online para avaliar e monitorar o desempenho do seu agente Strands usando avaliadores integrados e personalizados.
 
-## What You'll Learn
+## O Que Você Vai Aprender
 
-- Running on-demand evaluations on specific Strands agent traces
-- Setting up online evaluations for continuous monitoring of Strands agents
-- Using the AgentCore Starter Toolkit to manage evaluations
-- Analyzing evaluation results to improve agent quality
+- Executar avaliações sob demanda em traces específicos do agente Strands
+- Configurar avaliações online para monitoramento contínuo de agentes Strands
+- Usar o AgentCore Starter Toolkit para gerenciar avaliações
+- Analisar resultados de avaliação para melhorar a qualidade do agente
 
-## Prerequisites
+## Pré-requisitos
 
-Before starting these tutorials, ensure you have:
-- Completed [Tutorial 00: Prerequisites](../../00-prereqs) and created the Strands agent (`eval_agent_strands.py`)
-- Completed [Tutorial 01: Creating Custom Evaluators](../../01-creating-custom-evaluators) and created a custom evaluator
-- Your Strands agent deployed on AgentCore Runtime
-- Generated at least one session with traces by invoking your agent
-- Python 3.10+ installed
-- AWS credentials configured with appropriate permissions
+Antes de iniciar estes tutoriais, certifique-se de ter:
+- Completado o [Tutorial 00: Pré-requisitos](../../00-prereqs) e criado o agente Strands (`eval_agent_strands.py`)
+- Completado o [Tutorial 01: Criando Avaliadores Personalizados](../../01-creating-custom-evaluators) e criado um avaliador personalizado
+- Seu agente Strands implantado no AgentCore Runtime
+- Gerado pelo menos uma sessão com traces invocando seu agente
+- Python 3.10+ instalado
+- Credenciais AWS configuradas com permissões apropriadas
 
-## Tutorial Structure
+## Estrutura do Tutorial
 
 ### [01-on-demand-eval.ipynb](01-on-demand-eval.ipynb)
 
-**Tutorial Type:** Evaluating Strands agent with on-demand evaluators (built-in and custom)
+**Tipo de Tutorial:** Avaliando agente Strands com avaliadores sob demanda (integrados e personalizados)
 
-**What You'll Learn:**
-- How to retrieve session and trace information from your deployed Strands agent
-- Initializing the AgentCore Evaluations client using the Starter Toolkit
-- Running on-demand evaluations on specific traces or sessions
-- Using both built-in evaluators (e.g., `Builtin.Correctness`, `Builtin.Helpfulness`) and custom evaluators
-- Interpreting evaluation results including scores, explanations, and token usage
+**O Que Você Vai Aprender:**
+- Como recuperar informações de sessão e trace do seu agente Strands implantado
+- Inicializar o cliente AgentCore Evaluations usando o Starter Toolkit
+- Executar avaliações sob demanda em traces ou sessões específicas
+- Usar avaliadores integrados (ex.: `Builtin.Correctness`, `Builtin.Helpfulness`) e avaliadores personalizados
+- Interpretar resultados de avaliação incluindo pontuações, explicações e uso de tokens
 
-**Key Concepts:**
-- **Targeted Assessment**: Evaluate specific interactions by providing session or trace IDs
-- **Synchronous Execution**: Get immediate results for your evaluation requests
-- **Flexible Evaluator Selection**: Apply multiple evaluators to the same trace
-- **Investigation Tool**: Perfect for analyzing specific interactions or validating fixes
+**Conceitos-Chave:**
+- **Avaliação Direcionada**: Avalie interações específicas fornecendo IDs de sessão ou trace
+- **Execução Síncrona**: Obtenha resultados imediatos para suas solicitações de avaliação
+- **Seleção Flexível de Avaliadores**: Aplique múltiplos avaliadores ao mesmo trace
+- **Ferramenta de Investigação**: Perfeita para analisar interações específicas ou validar correções
 
 ### [02-online-eval.ipynb](02-online-eval.ipynb)
 
-**Tutorial Type:** Evaluating Strands agent with online evaluators (built-in and custom)
+**Tipo de Tutorial:** Avaliando agente Strands com avaliadores online (integrados e personalizados)
 
-**What You'll Learn:**
-- Creating online evaluation configurations for your Strands agent
-- Configuring sampling rates and filtering rules
-- Setting up continuous evaluation with built-in and custom evaluators
-- Monitoring evaluation results in CloudWatch dashboards
-- Managing online evaluation configurations (enable, disable, update, delete)
+**O Que Você Vai Aprender:**
+- Criar configurações de avaliação online para seu agente Strands
+- Configurar taxas de amostragem e regras de filtragem
+- Configurar avaliação contínua com avaliadores integrados e personalizados
+- Monitorar resultados de avaliação em dashboards do CloudWatch
+- Gerenciar configurações de avaliação online (habilitar, desabilitar, atualizar, excluir)
 
-**Key Concepts:**
-- **Continuous Monitoring**: Automatically evaluate agent performance as interactions occur
-- **Sampling-Based**: Configure percentage-based sampling (e.g., evaluate 10% of sessions)
-- **Real-time Insights**: Track quality trends and catch regressions early
-- **Production-Ready**: Designed for scale with minimal performance impact
+**Conceitos-Chave:**
+- **Monitoramento Contínuo**: Avalie automaticamente o desempenho do agente conforme as interações ocorrem
+- **Baseado em Amostragem**: Configure amostragem baseada em porcentagem (ex.: avaliar 10% das sessões)
+- **Insights em Tempo Real**: Acompanhe tendências de qualidade e detecte regressões precocemente
+- **Pronto para Produção**: Projetado para escala com impacto mínimo no desempenho
 
-## Strands Agent Architecture
+## Arquitetura do Agente Strands
 
-The Strands agent used in these tutorials includes:
+O agente Strands usado nestes tutoriais inclui:
 
-**Code Execution Capability:**
-- Uses AgentCore Code Interpreter to run Python code
-- Handles math calculations and data analysis
+**Capacidade de Execução de Código:**
+- Usa o AgentCore Code Interpreter para executar código Python
+- Lida com cálculos matemáticos e análise de dados
 
-**Memory Integration:**
-- Stores user facts and preferences
-- Retrieves relevant context for personalized responses
+**Integração com Memória:**
+- Armazena fatos e preferências do usuário
+- Recupera contexto relevante para respostas personalizadas
 
-**Model:**
-- Anthropic Claude Haiku 4.5 from Amazon Bedrock
+**Modelo:**
+- Anthropic Claude Haiku 4.5 do Amazon Bedrock
 
-**Observability:**
-- Automatic OTEL instrumentation via AgentCore Runtime
-- Traces available in CloudWatch GenAI Observability Dashboard
+**Observabilidade:**
+- Instrumentação OTEL automática via AgentCore Runtime
+- Traces disponíveis no Dashboard de Observabilidade GenAI do CloudWatch
 
-## How Evaluations Work with Strands Agents
+## Como as Avaliações Funcionam com Agentes Strands
 
-1. **Agent Invocation**: Your Strands agent processes user requests
-2. **Trace Generation**: AgentCore Observability captures OTEL traces automatically
-3. **Trace Storage**: Traces are stored in CloudWatch Log groups
-4. **Evaluation**:
-   - **On-demand**: You select specific sessions/traces to evaluate
-   - **Online**: AgentCore automatically samples and evaluates based on your configuration
-5. **Results Analysis**: View scores, explanations, and trends in CloudWatch
+1. **Invocação do Agente**: Seu agente Strands processa solicitações do usuário
+2. **Geração de Traces**: O AgentCore Observability captura traces OTEL automaticamente
+3. **Armazenamento de Traces**: Os traces são armazenados em grupos de logs do CloudWatch
+4. **Avaliação**:
+   - **Sob demanda**: Você seleciona sessões/traces específicos para avaliar
+   - **Online**: O AgentCore amostra e avalia automaticamente com base na sua configuração
+5. **Análise de Resultados**: Visualize pontuações, explicações e tendências no CloudWatch
 
-## Using the AgentCore Starter Toolkit
+## Usando o AgentCore Starter Toolkit
 
-Both notebooks use the **AgentCore Starter Toolkit** to simplify evaluation workflows:
+Ambos os notebooks usam o **AgentCore Starter Toolkit** para simplificar os fluxos de trabalho de avaliação:
 
 ```python
 from bedrock_agentcore_starter_toolkit import Evaluations
 
-# Initialize the evaluations client
+# Inicializar o cliente de avaliações
 evaluations = Evaluations()
 
-# On-demand evaluation
+# Avaliação sob demanda
 result = evaluations.evaluate_session(
     session_id="your-session-id",
     evaluator_ids=["Builtin.Correctness", "your-custom-evaluator-id"]
 )
 
-# Online evaluation
+# Avaliação online
 config = evaluations.create_online_evaluation(
     config_name="your-config-name",
     sampling_percentage=100,
@@ -110,19 +110,18 @@ config = evaluations.create_online_evaluation(
 )
 ```
 
-## Expected Outcomes
+## Resultados Esperados
 
-After completing these tutorials, you will be able to:
-- Evaluate specific Strands agent interactions using on-demand evaluations
-- Set up continuous quality monitoring for production Strands agents
-- Analyze evaluation results to identify areas for improvement
-- Use both built-in and custom evaluators effectively
-- Monitor agent quality trends over time
+Após completar estes tutoriais, você será capaz de:
+- Avaliar interações específicas do agente Strands usando avaliações sob demanda
+- Configurar monitoramento contínuo de qualidade para agentes Strands em produção
+- Analisar resultados de avaliação para identificar áreas de melhoria
+- Usar avaliadores integrados e personalizados de forma eficaz
+- Monitorar tendências de qualidade do agente ao longo do tempo
 
-## Next Steps
+## Próximos Passos
 
-After completing these Strands-specific tutorials:
-- Explore the [LangGraph examples](../02-langgraph/) to see how evaluations work with different frameworks
-- Proceed to [Tutorial 03: Advanced](../../03-advanced) for advanced evaluation techniques
-- Review your evaluation results in the CloudWatch GenAI Observability Dashboard
-
+Após completar estes tutoriais específicos do Strands:
+- Explore os [exemplos com LangGraph](../02-langgraph/) para ver como as avaliações funcionam com diferentes frameworks
+- Prossiga para o [Tutorial 03: Avançado](../../03-advanced) para técnicas avançadas de avaliação
+- Revise seus resultados de avaliação no Dashboard de Observabilidade GenAI do CloudWatch

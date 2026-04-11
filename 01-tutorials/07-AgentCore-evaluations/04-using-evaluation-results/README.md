@@ -1,50 +1,50 @@
-# Evaluation Analyzer
+# Analisador de Avaliações
 
-**Scale your AI agent evaluation analysis from days/weeks to minutes.**
+**Escale sua análise de avaliação de agentes de IA de dias/semanas para minutos.**
 
 <p align="center">
-  <img src="assets/improvement_loop.svg" alt="Continuous improvement loop for AI agents" width="700">
+  <img src="assets/improvement_loop.svg" alt="Loop de melhoria contínua para agentes de IA" width="700">
 </p>
 
-## The Problem
+## O Problema
 
-When you evaluate an AI agent at scale, you get hundreds of LLM-as-a-Judge explanations. Each one contains detailed reasoning about why a score was given. No human can read through all of them to find patterns.
+Quando você avalia um agente de IA em escala, você obtém centenas de explicações de LLM-como-Juiz. Cada uma contém raciocínio detalhado sobre por que uma pontuação foi dada. Nenhum humano consegue ler todas elas para encontrar padrões.
 
-## What It Does
+## O Que Faz
 
-1. **Loads** your evaluation JSON files
-2. **Filters** low-scoring evaluations (configurable threshold)
-3. **Analyzes** failure patterns using AI
-4. **Generates** specific system prompt fixes
+1. **Carrega** seus arquivos JSON de avaliação
+2. **Filtra** avaliações com pontuação baixa (limite configurável)
+3. **Analisa** padrões de falha usando IA
+4. **Gera** correções específicas para o prompt do sistema
 
-## What You Get
+## O Que Você Obtém
 
-- **Top 3 problems** with evidence quotes from the LLM judge
-- **Before/after table** showing exact prompt changes
-- **Complete updated system prompt** ready to copy-paste
+- **Top 3 problemas** com citações de evidências do juiz LLM
+- **Tabela antes/depois** mostrando mudanças exatas no prompt
+- **Prompt do sistema atualizado completo** pronto para copiar e colar
 
-See [`example_agent_output.md`](example_agent_output.md) for a sample report.
+Veja [`example_agent_output.md`](example_agent_output.md) para um relatório de exemplo.
 
-## Quick Start
+## Início Rápido
 
 ```bash
-# 1. Install dependencies
+# 1. Instalar dependências
 pip install -r requirements.txt
 
-# 2. Add your data
-#    - Place evaluation JSONs in eval_data/
-#    - Edit system_prompt.txt with your agent's prompt
+# 2. Adicionar seus dados
+#    - Coloque JSONs de avaliação em eval_data/
+#    - Edite system_prompt.txt com o prompt do seu agente
 
-# 3. Run the notebook
+# 3. Executar o notebook
 jupyter notebook evaluation_analyzer.ipynb
 ```
 
-## Requirements
+## Requisitos
 
 - Python 3.9+
-- AWS credentials configured for Amazon Bedrock
-- Evaluation data from [Strands Evals](https://github.com/strands-agents/strands-evals) or [AWS AgentCore](https://docs.aws.amazon.com/agentcore/)
+- Credenciais AWS configuradas para o Amazon Bedrock
+- Dados de avaliação do [Strands Evals](https://github.com/strands-agents/strands-evals) ou [AWS AgentCore](https://docs.aws.amazon.com/agentcore/)
 
 ---
 
-**[Open the notebook](evaluation_analyzer.ipynb) for the full walkthrough and documentation.**
+**[Abra o notebook](evaluation_analyzer.ipynb) para o passo a passo completo e documentação.**

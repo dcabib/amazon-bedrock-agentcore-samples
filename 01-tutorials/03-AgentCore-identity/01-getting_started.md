@@ -1,18 +1,18 @@
-# Getting Started with Amazon Bedrock AgentCore Identity
+# Começando com Amazon Bedrock AgentCore Identity
 
-## Introduction
+## Introdução
 
-Amazon Bedrock AgentCore Identity is a comprehensive identity and credential management service designed specifically for AI agents and automated workloads. It provides secure authentication, authorization, and credential management capabilities that enable users to invoke agents, and agents to access external resources and services on behalf of users while maintaining strict security controls and audit trails. Agent identities are implemented as workload identities with specialized attributes that enable agent-specific capabilities while maintaining compatibility with industry-standard workload identity patterns. The service integrates natively with Amazon Bedrock AgentCore to provide comprehensive identity and credential management for agent applications.
+Amazon Bedrock AgentCore Identity é um serviço abrangente de gerenciamento de identidade e credenciais projetado especificamente para agentes de IA e cargas de trabalho automatizadas. Ele fornece recursos seguros de autenticação, autorização e gerenciamento de credenciais que permitem aos usuários invocar agentes, e aos agentes acessar recursos e serviços externos em nome dos usuários, mantendo controles de segurança rigorosos e trilhas de auditoria. Identidades de agentes são implementadas como identidades de carga de trabalho com atributos especializados que habilitam capacidades específicas de agente, mantendo compatibilidade com padrões de identidade de carga de trabalho da indústria. O serviço se integra nativamente com Amazon Bedrock AgentCore para fornecer gerenciamento abrangente de identidade e credenciais para aplicações de agente.
 
-## Types of Auth supported by AgentCore Identity
+## Tipos de Autenticação suportados pelo AgentCore Identity
 
-AgentCore Identity lets you validate inbound access (Inbound Auth) for users and applications calling agents or tools in an AgentCore Runtime or validate access to AgentCore Gateway targets. It also provide secure outbound access (Outbound Auth) from an agent or Gateway target to external services. It integrates with your existing identity providers (such as Amazon Cognito) while enforcing permission boundaries for agents acting independently or on behalf of users (via OAuth). 
+AgentCore Identity permite validar acesso de entrada (Inbound Auth) para usuários e aplicações chamando agentes ou ferramentas em um AgentCore Runtime ou validar acesso a alvos AgentCore Gateway. Ele também fornece acesso seguro de saída (Outbound Auth) de um agente ou alvo Gateway para serviços externos. Ele se integra com seus provedores de identidade existentes (como Amazon Cognito) enquanto impõe limites de permissão para agentes atuando independentemente ou em nome de usuários (via OAuth). 
 
 <div style="text-align:center">
     <img src="images/auth_basics1.png" width="75%" />
     <img src="images/auth_basics2.png" width="75%" />
 </div>
 
-* Inbound: Inbound Auth is used to grant access to users to invoke agents or tools. Consider a scenario where a user wants to invoke an agent within an application. That user must have permissions to invoke the agent and the agent should retain who the user is when performing tasks. Inbound auth supports two mechanisms for auth, AWS IAM or Oauth. Oauth allows agents builders a way to invoke the agent without having to grant users IAM permissions. 
-  
-* Outbound: Outbound auth is used to grant agents or AgentCore Gateways access to AWS services or external resources on behalf of users. AgentCore Identity will use the provided IAM execution role to access AWS resources. Oauth 2-leg or 3-leg access flows will be used for external resources.
+* Inbound (Entrada): Inbound Auth é usado para conceder acesso aos usuários para invocar agentes ou ferramentas. Considere um cenário onde um usuário quer invocar um agente dentro de uma aplicação. Esse usuário deve ter permissões para invocar o agente e o agente deve reter quem é o usuário ao realizar tarefas. Inbound auth suporta dois mecanismos de autenticação, AWS IAM ou OAuth. OAuth permite aos construtores de agentes uma maneira de invocar o agente sem ter que conceder aos usuários permissões IAM.
+
+* Outbound (Saída): Outbound auth é usado para conceder aos agentes ou AgentCore Gateways acesso a serviços AWS ou recursos externos em nome dos usuários. AgentCore Identity usará a role de execução IAM fornecida para acessar recursos AWS. Fluxos de acesso OAuth de 2 ou 3 etapas serão usados para recursos externos.

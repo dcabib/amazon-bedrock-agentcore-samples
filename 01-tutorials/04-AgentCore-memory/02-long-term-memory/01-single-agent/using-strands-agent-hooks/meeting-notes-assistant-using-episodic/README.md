@@ -1,91 +1,91 @@
-# AgentCore Memory: Episodic Memory Strategy
+# AgentCore Memory: Estratégia de Memória Episódica
 
-| Information         | Details                                                      |
+| Informação          | Detalhes                                                     |
 |:--------------------|:-------------------------------------------------------------|
-| Tutorial type       | Long term Episodic                                           |
-| Agent type          | Meeting Notes Assistant                                      |
-| Agentic Framework   | Strands Agents                                               |
-| LLM model           | Anthropic Claude Haiku 4.5                                   |
-| Tutorial components | AgentCore Episodic Memory with Reflections, Hooks            |
-| Example complexity  | Intermediate                                                 |
+| Tipo de tutorial    | Longo prazo Episódica                                        |
+| Tipo de agente      | Assistente de Notas de Reunião                               |
+| Framework Agêntico  | Strands Agents                                               |
+| Modelo LLM          | Anthropic Claude Haiku 4.5                                   |
+| Componentes do tutorial | Memória Episódica AgentCore com Reflexões, Hooks         |
+| Complexidade do exemplo | Intermediária                                            |
 
-## Overview
+## Visão Geral
 
-Episodic memory captures meaningful slices of user and system interactions so applications can recall context in a way that feels focused and relevant. Instead of storing every raw event, it identifies important moments, summarizes them into compact records, and organizes them so the system can retrieve what matters without noise.
+A memória episódica captura fatias significativas de interações entre usuário e sistema para que aplicações possam recuperar contexto de uma forma focada e relevante. Em vez de armazenar cada evento bruto, ela identifica momentos importantes, os resume em registros compactos e os organiza para que o sistema possa recuperar o que importa sem ruído.
 
-**Reflections** build on episodic records by analyzing past episodes to surface insights, patterns, and higher-level conclusions. They turn raw experience into guidance the application can use immediately.
+**Reflexões** se baseiam em registros episódicos analisando episódios passados para revelar insights, padrões e conclusões de nível superior. Elas transformam experiência bruta em orientação que a aplicação pode usar imediatamente.
 
-## What is Episodic Memory?
+## O que é Memória Episódica?
 
-Episodic memory provides:
+A memória episódica fornece:
 
-- **Episode Detection**: Automatically identifies when meaningful interaction sequences complete
-- **Structured Capture**: Records situation, intent, assessment, justification, and episode-level reflection
-- **Cross-Episode Learning**: Generates reflections that identify patterns across multiple episodes
-- **Contextual Retrieval**: Enables agents to learn from past experiences and avoid repeating mistakes
+- **Detecção de Episódios**: Identifica automaticamente quando sequências de interação significativas são completadas
+- **Captura Estruturada**: Registra situação, intenção, avaliação, justificativa e reflexão no nível do episódio
+- **Aprendizado Entre Episódios**: Gera reflexões que identificam padrões em múltiplos episódios
+- **Recuperação Contextual**: Permite que agentes aprendam com experiências passadas e evitem repetir erros
 
-## How Episodic Memory Differs from Other Strategies
+## Como a Memória Episódica Difere de Outras Estratégias
 
-| Strategy | Focus | Best For |
-|----------|-------|----------|
-| **Semantic** | Facts and knowledge | Static information retrieval |
-| **User Preference** | User settings and preferences | Personalization |
-| **Summary** | Conversation condensation | Long conversation context |
-| **Episodic** | Interaction sequences + reflections | Learning from experience |
+| Estratégia | Foco | Melhor Para |
+|------------|------|-------------|
+| **Semântica** | Fatos e conhecimento | Recuperação de informações estáticas |
+| **Preferência do Usuário** | Configurações e preferências do usuário | Personalização |
+| **Resumo** | Condensação de conversas | Contexto de conversas longas |
+| **Episódica** | Sequências de interação + reflexões | Aprender com a experiência |
 
-Episodic memory is unique because it:
-1. Captures the **sequence** of actions, not just facts
-2. Generates **reflections** that identify patterns across episodes
-3. Helps agents understand **why** certain approaches worked or failed
+A memória episódica é única porque:
+1. Captura a **sequência** de ações, não apenas fatos
+2. Gera **reflexões** que identificam padrões entre episódios
+3. Ajuda agentes a entender **por que** certas abordagens funcionaram ou falharam
 
-## When to Use Episodic Memory
+## Quando Usar Memória Episódica
 
-Ideal use cases include:
+Casos de uso ideais incluem:
 
-- **Meeting assistants**: Track decisions, action items, and follow-ups across meetings
-- **Customer support conversations**: Learn from successful resolution patterns
-- **Agent-driven workflows**: Remember which tool combinations work best
-- **Personal productivity tools**: Adapt to user working patterns over time
-- **Project management**: Identify recurring blockers and successful strategies
+- **Assistentes de reunião**: Rastrear decisões, itens de ação e acompanhamentos entre reuniões
+- **Conversas de suporte ao cliente**: Aprender com padrões de resolução bem-sucedidos
+- **Fluxos de trabalho orientados por agentes**: Lembrar quais combinações de ferramentas funcionam melhor
+- **Ferramentas de produtividade pessoal**: Adaptar-se aos padrões de trabalho do usuário ao longo do tempo
+- **Gerenciamento de projetos**: Identificar bloqueios recorrentes e estratégias bem-sucedidas
 
-## Strategy Steps
+## Etapas da Estratégia
 
-The episodic memory strategy includes three steps:
+A estratégia de memória episódica inclui três etapas:
 
-1. **Extraction**: Analyzes in-progress episode and determines if complete
-2. **Consolidation**: Combines extractions into a single episode when complete
-3. **Reflection**: Generates insights across multiple episodes
+1. **Extração**: Analisa o episódio em andamento e determina se está completo
+2. **Consolidação**: Combina extrações em um único episódio quando completo
+3. **Reflexão**: Gera insights em múltiplos episódios
 
-## Namespace Organization
+## Organização de Namespaces
 
-Episodes and reflections are stored in configurable namespaces:
+Episódios e reflexões são armazenados em namespaces configuráveis:
 
 ```python
-# Store episodes at actor level (recommended for most use cases)
+# Armazenar episódios no nível do ator (recomendado para a maioria dos casos de uso)
 "namespaces": ["meetings/actor/{actorId}/episodes"]
 
-# Reflections must be same as or prefix of episodic namespace
+# Reflexões devem ser o mesmo ou prefixo do namespace episódico
 "reflectionConfiguration": {
-    "namespaces": ["meetings/actor/{actorId}"]  # Prefix of episodes namespace
+    "namespaces": ["meetings/actor/{actorId}"]  # Prefixo do namespace de episódios
 }
 ```
 
-**Important**: The reflection namespace must be the same as or a prefix of the episodic namespace. For example, if episodes are at `meetings/actor/{actorId}/episodes`, reflections should be at `meetings/actor/{actorId}` (prefix).
+**Importante**: O namespace de reflexão deve ser o mesmo ou um prefixo do namespace episódico. Por exemplo, se os episódios estão em `meetings/actor/{actorId}/episodes`, as reflexões devem estar em `meetings/actor/{actorId}` (prefixo).
 
-## Architecture
+## Arquitetura
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                        Meeting Notes Assistant                               │
+│                    Assistente de Notas de Reunião                            │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │  ┌──────────────┐     ┌──────────────────────────────────────────────────┐  │
-│  │  Meeting     │     │              Strands Agent                        │  │
-│  │ Participant  │────▶│  ┌─────────────────────────────────────────────┐  │  │
-│  │              │     │  │           System Prompt                     │  │  │
-│  │  "Let's      │     │  │  "You are a meeting assistant that tracks   │  │  │
-│  │  discuss     │     │  │   decisions and action items..."            │  │  │
-│  │  Q3 goals"   │     │  └─────────────────────────────────────────────┘  │  │
+│  │  Participante│     │              Strands Agent                        │  │
+│  │  da Reunião  │────▶│  ┌─────────────────────────────────────────────┐  │  │
+│  │              │     │  │           Prompt do Sistema                 │  │  │
+│  │  "Vamos      │     │  │  "Você é um assistente de reunião que      │  │  │
+│  │  discutir    │     │  │   rastreia decisões e itens de ação..."    │  │  │
+│  │  metas do T3"│     │  └─────────────────────────────────────────────┘  │  │
 │  └──────────────┘     │                      │                            │  │
 │                       │                      ▼                            │  │
 │                       │  ┌─────────────────────────────────────────────┐  │  │
@@ -93,12 +93,12 @@ Episodes and reflections are stored in configurable namespaces:
 │                       │  │  ┌───────────────┐  ┌───────────────────┐   │  │  │
 │                       │  │  │ MessageAdded  │  │ AfterInvocation   │   │  │  │
 │                       │  │  │    Hook       │  │      Hook         │   │  │  │
-│                       │  │  │ (retrieve)    │  │ (save events)     │   │  │  │
+│                       │  │  │ (recuperar)   │  │ (salvar eventos)  │   │  │  │
 │                       │  │  └───────┬───────┘  └─────────┬─────────┘   │  │  │
 │                       │  └──────────┼────────────────────┼─────────────┘  │  │
 │                       │             │                    │                │  │
 │                       │  ┌──────────┴────────────────────┴─────────────┐  │  │
-│                       │  │              Tools                          │  │  │
+│                       │  │              Ferramentas                    │  │  │
 │                       │  │  capture_action | identify_decision |       │  │  │
 │                       │  │  summarize_discussion | track_followup      │  │  │
 │                       │  └─────────────────────────────────────────────┘  │  │
@@ -106,160 +106,160 @@ Episodes and reflections are stored in configurable namespaces:
 │                                          │                                   │
 │                                          ▼                                   │
 │  ┌───────────────────────────────────────────────────────────────────────┐  │
-│  │                    AgentCore Memory Service                            │  │
+│  │                    Serviço AgentCore Memory                            │  │
 │  │  ┌─────────────────────────────────────────────────────────────────┐  │  │
-│  │  │                   Episodic Strategy                              │  │  │
+│  │  │                   Estratégia Episódica                          │  │  │
 │  │  │                                                                  │  │  │
 │  │  │   ┌──────────────┐   ┌───────────────┐   ┌─────────────────┐   │  │  │
-│  │  │   │  Extraction  │──▶│ Consolidation │──▶│   Reflection    │   │  │  │
+│  │  │   │  Extração    │──▶│ Consolidação  │──▶│   Reflexão      │   │  │  │
 │  │  │   │              │   │               │   │                 │   │  │  │
-│  │  │   │ Detect when  │   │ Combine into  │   │ Generate cross- │   │  │  │
-│  │  │   │ meeting ends │   │ single record │   │ meeting insights│   │  │  │
+│  │  │   │ Detectar     │   │ Combinar em   │   │ Gerar insights  │   │  │  │
+│  │  │   │ fim reunião  │   │ registro único│   │ entre reuniões  │   │  │  │
 │  │  │   └──────────────┘   └───────────────┘   └─────────────────┘   │  │  │
 │  │  └─────────────────────────────────────────────────────────────────┘  │  │
 │  │                                                                        │  │
 │  │  ┌─────────────────────────────┐  ┌─────────────────────────────────┐ │  │
-│  │  │        Episodes             │  │         Reflections             │ │  │
+│  │  │        Episódios            │  │         Reflexões               │ │  │
 │  │  │ /meetings/actor/{id}/episodes│  │/meetings/actor/{id}/reflections │ │  │
 │  │  │                             │  │                                 │ │  │
-│  │  │  • Meeting purpose          │  │  • Effective meeting patterns   │ │  │
-│  │  │  • Key decisions made       │  │  • Action item completion rate  │ │  │
-│  │  │  • Action items assigned    │  │  • Participant preferences      │ │  │
-│  │  │  • Follow-up status         │  │  • Common blockers              │ │  │
+│  │  │  • Propósito da reunião     │  │  • Padrões eficazes de reunião  │ │  │
+│  │  │  • Decisões tomadas         │  │  • Taxa de conclusão de itens   │ │  │
+│  │  │  • Itens de ação atribuídos │  │  • Preferências dos participantes│ │  │
+│  │  │  • Status de acompanhamento │  │  • Bloqueios comuns             │ │  │
 │  │  └─────────────────────────────┘  └─────────────────────────────────┘ │  │
 │  └───────────────────────────────────────────────────────────────────────┘  │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
 
-Data Flow:
-1. Meeting participant discusses topics
-2. MessageAdded hook retrieves relevant past meeting episodes & reflections
-3. Agent processes discussion with historical context
-4. Agent uses tools (capture_action, identify_decision, summarize_discussion, track_followup)
-5. AfterInvocation hook saves interaction as event
-6. AgentCore extracts episodes when meeting completes (~1 min)
-7. Reflections generated across multiple meetings (background)
+Fluxo de Dados:
+1. Participante da reunião discute tópicos
+2. Hook MessageAdded recupera episódios e reflexões relevantes de reuniões passadas
+3. Agente processa a discussão com contexto histórico
+4. Agente usa ferramentas (capture_action, identify_decision, summarize_discussion, track_followup)
+5. Hook AfterInvocation salva a interação como evento
+6. AgentCore extrai episódios quando a reunião é completada (~1 min)
+7. Reflexões são geradas em múltiplas reuniões (em segundo plano)
 ```
 
-## Available Sample Notebooks
+## Notebooks de Exemplo Disponíveis
 
-| Framework | Use Case | Description | Notebook |
-|-----------|----------|-------------|----------|
-| Strands Agent | Meeting Notes | Meeting assistant that tracks decisions, action items, and learns from past meetings | [meeting-notes-assistant.ipynb](./meeting-notes-assistant.ipynb) |
+| Framework | Caso de Uso | Descrição | Notebook |
+|-----------|-------------|-----------|----------|
+| Strands Agent | Notas de Reunião | Assistente de reunião que rastreia decisões, itens de ação e aprende com reuniões passadas | [meeting-notes-assistant.ipynb](./meeting-notes-assistant.ipynb) |
 
-## Getting Started
+## Primeiros Passos
 
-1. Navigate to this folder
-2. Install requirements: `pip install -r requirements.txt`
-3. Open the Jupyter notebook and follow the step-by-step implementation
+1. Navegue até esta pasta
+2. Instale os requisitos: `pip install -r requirements.txt`
+3. Abra o Jupyter notebook e siga a implementação passo a passo
 
-## Sample Prompts
+## Prompts de Exemplo
 
-Try these meeting scenarios to test episodic memory learning:
+Experimente estes cenários de reunião para testar o aprendizado da memória episódica:
 
-### 1. Follow-up on Previous Decision
-**Prompt**: "Let's revisit the Q3 marketing budget we discussed last week"
+### 1. Acompanhamento de Decisão Anterior
+**Prompt**: "Vamos revisitar o orçamento de marketing do T3 que discutimos na semana passada"
 
-**Expected Behavior**: Agent recalls past episode with budget discussion, retrieves previous decisions, and references context from that meeting.
+**Comportamento Esperado**: O agente recupera o episódio passado com a discussão do orçamento, recupera decisões anteriores e referencia o contexto daquela reunião.
 
-### 2. Action Item Check
-**Prompt**: "Did we assign someone to handle the website redesign?"
+### 2. Verificação de Item de Ação
+**Prompt**: "Nós designamos alguém para cuidar do redesign do site?"
 
-**Expected Behavior**: Agent retrieves past episodes where website redesign was discussed, identifies assigned action items and owner.
+**Comportamento Esperado**: O agente recupera episódios passados onde o redesign do site foi discutido, identifica itens de ação atribuídos e responsável.
 
-### 3. Recurring Meeting Pattern
-**Prompt**: "We need to plan the weekly sprint review meeting"
+### 3. Padrão de Reunião Recorrente
+**Prompt**: "Precisamos planejar a reunião de revisão do sprint semanal"
 
-**Expected Behavior**: Agent applies learned patterns from past sprint reviews (e.g., "Team prefers 30-min format" or "Always include demo time").
+**Comportamento Esperado**: O agente aplica padrões aprendidos de revisões de sprint passadas (ex.: "A equipe prefere formato de 30 min" ou "Sempre incluir tempo para demo").
 
-### 4. New Meeting with Context
-**Prompt**: "Let's have a quick sync about the product launch timeline. We need to finalize dates."
+### 4. Nova Reunião com Contexto
+**Prompt**: "Vamos ter um alinhamento rápido sobre o cronograma de lançamento do produto. Precisamos finalizar as datas."
 
-**Expected Behavior**: Multi-step meeting facilitation using tools to capture decisions, identify action items, and track follow-ups.
+**Comportamento Esperado**: Facilitação de reunião multi-etapa usando ferramentas para capturar decisões, identificar itens de ação e rastrear acompanhamentos.
 
-### 5. Participant Preference Recognition
-**Prompt**: "Sarah wants to discuss the technical architecture for the new feature"
+### 5. Reconhecimento de Preferência do Participante
+**Prompt**: "Sarah quer discutir a arquitetura técnica para o novo recurso"
 
-**Expected Behavior**: Agent recognizes Sarah's preferences from past meetings (e.g., "Sarah prefers detailed diagrams" or "Technical meetings with Sarah typically need 1 hour").
+**Comportamento Esperado**: O agente reconhece as preferências de Sarah de reuniões passadas (ex.: "Sarah prefere diagramas detalhados" ou "Reuniões técnicas com Sarah tipicamente precisam de 1 hora").
 
-### 6. New Topic
-**Prompt**: "We need to discuss the company's sustainability initiative for the first time"
+### 6. Novo Tópico
+**Prompt**: "Precisamos discutir a iniciativa de sustentabilidade da empresa pela primeira vez"
 
-**Expected Behavior**: Agent acknowledges this is a new topic with no past episodes, provides general meeting structure, captures decisions and action items for future reference.
+**Comportamento Esperado**: O agente reconhece que este é um tópico novo sem episódios passados, fornece estrutura geral de reunião, captura decisões e itens de ação para referência futura.
 
-## Key Concepts
+## Conceitos Principais
 
-### Episodes vs Reflections
+### Episódios vs Reflexões
 
-**Episodes** capture individual interaction sequences:
-- A project planning meeting where decisions were made
-- A sprint retrospective with action items assigned
-- A budget review discussion with specific outcomes
+**Episódios** capturam sequências de interação individuais:
+- Uma reunião de planejamento de projeto onde decisões foram tomadas
+- Uma retrospectiva de sprint com itens de ação atribuídos
+- Uma discussão de revisão de orçamento com resultados específicos
 
-**Reflections** analyze patterns across episodes:
-- Which meeting formats work best for different teams
-- Common blockers that repeatedly surface
-- Action item completion rates by team member
-- Participant communication preferences
+**Reflexões** analisam padrões entre episódios:
+- Quais formatos de reunião funcionam melhor para diferentes equipes
+- Bloqueios comuns que surgem repetidamente
+- Taxas de conclusão de itens de ação por membro da equipe
+- Preferências de comunicação dos participantes
 
-### Retrieval Best Practices
+### Melhores Práticas de Recuperação
 
-1. **Query by intent**: Episodes are indexed by "intent", reflections by "use case"
-2. **Include tool results**: When creating events, include `TOOL` results for optimal extraction
-3. **Use reflections proactively**: Query reflections at task start to avoid known pitfalls
-4. **Linearize successful episodes**: Feed successful episode turns to focus the agent
+1. **Consultar por intenção**: Episódios são indexados por "intenção", reflexões por "caso de uso"
+2. **Incluir resultados de ferramentas**: Ao criar eventos, inclua resultados `TOOL` para extração ideal
+3. **Usar reflexões proativamente**: Consulte reflexões no início da tarefa para evitar armadilhas conhecidas
+4. **Linearizar episódios bem-sucedidos**: Alimente turnos de episódios bem-sucedidos para focar o agente
 
-## Next Steps
+## Próximos Passos
 
-After mastering episodic memory:
-- Combine with semantic memory for comprehensive agent experiences
-- Implement cross-agent reflection sharing for team learning
-- Build feedback loops to improve episode detection
+Após dominar a memória episódica:
+- Combine com memória semântica para experiências abrangentes de agentes
+- Implemente compartilhamento de reflexões entre agentes para aprendizado em equipe
+- Construa loops de feedback para melhorar a detecção de episódios
 
-## Troubleshooting
+## Resolução de Problemas
 
-### Episodes Not Appearing
-**Issue**: No episodes found after running tests
+### Episódios Não Aparecem
+**Problema**: Nenhum episódio encontrado após executar os testes
 
-**Solution**: Episode extraction takes approximately 1 minute after a conversation completes. Wait and retry retrieval. Episodes are extracted asynchronously in the background.
+**Solução**: A extração de episódios leva aproximadamente 1 minuto após uma conversa ser completada. Aguarde e tente a recuperação novamente. Os episódios são extraídos de forma assíncrona em segundo plano.
 
-### Permission Errors
-**Issue**: `AccessDeniedException` when creating memory or saving events
+### Erros de Permissão
+**Problema**: `AccessDeniedException` ao criar memória ou salvar eventos
 
-**Solution**: Ensure your AWS credentials have the necessary permissions:
-- Policy: `BedrockAgentCoreFullAccess` (managed policy)
-- Or custom policy with `bedrock-agentcore:*` permissions
+**Solução**: Certifique-se de que suas credenciais AWS possuem as permissões necessárias:
+- Política: `BedrockAgentCoreFullAccess` (política gerenciada)
+- Ou política customizada com permissões `bedrock-agentcore:*`
 
-### Model Access Errors
-**Issue**: Cannot access Claude Haiku 4.5 model
+### Erros de Acesso ao Modelo
+**Problema**: Não é possível acessar o modelo Claude Haiku 4.5
 
-**Solution**: Enable model access in the AWS Bedrock console:
-1. Navigate to AWS Console → Bedrock → Model access
-2. Request access for "Anthropic Claude Haiku 4.5"
-3. Wait for approval (usually instant for standard models)
+**Solução**: Habilite o acesso ao modelo no console do AWS Bedrock:
+1. Navegue até Console AWS → Bedrock → Acesso ao modelo
+2. Solicite acesso para "Anthropic Claude Haiku 4.5"
+3. Aguarde aprovação (geralmente instantânea para modelos padrão)
 
-### Empty Reflection Results
-**Issue**: Reflections namespace returns no results
+### Resultados de Reflexão Vazios
+**Problema**: O namespace de reflexões não retorna resultados
 
-**Solution**: Reflections are generated after multiple episodes are collected. Run additional meeting sessions with varied scenarios to accumulate episodes. Reflection generation happens in the background and may take several minutes.
+**Solução**: Reflexões são geradas após múltiplos episódios serem coletados. Execute sessões adicionais de reunião com cenários variados para acumular episódios. A geração de reflexões acontece em segundo plano e pode levar vários minutos.
 
-### Memory Creation Fails with "Already Exists"
-**Issue**: Memory resource with same name already exists
+### Criação de Memória Falha com "Já Existe"
+**Problema**: Recurso de memória com o mesmo nome já existe
 
-**Solution**: The code handles this automatically by reusing the existing memory. If you want to start fresh, delete the old memory first using `client.delete_memory_and_wait(memory_id=memory_id)`.
+**Solução**: O código trata isso automaticamente reutilizando a memória existente. Se quiser começar do zero, delete a memória antiga primeiro usando `client.delete_memory_and_wait(memory_id=memory_id)`.
 
-## Clean Up
+## Limpeza
 
-After completing the tutorial, delete the memory resource to avoid ongoing charges:
+Após completar o tutorial, delete o recurso de memória para evitar cobranças contínuas:
 
 ```python
 try:
     client.delete_memory_and_wait(memory_id=memory_id)
-    print(f"✅ Deleted memory resource: {memory_id}")
+    print(f"✅ Recurso de memória deletado: {memory_id}")
 except Exception as e:
-    print(f"❌ Error deleting memory: {e}")
+    print(f"❌ Erro ao deletar memória: {e}")
 ```
 
-**Note**: This permanently deletes all episodes and reflections stored for this memory resource. Make sure to export any data you want to keep before deletion.
+**Nota**: Isso deleta permanentemente todos os episódios e reflexões armazenados para este recurso de memória. Certifique-se de exportar quaisquer dados que deseje manter antes da exclusão.
 
-**Cost Considerations**: AgentCore Memory pricing is based on storage and retrieval. Regular cleanup of development/test memory resources helps control costs.
+**Considerações de Custo**: O preço do AgentCore Memory é baseado em armazenamento e recuperação. A limpeza regular de recursos de memória de desenvolvimento/teste ajuda a controlar custos.

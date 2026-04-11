@@ -1,20 +1,20 @@
-# Culinary Assistant with Self-Managed Memory Strategy (With Citations)
+# Assistente Culinário com Estratégia de Memória Autogerenciada (Com Citações)
 
-This sample demonstrates Amazon Bedrock AgentCore's self-managed memory strategy with enhanced citation tracking. This version extends the base culinary assistant example by adding comprehensive citation information to extracted long-term memories.
+Este exemplo demonstra a estratégia de memória autogerenciada do Amazon Bedrock AgentCore com rastreamento aprimorado de citações. Esta versão estende o exemplo base do assistente culinário adicionando informações abrangentes de citação às memórias de longo prazo extraídas.
 
-## What's Different
+## O que há de Diferente
 
-This sample adds citation functionality to track the source of extracted memories:
+Este exemplo adiciona funcionalidade de citação para rastrear a origem das memórias extraídas:
 
-### Citation Features
+### Funcionalidades de Citação
 
-1. **Source Tracking**: Each extracted memory includes metadata about its origin:
-   - Session ID and Actor ID
-   - Starting and ending timestamps
-   - S3 URI where the original short-term memory payload is stored
-   - Extraction job ID
+1. **Rastreamento de Origem**: Cada memória extraída inclui metadados sobre sua origem:
+   - ID da Sessão e ID do Ator
+   - Timestamps de início e fim
+   - URI S3 onde o payload original da memória de curto prazo está armazenado
+   - ID do job de extração
 
-2. **Citation Metadata**: Structured citation information is stored in the memory metadata:
+2. **Metadados de Citação**: Informações de citação estruturadas são armazenadas nos metadados da memória:
    ```python
    citation_info = {
        'source_type': 'short_term_memory',
@@ -28,64 +28,64 @@ This sample adds citation functionality to track the source of extracted memorie
    }
    ```
 
-3. **Human-Readable Citations**: Each memory content includes an appended citation text:
+3. **Citações Legíveis por Humanos**: Cada conteúdo de memória inclui um texto de citação anexado:
    ```
    [Citation: Extracted from session {session_id}, actor {actor_id}, source: {s3_location}, job: {job_id}, timestamp: {timestamp}]
    ```
 
-### Modified Files
+### Arquivos Modificados
 
 #### `lambda_function.py`
 
-The key changes are in the `MemoryExtractor` class:
+As principais mudanças estão na classe `MemoryExtractor`:
 
-- `extract_memories()` method now accepts `s3_location` and `job_id` parameters
-- `_format_extracted_memories()` method builds citation information and appends it to memory content
-- Enhanced logging to track citation information
+- O método `extract_memories()` agora aceita os parâmetros `s3_location` e `job_id`
+- O método `_format_extracted_memories()` constrói informações de citação e as anexa ao conteúdo da memória
+- Logging aprimorado para rastrear informações de citação
 
-**Key Method**: `_format_extracted_memories` (line 97)
-This method formats extracted memories with metadata and citation information, creating a traceable link from long-term memories back to their source in short-term memory.
+**Método Principal**: `_format_extracted_memories` (linha 97)
+Este método formata memórias extraídas com metadados e informações de citação, criando um link rastreável das memórias de longo prazo de volta à sua origem na memória de curto prazo.
 
 #### `agentcore_self_managed_memory_demo.ipynb`
 
-Updated to demonstrate the citation functionality in action, showing how extracted memories now include source attribution.
+Atualizado para demonstrar a funcionalidade de citação em ação, mostrando como as memórias extraídas agora incluem atribuição de origem.
 
-## Use Cases
+## Casos de Uso
 
-This citation-enhanced version is particularly useful for:
+Esta versão aprimorada com citações é particularmente útil para:
 
-1. **Audit Trails**: Maintaining a complete record of where memories originated
-2. **Debugging**: Tracing back to the original conversation context
-3. **Compliance**: Meeting requirements for data lineage and source attribution
-4. **Memory Verification**: Ability to verify memory content against original source in S3
+1. **Trilhas de Auditoria**: Manter um registro completo de onde as memórias se originaram
+2. **Depuração**: Rastrear de volta ao contexto original da conversa
+3. **Conformidade**: Atender requisitos de linhagem de dados e atribuição de origem
+4. **Verificação de Memória**: Capacidade de verificar o conteúdo da memória contra a origem original no S3
 
-## Prerequisites
+## Pré-requisitos
 
-Same as the base culinary assistant example:
+Mesmos do exemplo base do assistente culinário:
 - Python 3.11+
-- AWS credentials configured
-- Amazon Bedrock access with Claude models
-- Required AWS services: Lambda, S3, SNS, SQS
+- Credenciais AWS configuradas
+- Acesso ao Amazon Bedrock com modelos Claude
+- Serviços AWS necessários: Lambda, S3, SNS, SQS
 
-## Setup
+## Configuração
 
-Follow the same setup process as the base culinary assistant example. The notebook will guide you through:
+Siga o mesmo processo de configuração do exemplo base do assistente culinário. O notebook guiará você através de:
 
-1. Creating the Lambda function with citation support
-2. Setting up the memory strategy with trigger conditions
-3. Testing the enhanced citation functionality
+1. Criar a função Lambda com suporte a citações
+2. Configurar a estratégia de memória com condições de gatilho
+3. Testar a funcionalidade aprimorada de citações
 
-## Comparison with Base Sample
+## Comparação com o Exemplo Base
 
-| Feature | Base Sample | With Citations |
-|---------|------------|----------------|
-| Memory extraction | ✅ | ✅ |
-| S3 payload tracking | ❌ | ✅ |
-| Source attribution | ❌ | ✅ |
-| Job ID tracking | ❌ | ✅ |
-| Timestamp context | ❌ | ✅ |
-| Citation metadata | ❌ | ✅ |
+| Funcionalidade | Exemplo Base | Com Citações |
+|----------------|-------------|--------------|
+| Extração de memória | ✅ | ✅ |
+| Rastreamento de payload S3 | ❌ | ✅ |
+| Atribuição de origem | ❌ | ✅ |
+| Rastreamento de ID do job | ❌ | ✅ |
+| Contexto de timestamp | ❌ | ✅ |
+| Metadados de citação | ❌ | ✅ |
 
-## Documentation
+## Documentação
 
-For more information about self-managed memory strategies, see the [Amazon Bedrock AgentCore documentation](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/memory-self-managed-strategies.html).
+Para mais informações sobre estratégias de memória autogerenciada, consulte a [documentação do Amazon Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/memory-self-managed-strategies.html).

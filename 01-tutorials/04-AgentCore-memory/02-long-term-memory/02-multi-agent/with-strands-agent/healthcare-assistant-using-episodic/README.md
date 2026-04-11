@@ -1,67 +1,67 @@
-# Multi-Agent Healthcare System with Episodic Memory
+# Sistema de Saúde Multi-Agente com Memória Episódica
 
-Episodic memory captures meaningful interaction slices, identifying important moments and summarizing them into compact, organized records for focused retrieval without noise.
+A memória episódica captura fatias significativas de interação, identificando momentos importantes e resumindo-os em registros compactos e organizados para recuperação focada sem ruído.
 
-Reflections analyze episodes to surface insights, patterns, and conclusions—helping the system understand why events matter and how they should influence future behavior, turning experience into actionable guidance.
+Reflexões analisam episódios para revelar insights, padrões e conclusões—ajudando o sistema a entender por que eventos importam e como devem influenciar comportamento futuro, transformando experiência em orientação acionável.
 
-A comprehensive example demonstrating **multi-agent coordination with episodic memory** using Amazon Bedrock AgentCore Memory. This tutorial shows how AI agents can learn from past interactions and improve decision-making over time.
+Um exemplo abrangente demonstrando **coordenação multi-agente com memória episódica** usando Amazon Bedrock AgentCore Memory. Este tutorial mostra como agentes de IA podem aprender com interações passadas e melhorar a tomada de decisão ao longo do tempo.
 
-## Overview
+## Visão Geral
 
-This tutorial showcases a healthcare assistant system with:
-- **Supervisor Agent**: Routes patient questions to specialized agents
-- **Claims Agent**: Handles insurance claims and billing queries
-- **Demographics Agent**: Manages patient demographic information
-- **Medication Agent**: Handles medication and prescription queries
+Este tutorial apresenta um sistema de assistente de saúde com:
+- **Agente Supervisor**: Encaminha perguntas de pacientes para agentes especializados
+- **Agente de Sinistros**: Lida com sinistros de seguro e consultas de faturamento
+- **Agente de Dados Demográficos**: Gerencia informações demográficas dos pacientes
+- **Agente de Medicamentos**: Lida com consultas sobre medicamentos e prescrições
 
-Each agent maintains isolated short-term memory through **memory branching**, while sharing long-term insights through **episodic memory strategies**.
+Cada agente mantém memória de curto prazo isolada através de **ramificação de memória**, enquanto compartilha insights de longo prazo através de **estratégias de memória episódica**.
 
-## Architecture
+## Arquitetura
 <div style="text-align:left">
     <img src="architecture.png" width="75%" />
 </div>
 
-## Memory Strategy
+## Estratégia de Memória
 
-### Episodic 
+### Episódica
 
-The system uses a episodic memory strategy with:
+O sistema usa uma estratégia de memória episódica com:
 
-**Extraction**: Converts conversation events into structured episodes
-- Prompt: "Extract patient interactions with healthcare agents"
+**Extração**: Converte eventos de conversa em episódios estruturados
+- Prompt: "Extrair interações de pacientes com agentes de saúde"
 - Namespace: `healthcare/{actorId}/{sessionId}/`
 
-**Consolidation**: Merges related episodes
-- Prompt: "Consolidate healthcare conversations"
+**Consolidação**: Mescla episódios relacionados
+- Prompt: "Consolidar conversas de saúde"
 
-**Reflection**: Generates cross-session insights
-- Prompt: "Generate insights from patient care patterns"
-- Namespace: `healthcare/{actorId}/` (exact namespace prefix)
+**Reflexão**: Gera insights entre sessões
+- Prompt: "Gerar insights a partir de padrões de cuidado ao paciente"
+- Namespace: `healthcare/{actorId}/` (prefixo exato do namespace)
 
-### Memory Branching
+### Ramificação de Memória
 
-Each agent operates on its own memory branch:
-- `main`: Supervisor agent routing decisions
-- `claims_agent`: Insurance and billing conversations
-- `demographics_agent`: Patient information updates
-- `medication_agent`: Prescription discussions
+Cada agente opera em sua própria ramificação de memória:
+- `main`: Decisões de encaminhamento do agente supervisor
+- `claims_agent`: Conversas sobre seguro e faturamento
+- `demographics_agent`: Atualizações de informações do paciente
+- `medication_agent`: Discussões sobre prescrições
 
-**Benefits:**
-- Agents don't see each other's conversations
-- Clean separation of concerns
-- All agents contribute to shared long-term memory
-- Patient-level insights span all interactions
+**Benefícios:**
+- Agentes não veem as conversas uns dos outros
+- Separação limpa de responsabilidades
+- Todos os agentes contribuem para a memória de longo prazo compartilhada
+- Insights no nível do paciente abrangem todas as interações
 
-## Prerequisites
+## Pré-requisitos
 
-### AWS Services
-- **Amazon Bedrock**: Access to Claude Sonnet 4 model 
-- **Amazon Bedrock AgentCore Memory**: For episodic memory strategy
-- **Amazon HealthLake** (optional): FHIR datastore with patient data
-  - Can create new datastore with Synthea data during setup
-  - Or use existing datastore
+### Serviços AWS
+- **Amazon Bedrock**: Acesso ao modelo Claude Sonnet 4
+- **Amazon Bedrock AgentCore Memory**: Para estratégia de memória episódica
+- **Amazon HealthLake** (opcional): Datastore FHIR com dados de pacientes
+  - Pode criar novo datastore com dados Synthea durante a configuração
+  - Ou usar datastore existente
 
-### IAM Permissions
+### Permissões IAM
 ```json
 {
   "Version": "2012-10-17",
@@ -88,190 +88,189 @@ Each agent operates on its own memory branch:
 }
 ```
 
-### Python Environment
+### Ambiente Python
 - Python 3.10+
-- Jupyter Notebook or JupyterLab
+- Jupyter Notebook ou JupyterLab
 
-## Installation
+## Instalação
 
-1. Install dependencies:
+1. Instale as dependências:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Configure AWS credentials:
+2. Configure as credenciais AWS:
 ```bash
 aws configure
 ```
 
-## Usage
+## Uso
 
-### Quick Start
+### Início Rápido
 
-1. Open the notebook:
+1. Abra o notebook:
 ```bash
 jupyter notebook healthcare-data-assistant.ipynb
 ```
 
-2. Run cells sequentially:
-   - **Step 1**: Environment Setup
-   - **Step 2**: Configure HealthLake Datastore
-   - **Step 3**: Create Memory as tool for Long-term memory with Episodic Strategy
-   - **Step 4**: Create Memory Hook Provider with Branch Support for Short-term memory
-   - **Step 5**: Create Multi-Agent Healthcare Architecture with Memory Branching
-   - **Step 6**: Test with interactive chat
-   - **Step 7**: Inspect healthcare memory branches
-   - **Step 8**: Validate long-term memory (episodes and reflections)
+2. Execute as células sequencialmente:
+   - **Passo 1**: Configuração do Ambiente
+   - **Passo 2**: Configurar o Datastore HealthLake
+   - **Passo 3**: Criar Memória como ferramenta para memória de Longo prazo com Estratégia Episódica
+   - **Passo 4**: Criar Provedor de Hook de Memória com Suporte a Ramificação para memória de Curto prazo
+   - **Passo 5**: Criar Arquitetura de Saúde Multi-Agente com Ramificação de Memória
+   - **Passo 6**: Testar com chat interativo
+   - **Passo 7**: Inspecionar ramificações de memória de saúde
+   - **Passo 8**: Validar memória de longo prazo (episódios e reflexões)
 
-### Interactive Inputs
+### Entradas Interativas
 
-The notebook prompts for:
-- **HealthLake datastore ID**: Existing datastore or create new with Synthea data ( no real patient information is used)
-- **HealthLake region**: AWS region for HealthLake
+O notebook solicita:
+- **ID do datastore HealthLake**: Datastore existente ou criar novo com dados Synthea (nenhuma informação real de paciente é usada)
+- **Região do HealthLake**: Região AWS para o HealthLake
 
-### Testing the System
+### Testando o Sistema
 
-The interactive chat (Step 7) allows you to:
-- Ask about insurance claims
-- Request demographic information
-- Query medications and prescriptions
-- See supervisor routing in action
-- Observe memory branching
+O chat interativo (Passo 7) permite que você:
+- Pergunte sobre sinistros de seguro
+- Solicite informações demográficas
+- Consulte medicamentos e prescrições
+- Veja o encaminhamento do supervisor em ação
+- Observe a ramificação de memória
 
-Example questions:
+Exemplos de perguntas:
 ```
-You: What's the status of my insurance claim?
-You: Can you tell me about my medications?
-You: What's my current address on file?
+Você: Qual é o status do meu sinistro de seguro?
+Você: Pode me dizer sobre meus medicamentos?
+Você: Qual é meu endereço atual cadastrado?
 ```
 
-Type `quit`, `exit`, or `q` to end the chat session.
+Digite `quit`, `exit` ou `q` para encerrar a sessão de chat.
 
-## Memory Browser Integration
+## Integração com o Navegador de Memória
 
-After running the notebook, you can visualize the memory using the memory browser:
+Após executar o notebook, você pode visualizar a memória usando o navegador de memória:
 
-1. Note the Memory ID from the configuration summary
-2. Open - [Memory Browser](https://github.com/awslabs/amazon-bedrock-agentcore-samples/tree/main/01-tutorials/04-AgentCore-memory/03-advanced-patterns/04-memory-browser) - Visualize and explore memory events, episodes, and reflections at `http://localhost:8000`
-3. Enter the Memory ID to explore:
-   - **Short-term memory**: Events by branch
-   - **Episodes**: Session-level consolidated memories
-   - **Reflections**: Patient-level insights
+1. Anote o ID da Memória a partir do resumo de configuração
+2. Abra - [Navegador de Memória](https://github.com/awslabs/amazon-bedrock-agentcore-samples/tree/main/01-tutorials/04-AgentCore-memory/03-advanced-patterns/04-memory-browser) - Visualize e explore eventos, episódios e reflexões de memória em `http://localhost:8000`
+3. Insira o ID da Memória para explorar:
+   - **Memória de curto prazo**: Eventos por ramificação
+   - **Episódios**: Memórias consolidadas no nível da sessão
+   - **Reflexões**: Insights no nível do paciente
 
-**⏱️ Note**: Episode and reflection generation takes 10-15 minutes after conversations. Check back later if no episodes/reflections appear immediately.
+**⏱️ Nota**: A geração de episódios e reflexões leva 10-15 minutos após as conversas. Verifique novamente mais tarde se nenhum episódio/reflexão aparecer imediatamente.
 
-## Key Concepts Demonstrated
+## Conceitos Principais Demonstrados
 
-### 1. Multi-Agent Coordination
-- Supervisor pattern for routing
-- Specialized agents with domain expertise
-- Dynamic tool usage for real-time data
+### 1. Coordenação Multi-Agente
+- Padrão supervisor para encaminhamento
+- Agentes especializados com expertise de domínio
+- Uso dinâmico de ferramentas para dados em tempo real
 
-### 2. Memory Branching
-- Isolated conversations per agent
-- Branch-specific event storage
-- Shared session context
+### 2. Ramificação de Memória
+- Conversas isoladas por agente
+- Armazenamento de eventos específico por ramificação
+- Contexto de sessão compartilhado
 
-### 3. Episodic Memory
-- extraction, consolidation, and reflection prompts
-- Session-level episodes
-- Patient-level reflections
+### 3. Memória Episódica
+- Prompts de extração, consolidação e reflexão
+- Episódios no nível da sessão
+- Reflexões no nível do paciente
 
-### 4. HealthLake Integration
-- Dynamic FHIR queries
-- Real-time patient data access
-- All data is synthetic (generated by Synthea) - no real patient information is used
+### 4. Integração com HealthLake
+- Consultas FHIR dinâmicas
+- Acesso a dados de pacientes em tempo real
+- Todos os dados são sintéticos (gerados pelo Synthea) - nenhuma informação real de paciente é usada
 
-## Customization
+## Customização
 
-### Adding New Agents
+### Adicionando Novos Agentes
 
 ```python
 @tool
 def get_patient_allergies(patient_id: str = PATIENT_ID) -> dict:
-    """Get patient allergies from HealthLake"""
+    """Obter alergias do paciente do HealthLake"""
     return query_healthlake('AllergyIntolerance', {'patient': patient_id})
 
 allergy_agent = Agent(
     model="global.anthropic.claude-sonnet-4-20250514-v1:0",
-    system_prompt="You handle patient allergies. Use get_patient_allergies tool.",
+    system_prompt="Você lida com alergias de pacientes. Use a ferramenta get_patient_allergies.",
     tools=[get_patient_allergies]
 )
 ```
 
-### Using Different Models
+### Usando Modelos Diferentes
 
-Change the `model` parameter in agent creation:
+Altere o parâmetro `model` na criação do agente:
 ```python
 Agent(
-    model="anthropic.claude-3-5-sonnet-20241022-v2:0",  # Different model
+    model="anthropic.claude-3-5-sonnet-20241022-v2:0",  # Modelo diferente
     system_prompt="...",
     tools=[...]
 )
 ```
-## Additional Resources
 
-- [Episodic Memory Best Practices](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/episodic-memory-strategy.html#memory-episodic-retrieve-episodes) - Learn how to retrieve episodes to improve agentic performance
+## Recursos Adicionais
+
+- [Melhores Práticas de Memória Episódica](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/episodic-memory-strategy.html#memory-episodic-retrieve-episodes) - Aprenda como recuperar episódios para melhorar o desempenho agêntico
 
 
-## Troubleshooting
+## Resolução de Problemas
 
-### Branch Creation Errors
-If you see "Branch rootEventId is required when creating a branch":
-- **Restart the Jupyter kernel** (Kernel → Restart)
-- **Re-run all cells** from the beginning to reload the corrected `HealthcareMemoryHooks` class
-- The fix ensures the main branch has an initial event before forking specialized agent branches
+### Erros de Criação de Ramificação
+Se você ver "Branch rootEventId is required when creating a branch":
+- **Reinicie o kernel do Jupyter** (Kernel → Reiniciar)
+- **Re-execute todas as células** desde o início para recarregar a classe `HealthcareMemoryHooks` corrigida
+- A correção garante que a ramificação principal tenha um evento inicial antes de criar ramificações de agentes especializados
 
-### Memory Hook Errors
-If you see "MemorySession.add_turns() got an unexpected keyword argument 'branch_name'":
-- This indicates the notebook is using cached/old code
-- **Restart the kernel** and re-run all cells to pick up the API fixes
-- The corrected code uses `branch={"name": branch_name}` format
+### Erros de Hook de Memória
+Se você ver "MemorySession.add_turns() got an unexpected keyword argument 'branch_name'":
+- Isso indica que o notebook está usando código antigo/em cache
+- **Reinicie o kernel** e re-execute todas as células para carregar as correções da API
+- O código corrigido usa o formato `branch={"name": branch_name}`
 
-### Model Not Available
-If you see "serviceUnavailableException", ensure:
-- Using global inference profile: `global.anthropic.claude-sonnet-4-20250514-v1:0`
-- Or region-specific profile for your region
+### Modelo Não Disponível
+Se você ver "serviceUnavailableException", certifique-se de:
+- Usar perfil de inferência global: `global.anthropic.claude-sonnet-4-20250514-v1:0`
+- Ou perfil específico da região para sua região
 
-### HealthLake Access Denied
-Verify IAM permissions include:
+### Acesso Negado ao HealthLake
+Verifique se as permissões IAM incluem:
 - `healthlake:DescribeFHIRDatastore`
 - `healthlake:ReadResource`
 - `healthlake:SearchWithGet`
 
-### Memory Creation Failed
-Check that:
-- IAM role has Bedrock invoke permissions
+### Falha na Criação de Memória
+Verifique se:
+- A role IAM possui permissões de invocação do Bedrock
 
 
-## Cleanup
+## Limpeza
 
-After completing the tutorial, you can clean up resources to avoid ongoing charges:
+Após completar o tutorial, você pode limpar os recursos para evitar cobranças contínuas:
 
-1. Run the **Cleanup** cell at the end of the notebook
-2. You'll be prompted to delete:
-   - **Memory**: AgentCore Memory instance
-   - **HealthLake Datastore**: FHIR datastore (optional)
+1. Execute a célula de **Limpeza** no final do notebook
+2. Você será solicitado a deletar:
+   - **Memória**: Instância do AgentCore Memory
+   - **Datastore HealthLake**: Datastore FHIR (opcional)
 
-Each resource can be deleted independently based on your needs.
+Cada recurso pode ser deletado independentemente conforme suas necessidades.
 
-### Manual Cleanup
+### Limpeza Manual
 
-If needed, you can also delete resources manually:
+Se necessário, você também pode deletar recursos manualmente:
 
 ```bash
-# Delete memory
+# Deletar memória
 aws bedrock-agentcore-cp delete-memory --memory-id <MEMORY_ID> --region us-east-1
 
-# Delete HealthLake datastore
+# Deletar datastore HealthLake
 aws healthlake delete-fhir-datastore --datastore-id <DATASTORE_ID> --region <REGION>
 ```
 
-## Learn More
+## Saiba Mais
 
-- [AgentCore Memory Documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/agentcore-memory.html)
-- [Strands Agents Guide](https://strandsagents.com)
-- [HealthLake FHIR API](https://docs.aws.amazon.com/healthlake/latest/devguide/working-with-FHIR-healthlake.html)
-- [Memory Branching Patterns](https://docs.aws.amazon.com/bedrock/latest/userguide/agentcore-memory-branching.html)
-
-
+- [Documentação do AgentCore Memory](https://docs.aws.amazon.com/bedrock/latest/userguide/agentcore-memory.html)
+- [Guia do Strands Agents](https://strandsagents.com)
+- [API FHIR do HealthLake](https://docs.aws.amazon.com/healthlake/latest/devguide/working-with-FHIR-healthlake.html)
+- [Padrões de Ramificação de Memória](https://docs.aws.amazon.com/bedrock/latest/userguide/agentcore-memory-branching.html)

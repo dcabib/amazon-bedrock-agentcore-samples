@@ -1,135 +1,135 @@
-# AgentCore Memory Cross-Region Replication
+# Replicação Cross-Region do AgentCore Memory
 
-Active-passive cross-region replication for [Amazon Bedrock AgentCore Memory](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/memory.html) using the [memory record streaming](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/memory-record-streaming.html) feature.
+Replicação cross-region ativo-passivo para o [Amazon Bedrock AgentCore Memory](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/memory.html) usando o recurso de [streaming de registros de memória](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/memory-record-streaming.html).
 
-AgentCore Memory stores long-term knowledge for AI agents — user preferences, conversation history, extracted facts. This data is critical to agent quality. If the primary region goes down, agents lose access to all accumulated memory. This solution provides near real-time replication to a secondary region so you can fail over in seconds.
+O AgentCore Memory armazena conhecimento de longo prazo para agentes de IA — preferências do usuário, histórico de conversas, fatos extraídos. Esses dados são críticos para a qualidade do agente. Se a região primária ficar indisponível, os agentes perdem acesso a toda a memória acumulada. Esta solução fornece replicação quase em tempo real para uma região secundária para que você possa fazer failover em segundos.
 
-## Architecture
+## Arquitetura
 
-![Architecture](images/architecture.png)
+![Arquitetura](images/architecture.png)
 
-### How It Works
+### Como Funciona
 
-1. The primary AgentCore Memory has **streaming enabled** — every time a memory record is created or updated, an event is published to a Kinesis Data Stream
-2. A **Lambda consumer** reads from Kinesis via an Event Source Mapping (ESM), decodes the event, and calls `BatchCreateMemoryRecords` on the secondary region's Memory
-3. To prevent infinite loops (secondary streaming back to primary), replicated records use a **`replicated/` namespace prefix** — the Lambda skips any event with this prefix
-4. The secondary region has all the same infrastructure pre-deployed (Kinesis, Lambda, IAM), but **streaming is OFF** — so the Lambda sits idle at zero cost
-5. **Failover** is two API calls: enable streaming on secondary, disable on primary. Takes seconds.
+1. O AgentCore Memory primário tem **streaming habilitado** — toda vez que um registro de memória é criado ou atualizado, um evento é publicado em um Kinesis Data Stream
+2. Um **consumidor Lambda** lê do Kinesis via Event Source Mapping (ESM), decodifica o evento e chama `BatchCreateMemoryRecords` na Memória da região secundária
+3. Para evitar loops infinitos (secundário replicando de volta para o primário), registros replicados usam um **prefixo de namespace `replicated/`** — o Lambda ignora qualquer evento com este prefixo
+4. A região secundária tem toda a mesma infraestrutura pré-implantada (Kinesis, Lambda, IAM), mas **streaming está DESLIGADO** — então o Lambda fica inativo com custo zero
+5. **Failover** são duas chamadas de API: habilitar streaming no secundário, desabilitar no primário. Leva segundos.
 
-### Key Metrics
+### Métricas Principais
 
-| Metric | Value |
-|:-------|:------|
-| RPO (Recovery Point Objective) | 5–15 seconds |
-| RTO (Recovery Time Objective) | 15–30 seconds |
-| Failover mechanism | Toggle streaming via `update-memory` API |
-| Loop prevention | `replicated/` namespace prefix |
-| Conflict resolution | AgentCore Memory native consolidation |
+| Métrica | Valor |
+|:--------|:------|
+| RPO (Objetivo de Ponto de Recuperação) | 5–15 segundos |
+| RTO (Objetivo de Tempo de Recuperação) | 15–30 segundos |
+| Mecanismo de failover | Alternar streaming via API `update-memory` |
+| Prevenção de loop | Prefixo de namespace `replicated/` |
+| Resolução de conflitos | Consolidação nativa do AgentCore Memory |
 
-## Prerequisites
+## Pré-requisitos
 
-- AWS CLI v2 configured with appropriate permissions
+- AWS CLI v2 configurado com permissões apropriadas
 - Python 3.10+
-- Access to Amazon Bedrock AgentCore in `us-east-1` and `us-west-2`
-- Permissions for: CloudFormation, Kinesis, Lambda, IAM, SQS, DynamoDB, S3
+- Acesso ao Amazon Bedrock AgentCore em `us-east-1` e `us-west-2`
+- Permissões para: CloudFormation, Kinesis, Lambda, IAM, SQS, DynamoDB, S3
 
-## Quick Start
+## Início Rápido
 
-The notebook walks you through everything step by step:
+O notebook guia você por tudo passo a passo:
 
 ```bash
 jupyter notebook 06-memory-cross-region-replication.ipynb
 ```
 
-Or deploy the infrastructure directly without the notebook:
+Ou implante a infraestrutura diretamente sem o notebook:
 
 ```bash
 bash scripts/deploy.sh us-east-1 us-west-2
 ```
 
-## Project Structure
+## Estrutura do Projeto
 
 ```
-├── 06-memory-cross-region-replication.ipynb   # Main tutorial — run this
+├── 06-memory-cross-region-replication.ipynb   # Tutorial principal — execute este
 ├── README.md
 ├── requirements.txt                           # boto3>=1.42.63
 └── scripts/
-    ├── deploy.sh                              # Deployment orchestration
-    ├── toggle-streaming.sh                    # Failover toggle
-    ├── handler.py                             # Lambda replication consumer
-    ├── regional-stack.yaml                    # Per-region CloudFormation
+    ├── deploy.sh                              # Orquestração de implantação
+    ├── toggle-streaming.sh                    # Alternância de failover
+    ├── handler.py                             # Consumidor Lambda de replicação
+    ├── regional-stack.yaml                    # CloudFormation por região
     └── global-stack.yaml                      # DynamoDB Global Table
 ```
 
-### What Each File Does
+### O que Cada Arquivo Faz
 
-**`06-memory-cross-region-replication.ipynb`** — The self-contained tutorial notebook. It deploys infrastructure, creates memory records, verifies replication, tests failover/failback, and cleans up. This is what users should follow.
+**`06-memory-cross-region-replication.ipynb`** — O notebook tutorial autocontido. Ele implanta infraestrutura, cria registros de memória, verifica replicação, testa failover/failback e faz limpeza. É o que os usuários devem seguir.
 
-**`scripts/deploy.sh`** — Orchestrates the full first-time deployment:
-1. Packages the Lambda function and uploads to S3 in both regions
-2. Deploys a DynamoDB Global Table for active-region tracking
-3. Deploys per-region CloudFormation stacks (Kinesis, Lambda, SQS DLQ, IAM roles, CloudWatch alarms)
-4. Creates AgentCore Memory instances — primary with streaming ON, secondary without
-5. Updates stacks with cross-region memory IDs so each Lambda knows where to replicate
-6. Seeds the DynamoDB config table with the active region
+**`scripts/deploy.sh`** — Orquestra a implantação completa da primeira vez:
+1. Empacota a função Lambda e faz upload para S3 em ambas as regiões
+2. Implanta uma DynamoDB Global Table para rastreamento da região ativa
+3. Implanta stacks CloudFormation por região (Kinesis, Lambda, SQS DLQ, roles IAM, alarmes CloudWatch)
+4. Cria instâncias AgentCore Memory — primária com streaming LIGADO, secundária sem
+5. Atualiza stacks com IDs de memória cross-region para que cada Lambda saiba onde replicar
+6. Alimenta a tabela de configuração DynamoDB com a região ativa
 
-**`scripts/toggle-streaming.sh`** — Enables or disables streaming on a Memory instance. This is the failover mechanism — enable on the new active region, disable on the old one. Under the hood it calls `update-memory --stream-delivery-resources`.
+**`scripts/toggle-streaming.sh`** — Habilita ou desabilita streaming em uma instância de Memória. Este é o mecanismo de failover — habilite na nova região ativa, desabilite na antiga. Por baixo dos panos, ele chama `update-memory --stream-delivery-resources`.
 
-**`scripts/handler.py`** — The Lambda function that consumes Kinesis stream events and replicates them. Key behaviors:
-- Skips `StreamingEnabled` and `MemoryRecordDeleted` events (not replicable)
-- Checks for `replicated/` namespace prefix to prevent infinite loops
-- Generates deterministic request IDs so retries don't create duplicates
-- Sends non-retryable errors to SQS DLQ; raises retryable errors for ESM retry
-- DLQ write failures are logged but never crash the Lambda
+**`scripts/handler.py`** — A função Lambda que consome eventos do stream Kinesis e os replica. Comportamentos principais:
+- Ignora eventos `StreamingEnabled` e `MemoryRecordDeleted` (não replicáveis)
+- Verifica prefixo de namespace `replicated/` para prevenir loops infinitos
+- Gera IDs de requisição determinísticos para que retentativas não criem duplicatas
+- Envia erros não retriáveis para SQS DLQ; levanta erros retriáveis para retentativa do ESM
+- Falhas de escrita no DLQ são logadas mas nunca travam o Lambda
 
-**`scripts/regional-stack.yaml`** — CloudFormation template deployed in each region. Creates:
-- Kinesis Data Stream (1 shard, 24h retention)
-- SQS Dead Letter Queue (14-day retention)
-- IAM roles for Memory streaming and Lambda execution
-- Lambda function with Kinesis ESM (bisect-on-error, max 3 retries)
-- CloudWatch alarms for Lambda errors, DLQ depth, and replication lag
+**`scripts/regional-stack.yaml`** — Template CloudFormation implantado em cada região. Cria:
+- Kinesis Data Stream (1 shard, retenção de 24h)
+- SQS Dead Letter Queue (retenção de 14 dias)
+- Roles IAM para streaming de Memória e execução do Lambda
+- Função Lambda com Kinesis ESM (bisect-on-error, máximo 3 retentativas)
+- Alarmes CloudWatch para erros do Lambda, profundidade do DLQ e lag de replicação
 
-**`scripts/global-stack.yaml`** — CloudFormation template for the DynamoDB Global Table that tracks which region is currently active. Deployed once, replicated to both regions automatically.
+**`scripts/global-stack.yaml`** — Template CloudFormation para a DynamoDB Global Table que rastreia qual região está atualmente ativa. Implantado uma vez, replicado para ambas as regiões automaticamente.
 
 ## Failover
 
 ```bash
-# Failover: primary → secondary
-# Enable secondary FIRST to avoid any replication gap
+# Failover: primário → secundário
+# Habilite o secundário PRIMEIRO para evitar qualquer gap de replicação
 bash scripts/toggle-streaming.sh enable us-west-2
 bash scripts/toggle-streaming.sh disable us-east-1
 
-# Failback: secondary → primary
+# Failback: secundário → primário
 bash scripts/toggle-streaming.sh enable us-east-1
 bash scripts/toggle-streaming.sh disable us-west-2
 ```
 
-The order matters — always enable the new path before disabling the old one. If both regions briefly have streaming on, the loop prevention handles it safely.
+A ordem importa — sempre habilite o novo caminho antes de desabilitar o antigo. Se ambas as regiões brevemente tiverem streaming ligado, a prevenção de loop lida com isso com segurança.
 
-## Cost
+## Custo
 
-### Fixed (always running)
+### Fixo (sempre rodando)
 
-| Resource | Cost | Notes |
-|:---------|:-----|:------|
-| Kinesis (1 shard × 2 regions) | ~$22/month | Shard-hour pricing |
-| DynamoDB Global Table | ~$0.25/month | Single record, on-demand |
-| CloudWatch Alarms (3 × 2 regions) | ~$0.60/month | Standard resolution |
+| Recurso | Custo | Notas |
+|:---------|:------|:------|
+| Kinesis (1 shard × 2 regiões) | ~$22/mês | Precificação por hora de shard |
+| DynamoDB Global Table | ~$0,25/mês | Registro único, sob demanda |
+| Alarmes CloudWatch (3 × 2 regiões) | ~$0,60/mês | Resolução padrão |
 
-### Variable (proportional to usage)
+### Variável (proporcional ao uso)
 
-| Resource | Cost |
-|:---------|:-----|
-| Kinesis PutRecord | $0.014 per 1M records |
-| Lambda invocations | $0.20 per 1M + duration |
-| AgentCore Memory writes | Per-record pricing |
+| Recurso | Custo |
+|:---------|:------|
+| Kinesis PutRecord | $0,014 por 1M registros |
+| Invocações Lambda | $0,20 por 1M + duração |
+| Escritas AgentCore Memory | Precificação por registro |
 
-The secondary's Kinesis shard costs ~$11/month even when idle — this is the price of instant failover readiness.
+O shard Kinesis do secundário custa ~$11/mês mesmo quando inativo — este é o preço da prontidão para failover instantâneo.
 
-## Known Limitations
+## Limitações Conhecidas
 
-- Deletes are not replicated (remote cleanup via AgentCore Memory consolidation)
-- Updates are replicated as new Creates (consolidation handles deduplication)
-- Single AWS account only (cross-account would require additional IAM roles)
-- Manual failover (could be automated with Route 53 health checks + Step Functions)
-- `deploy.sh` is for first-time deployment only — redeployment requires deleting Memory instances first
+- Exclusões não são replicadas (limpeza remota via consolidação do AgentCore Memory)
+- Atualizações são replicadas como novos Creates (consolidação lida com deduplicação)
+- Apenas conta AWS única (cross-account exigiria roles IAM adicionais)
+- Failover manual (poderia ser automatizado com Route 53 health checks + Step Functions)
+- `deploy.sh` é apenas para implantação da primeira vez — reimplantação requer deletar instâncias de Memória primeiro

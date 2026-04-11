@@ -1,7 +1,7 @@
 
-# Outbound Authorization Flow
+# Fluxo de Autorização de Saída
 
-### GitHub OAuth with AgentCore Identity
+### OAuth do GitHub com AgentCore Identity
 
 ```mermaid
 sequenceDiagram

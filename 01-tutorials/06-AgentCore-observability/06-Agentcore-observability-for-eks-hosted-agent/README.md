@@ -1,145 +1,145 @@
-# Deploying a Strands Agent to Amazon EKS
+# Implantando um Agente Strands no Amazon EKS
 
-This example demonstrates how to deploy a Python application built with [Strands Agents SDK](https://github.com/strands-agents/sdk-python) to Amazon EKS. The example deploys a travel research agent application that runs as a containerized service in Amazon EKS with an Application Load Balancer.
+Este exemplo demonstra como implantar uma aplicação Python construída com o [Strands Agents SDK](https://github.com/strands-agents/sdk-python) no Amazon EKS. O exemplo implanta uma aplicação de agente de pesquisa de viagens que é executada como um serviço containerizado no Amazon EKS com um Application Load Balancer.
 
-The application is built with FastAPI and provides a `/travel` endpoint that returns travel information based on the provided prompt.
+A aplicação é construída com FastAPI e fornece um endpoint `/travel` que retorna informações de viagem com base no prompt fornecido.
 
-## Prerequisites
+## Pré-requisitos
 
-- [AWS CLI](https://aws.amazon.com/cli/) installed and configured
-- [eksctl](https://eksctl.io/installation/) (v0.208.x or later) installed
-- [Helm](https://helm.sh/) (v3 or later) installed
-- [kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html) installed
-- Either:
-    - [Podman](https://podman.io/) installed and running
-    - (or) [Docker](https://www.docker.com/) installed and running
-- Amazon Bedrock Anthropic Claude model enabled in your AWS environment
+- [AWS CLI](https://aws.amazon.com/cli/) instalado e configurado
+- [eksctl](https://eksctl.io/installation/) (v0.208.x ou posterior) instalado
+- [Helm](https://helm.sh/) (v3 ou posterior) instalado
+- [kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html) instalado
+- Uma das opções:
+    - [Podman](https://podman.io/) instalado e em execução
+    - (ou) [Docker](https://www.docker.com/) instalado e em execução
+- Modelo Anthropic Claude do Amazon Bedrock habilitado no seu ambiente AWS
 
-## Quick Start (Automated Deployment)
+## Início Rápido (Implantação Automatizada)
 
-For an automated deployment experience, use the included Jupyter notebook:
+Para uma experiência de implantação automatizada, use o notebook Jupyter incluído:
 
 ```bash
-# Navigate to this directory
+# Navegue até este diretório
 cd strands-travel-agent-eks
 
-# Start Jupyter
+# Inicie o Jupyter
 jupyter notebook deploy.ipynb
 ```
 
-The notebook automates the entire deployment process including:
-- CloudWatch log group creation
-- EKS cluster creation
-- Docker image build and push to ECR
-- IAM policy and Pod Identity configuration
-- Helm chart deployment
-- Port-forwarding and agent testing
+O notebook automatiza todo o processo de implantação incluindo:
+- Criação do grupo de logs do CloudWatch
+- Criação do cluster EKS
+- Build da imagem Docker e push para o ECR
+- Configuração de política IAM e Pod Identity
+- Implantação do chart Helm
+- Port-forwarding e teste do agente
 
-> **Note:** The CloudWatch Observability addon (Section 8 in the notebook) is **optional**. It is NOT required for Bedrock AgentCore Observability. AgentCore sends telemetry directly to CloudWatch using the OTEL configuration in the Dockerfile.
+> **Nota:** O addon de Observabilidade do CloudWatch (Seção 8 no notebook) é **opcional**. Ele NÃO é necessário para a Observabilidade do Bedrock AgentCore. O AgentCore envia telemetria diretamente para o CloudWatch usando a configuração OTEL no Dockerfile.
 
-**Environment Variables (Optional):**
+**Variáveis de Ambiente (Opcional):**
 
-Customize the deployment by setting these environment variables before running the notebook:
+Personalize a implantação definindo estas variáveis de ambiente antes de executar o notebook:
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `AWS_REGION` | `us-east-1` | AWS region for deployment |
-| `CLUSTER_NAME` | `eks-strands-agents-demo` | EKS cluster name |
-| `SERVICE_NAME` | `strands-agents-travel` | Service name for Helm release |
-| `LOG_GROUP_NAME` | `/strands-agents/travel` | CloudWatch log group |
-| `LOG_STREAM_NAME` | `agent-logs` | CloudWatch log stream |
-| `METRIC_NAMESPACE` | `StrandsAgents/Travel` | CloudWatch metrics namespace |
-| `LOCAL_PORT` | `8080` | Local port for port-forwarding |
+| Variável | Padrão | Descrição |
+|----------|--------|-----------|
+| `AWS_REGION` | `us-east-1` | Região AWS para implantação |
+| `CLUSTER_NAME` | `eks-strands-agents-demo` | Nome do cluster EKS |
+| `SERVICE_NAME` | `strands-agents-travel` | Nome do serviço para o release Helm |
+| `LOG_GROUP_NAME` | `/strands-agents/travel` | Grupo de logs do CloudWatch |
+| `LOG_STREAM_NAME` | `agent-logs` | Stream de logs do CloudWatch |
+| `METRIC_NAMESPACE` | `StrandsAgents/Travel` | Namespace de métricas do CloudWatch |
+| `LOCAL_PORT` | `8080` | Porta local para port-forwarding |
 
-## Project Structure
+## Estrutura do Projeto
 
 ```
 .
 ├── README.md
-├── deploy.ipynb              # Automated deployment notebook
-├── chart/                    # Helm chart for Kubernetes deployment
+├── deploy.ipynb              # Notebook de implantação automatizada
+├── chart/                    # Chart Helm para implantação no Kubernetes
 │   ├── Chart.yaml
 │   ├── values.yaml
 │   └── templates/
-└── docker/                   # Docker container files
+└── docker/                   # Arquivos de container Docker
     ├── Dockerfile
     ├── app/
-    │   └── app.py           # FastAPI travel agent application
+    │   └── app.py           # Aplicação FastAPI de agente de viagem
     └── requirements.txt
 ```
 
-## Manual Deployment
+## Implantação Manual
 
-The following sections describe the manual deployment steps. Use these if you prefer CLI commands over the automated notebook.
+As seções a seguir descrevem os passos de implantação manual. Use-os se preferir comandos CLI ao notebook automatizado.
 
-### Configuration
+### Configuração
 
-Before building the Docker image, update the following values in `docker/Dockerfile`:
+Antes de construir a imagem Docker, atualize os seguintes valores em `docker/Dockerfile`:
 
-| Variable | Description | Action Required |
-|----------|-------------|-----------------|
-| `OTEL_RESOURCE_ATTRIBUTES` | Service name for AgentCore Observability | Replace `<YOUR_SERVICE_NAME>` with your service name |
-| `OTEL_EXPORTER_OTLP_LOGS_HEADERS` | OpenTelemetry observability configuration | Replace `<YOUR_LOG_GROUP>`, `<YOUR_LOG_STREAM>`, and `<YOUR_METRIC_NAMESPACE>` with your values |
+| Variável | Descrição | Ação Necessária |
+|----------|-----------|-----------------|
+| `OTEL_RESOURCE_ATTRIBUTES` | Nome do serviço para Observabilidade do AgentCore | Substitua `<YOUR_SERVICE_NAME>` pelo nome do seu serviço |
+| `OTEL_EXPORTER_OTLP_LOGS_HEADERS` | Configuração de observabilidade OpenTelemetry | Substitua `<YOUR_LOG_GROUP>`, `<YOUR_LOG_STREAM>` e `<YOUR_METRIC_NAMESPACE>` pelos seus valores |
 
-The application also supports these runtime environment variables (defaults are set in `docker/app/app.py`):
+A aplicação também suporta estas variáveis de ambiente em tempo de execução (os padrões são definidos em `docker/app/app.py`):
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `MODEL_ID` | Amazon Bedrock model ID | `us.anthropic.claude-haiku-4-5-20251001-v1:0` |
-| `MODEL_TEMPERATURE` | Model temperature for responses | `0` |
-| `MODEL_MAX_TOKENS` | Maximum tokens in response | `1028` |
+| Variável | Descrição | Padrão |
+|----------|-----------|--------|
+| `MODEL_ID` | ID do modelo Amazon Bedrock | `us.anthropic.claude-haiku-4-5-20251001-v1:0` |
+| `MODEL_TEMPERATURE` | Temperatura do modelo para respostas | `0` |
+| `MODEL_MAX_TOKENS` | Máximo de tokens na resposta | `1028` |
 
-### Create EKS Auto Mode cluster
+### Criar cluster EKS Auto Mode
 
-Set environment variables:
+Defina as variáveis de ambiente:
 ```bash
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
 export AWS_REGION=us-east-1
 export CLUSTER_NAME=eks-strands-agents-demo
 ```
 
-Create EKS Auto Mode cluster:
+Crie o cluster EKS Auto Mode:
 ```bash
 eksctl create cluster --name $CLUSTER_NAME --enable-auto-mode
 ```
 
-Configure kubeconfig context:
+Configure o contexto do kubeconfig:
 ```bash
 aws eks update-kubeconfig --name $CLUSTER_NAME
 ```
 
-### Building and Pushing Docker Image to ECR
+### Construindo e Enviando Imagem Docker para o ECR
 
-Follow these steps to build the Docker image and push it to Amazon ECR:
+Siga estes passos para construir a imagem Docker e enviá-la para o Amazon ECR:
 
-1. Authenticate to Amazon ECR:
+1. Autentique-se no Amazon ECR:
 ```bash
 aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
 ```
 
-2. Create the ECR repository if it doesn't exist:
+2. Crie o repositório ECR se ele não existir:
 ```bash
 aws ecr create-repository --repository-name strands-agents-travel --region ${AWS_REGION}
 ```
 
-3. Build the Docker image:
+3. Construa a imagem Docker:
 ```bash
 docker build --platform linux/amd64 -t strands-agents-travel:latest docker/
 ```
 
-4. Tag the image for ECR:
+4. Aplique a tag da imagem para o ECR:
 ```bash
 docker tag strands-agents-travel:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/strands-agents-travel:latest
 ```
 
-5. Push the image to ECR:
+5. Envie a imagem para o ECR:
 ```bash
 docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/strands-agents-travel:latest
 ```
 
-### Configure EKS Pod Identity to access Amazon Bedrock
+### Configurar EKS Pod Identity para acessar o Amazon Bedrock
 
-Create an IAM policy to allow InvokeModel and InvokeModelWithResponseStream to all Amazon Bedrock models:
+Crie uma política IAM para permitir InvokeModel e InvokeModelWithResponseStream para todos os modelos do Amazon Bedrock:
 ```bash
 cat > bedrock-policy.json << EOF
 {
@@ -163,7 +163,7 @@ aws iam create-policy \
 rm -f bedrock-policy.json
 ```
 
-Create an EKS Pod Identity association:
+Crie uma associação de EKS Pod Identity:
 ```bash
 eksctl create podidentityassociation --cluster $CLUSTER_NAME \
   --namespace default \
@@ -172,28 +172,28 @@ eksctl create podidentityassociation --cluster $CLUSTER_NAME \
   --role-name eks-strands-agents-travel
 ```
 
-### Deploy strands-agents-travel application
+### Implantar a aplicação strands-agents-travel
 
-Deploy the helm chart with the image from ECR:
+Implante o chart Helm com a imagem do ECR:
 ```bash
 helm install strands-agents-travel ./chart \
   --set image.repository=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/strands-agents-travel \
   --set image.tag=latest
 ```
 
-Wait for Deployment to be available (Pods Running):
+Aguarde o Deployment estar disponível (Pods em execução):
 ```bash
 kubectl wait --for=condition=available deployments strands-agents-travel --all
 ```
 
-### Test the Agent
+### Testar o Agente
 
-Using kubernetes port-forward:
+Usando port-forward do Kubernetes:
 ```bash
 kubectl --namespace default port-forward service/strands-agents-travel 8080:80 &
 ```
 
-Call the travel service:
+Chame o serviço de viagem:
 ```bash
 curl -X POST \
   http://localhost:8080/travel \
@@ -201,9 +201,9 @@ curl -X POST \
   -d '{"prompt": "What are the best places to visit in Tokyo in March?"}'
 ```
 
-### Expose Agent through Application Load Balancer
+### Expor Agente através do Application Load Balancer
 
-[Create an IngressClass to configure an Application Load Balancer](https://docs.aws.amazon.com/eks/latest/userguide/auto-configure-alb.html):
+[Crie um IngressClass para configurar um Application Load Balancer](https://docs.aws.amazon.com/eks/latest/userguide/auto-configure-alb.html):
 ```bash
 cat <<EOF | kubectl apply -f -
 apiVersion: eks.amazonaws.com/v1
@@ -232,7 +232,7 @@ spec:
 EOF
 ```
 
-Update helm deployment to create Ingress using the IngressClass created:
+Atualize a implantação Helm para criar Ingress usando o IngressClass criado:
 ```bash
 helm upgrade strands-agents-travel ./chart \
   --set image.repository=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/strands-agents-travel \
@@ -241,18 +241,18 @@ helm upgrade strands-agents-travel ./chart \
   --set ingress.className=alb
 ```
 
-Get the ALB URL:
+Obtenha a URL do ALB:
 ```bash
 export ALB_URL=$(kubectl get ingress strands-agents-travel -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
-echo "The shared ALB is available at: http://$ALB_URL"
+echo "O ALB compartilhado está disponível em: http://$ALB_URL"
 ```
 
-Wait for ALB to be active:
+Aguarde o ALB estar ativo:
 ```bash
 aws elbv2 wait load-balancer-available --load-balancer-arns $(aws elbv2 describe-load-balancers --query 'LoadBalancers[?DNSName==`'"$ALB_URL"'`].LoadBalancerArn' --output text)
 ```
 
-Call the travel service via Application Load Balancer:
+Chame o serviço de viagem via Application Load Balancer:
 ```bash
 curl -X POST \
   http://$ALB_URL/travel \
@@ -260,12 +260,12 @@ curl -X POST \
   -d '{"prompt": "What are the top attractions in Barcelona?"}'
 ```
 
-### Configure High Availability and Resiliency
+### Configurar Alta Disponibilidade e Resiliência
 
-To configure high availability:
-- Increase replicas to 3
-- [Topology Spread Constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/): Spread workload across multi-az
-- [Pod Disruption Budgets](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#pod-disruption-budgets): Tolerate minAvailable of 1
+Para configurar alta disponibilidade:
+- Aumente as réplicas para 3
+- [Topology Spread Constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/): Distribuir a carga de trabalho em múltiplas zonas de disponibilidade
+- [Pod Disruption Budgets](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#pod-disruption-budgets): Tolerar minAvailable de 1
 
 ```bash
 helm upgrade strands-agents-travel ./chart -f - <<EOF
@@ -300,23 +300,23 @@ podDisruptionBudget:
 EOF
 ```
 
-## Cleanup
+## Limpeza
 
-Uninstall helm chart:
+Desinstale o chart Helm:
 ```bash
 helm uninstall strands-agents-travel
 ```
 
-Delete EKS Auto Mode cluster:
+Exclua o cluster EKS Auto Mode:
 ```bash
 eksctl delete cluster --name $CLUSTER_NAME --wait
 ```
 
-Delete IAM policy:
+Exclua a política IAM:
 ```bash
 aws iam delete-policy --policy-arn arn:aws:iam::$AWS_ACCOUNT_ID:policy/strands-agents-travel-bedrock-policy
 ```
 
-## License
+## Licença
 
-This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
+Este projeto é licenciado sob a Licença Apache 2.0 - consulte o arquivo LICENSE para detalhes.

@@ -1,6 +1,6 @@
-# Inbound Authentication Flow
+# Fluxo de Autenticação de Entrada
 
-### ALB OIDC authentication with Entra ID
+### Autenticação OIDC do ALB com Entra ID
 
 ```mermaid
 sequenceDiagram

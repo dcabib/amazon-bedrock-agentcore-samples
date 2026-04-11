@@ -1,124 +1,124 @@
-# Running Evaluations
+# Executando Avaliações
 
-## Overview
+## Visão Geral
 
-In this tutorial you will learn how to use AgentCore Evaluations to assess your agent's performance using both on-demand and online evaluation approaches. You'll apply built-in and custom evaluators to analyze agent interactions and monitor quality at scale.
+Neste tutorial, você aprenderá como usar o AgentCore Evaluations para avaliar o desempenho do seu agente usando abordagens de avaliação sob demanda e online. Você aplicará avaliadores integrados e personalizados para analisar interações do agente e monitorar a qualidade em escala.
 
-## What You'll Learn
+## O Que Você Vai Aprender
 
-- Running on-demand evaluations for targeted assessment of specific interactions
-- Setting up online evaluations for continuous production monitoring
-- Analyzing evaluation results to improve agent quality
-- Using AgentCore Observability traces as inputs for evaluations
+- Executar avaliações sob demanda para avaliação direcionada de interações específicas
+- Configurar avaliações online para monitoramento contínuo em produção
+- Analisar resultados de avaliação para melhorar a qualidade do agente
+- Usar traces do AgentCore Observability como entradas para avaliações
 
-## Prerequisites
+## Pré-requisitos
 
-Before starting this tutorial, you should have:
-- Completed [Tutorial 00: Prerequisites](../00-prereqs) - Created sample agents (Strands and/or LangGraph)
-- Completed [Tutorial 01: Creating Custom Evaluators](../01-creating-custom-evaluators) - Created a custom evaluator
-- Your agent deployed on AgentCore Runtime with observability enabled
-- Generated at least one session with traces in AgentCore Observability
+Antes de iniciar este tutorial, você deve ter:
+- Completado o [Tutorial 00: Pré-requisitos](../00-prereqs) - Criado agentes de exemplo (Strands e/ou LangGraph)
+- Completado o [Tutorial 01: Criando Avaliadores Personalizados](../01-creating-custom-evaluators) - Criado um avaliador personalizado
+- Seu agente implantado no AgentCore Runtime com observabilidade habilitada
+- Gerado pelo menos uma sessão com traces no AgentCore Observability
 
-## Evaluation Types
+## Tipos de Avaliação
 
-### On-demand Evaluations
+### Avaliações Sob Demanda
 
-On-demand evaluation provides a flexible way to evaluate specific agent interactions by directly analyzing a chosen set of spans, traces, or sessions.
+A avaliação sob demanda fornece uma maneira flexível de avaliar interações específicas do agente, analisando diretamente um conjunto escolhido de spans, traces ou sessões.
 
-**Key Characteristics:**
-- **Targeted assessment**: Evaluate specific interactions by providing span, trace, or session IDs
-- **Synchronous execution**: Get immediate results for your evaluation requests
-- **Flexible scope**: Evaluate single spans, complete traces, or entire sessions
-- **Investigation tool**: Perfect for analyzing specific customer interactions or validating fixes
+**Características Principais:**
+- **Avaliação direcionada**: Avalie interações específicas fornecendo IDs de span, trace ou sessão
+- **Execução síncrona**: Obtenha resultados imediatos para suas solicitações de avaliação
+- **Escopo flexível**: Avalie spans individuais, traces completos ou sessões inteiras
+- **Ferramenta de investigação**: Perfeita para analisar interações específicas de clientes ou validar correções
 
-**When to Use On-demand Evaluations:**
-- Investigating specific customer interactions or reported issues
-- Validating fixes for identified problems
-- Analyzing historical data for quality improvements
-- Testing evaluators before deploying them in production
-- Performing deep-dive analysis on edge cases
+**Quando Usar Avaliações Sob Demanda:**
+- Investigar interações específicas de clientes ou problemas reportados
+- Validar correções para problemas identificados
+- Analisar dados históricos para melhorias de qualidade
+- Testar avaliadores antes de implantá-los em produção
+- Realizar análise aprofundada em casos extremos
 
-**How It Works:**
+**Como Funciona:**
 
-![On-demand Evaluations](../images/on_demand_evaluations.png)
+![Avaliações Sob Demanda](../images/on_demand_evaluations.png)
 
-1. Your agent generates traces in AgentCore Observability
-2. Traces are mapped to sessions and stored in CloudWatch Log groups
-3. You select specific sessions or traces to evaluate
-4. You specify which evaluators (built-in or custom) to apply
-5. AgentCore Evaluations processes the selected traces and returns detailed results
+1. Seu agente gera traces no AgentCore Observability
+2. Os traces são mapeados para sessões e armazenados em grupos de logs do CloudWatch
+3. Você seleciona sessões ou traces específicos para avaliar
+4. Você especifica quais avaliadores (integrados ou personalizados) aplicar
+5. O AgentCore Evaluations processa os traces selecionados e retorna resultados detalhados
 
-### Online Evaluations
+### Avaliações Online
 
-Online evaluation enables continuous quality monitoring of deployed agents in production environments based on real-time traffic.
+A avaliação online permite o monitoramento contínuo de qualidade de agentes implantados em ambientes de produção com base no tráfego em tempo real.
 
-**Key Characteristics:**
-- **Continuous monitoring**: Automatically evaluates agent performance as interactions occur
-- **Sampling-based**: Configure percentage-based sampling or conditional filters
-- **Real-time insights**: Track quality trends and catch regressions early
-- **Production-ready**: Designed for scale with minimal performance impact
+**Características Principais:**
+- **Monitoramento contínuo**: Avalia automaticamente o desempenho do agente conforme as interações ocorrem
+- **Baseada em amostragem**: Configure amostragem baseada em porcentagem ou filtros condicionais
+- **Insights em tempo real**: Acompanhe tendências de qualidade e detecte regressões precocemente
+- **Pronta para produção**: Projetada para escala com impacto mínimo no desempenho
 
-**When to Use Online Evaluations:**
-- Monitoring production agent performance continuously
-- Catching quality regressions before they impact users
-- Identifying patterns in user interactions at scale
-- Maintaining consistent agent performance over time
-- A/B testing different agent configurations
+**Quando Usar Avaliações Online:**
+- Monitorar o desempenho do agente em produção continuamente
+- Detectar regressões de qualidade antes que impactem os usuários
+- Identificar padrões nas interações dos usuários em escala
+- Manter desempenho consistente do agente ao longo do tempo
+- Testes A/B de diferentes configurações de agente
 
-**How It Works:**
+**Como Funciona:**
 
-![Online Evaluations](../images/online_evaluations.png)
+![Avaliações Online](../images/online_evaluations.png)
 
-1. Your agent generates traces in AgentCore Observability
-2. You create an online evaluation configuration specifying:
-   - Data source (CloudWatch log group or AgentCore Runtime endpoint)
-   - Sampling rate (e.g., evaluate 10% of all sessions)
-   - Evaluators to apply (built-in and/or custom)
-3. AgentCore Evaluations continuously processes incoming traces based on your rules
-4. Results are output to CloudWatch for dashboard visualization and analysis
-5. You monitor aggregated scores, track trends, and investigate low-scoring sessions
+1. Seu agente gera traces no AgentCore Observability
+2. Você cria uma configuração de avaliação online especificando:
+   - Fonte de dados (grupo de logs do CloudWatch ou endpoint do AgentCore Runtime)
+   - Taxa de amostragem (ex.: avaliar 10% de todas as sessões)
+   - Avaliadores a aplicar (integrados e/ou personalizados)
+3. O AgentCore Evaluations processa continuamente os traces recebidos com base nas suas regras
+4. Os resultados são enviados ao CloudWatch para visualização em dashboards e análise
+5. Você monitora pontuações agregadas, acompanha tendências e investiga sessões com baixa pontuação
 
-## AgentCore Observability Integration
+## Integração com AgentCore Observability
 
-Both evaluation types rely on **AgentCore Observability** to capture agent behavior through OpenTelemetry (OTEL) traces.
+Ambos os tipos de avaliação dependem do **AgentCore Observability** para capturar o comportamento do agente através de traces OpenTelemetry (OTEL).
 
-**How Observability Works:**
+**Como a Observabilidade Funciona:**
 
-![Observability Traces](../images/observability_traces.png)
+![Traces de Observabilidade](../images/observability_traces.png)
 
-AgentCore relies on **AWS Distro for OpenTelemetry (ADOT)** to instrument different types of OTEL traces across various agent frameworks:
+O AgentCore depende do **AWS Distro for OpenTelemetry (ADOT)** para instrumentar diferentes tipos de traces OTEL em vários frameworks de agentes:
 
-**For AgentCore Runtime-hosted agents** (like the agents in these tutorials):
-- Instrumentation is automatic with minimal configuration
-- Simply include `aws-opentelemetry-distro` in your `requirements.txt`
-- AgentCore Runtime handles OTEL configuration automatically
-- Traces appear in CloudWatch GenAI Observability Dashboard
+**Para agentes hospedados no AgentCore Runtime** (como os agentes nestes tutoriais):
+- A instrumentação é automática com configuração mínima
+- Simplesmente inclua `aws-opentelemetry-distro` no seu `requirements.txt`
+- O AgentCore Runtime lida com a configuração OTEL automaticamente
+- Os traces aparecem no Dashboard de Observabilidade GenAI do CloudWatch
 
-**For non-Runtime agents:**
-- Configure environment variables to direct telemetry to CloudWatch
-- Run your agent with OpenTelemetry instrumentation
-- See [AgentCore Observability documentation](../../06-AgentCore-observability) for details
+**Para agentes fora do Runtime:**
+- Configure variáveis de ambiente para direcionar a telemetria ao CloudWatch
+- Execute seu agente com instrumentação OpenTelemetry
+- Veja a [documentação do AgentCore Observability](../../06-AgentCore-observability) para detalhes
 
-## Tutorial Structure
+## Estrutura do Tutorial
 
-This tutorial provides examples for both **Strands Agents** and **LangGraph** frameworks to demonstrate AgentCore's framework-agnostic capabilities:
+Este tutorial fornece exemplos para os frameworks **Strands Agents** e **LangGraph** para demonstrar as capacidades agnósticas de framework do AgentCore:
 
 ### [01-strands](01-strands/)
-Examples using Strands Agents SDK:
-- **01-on-demand-eval.ipynb**: Run targeted evaluations on specific traces
-- **02-online-eval.ipynb**: Set up continuous production monitoring
+Exemplos usando o Strands Agents SDK:
+- **01-on-demand-eval.ipynb**: Execute avaliações direcionadas em traces específicos
+- **02-online-eval.ipynb**: Configure monitoramento contínuo em produção
 
 ### [02-langgraph](02-langgraph/)
-Examples using LangGraph framework:
-- **01-on-demand-eval.ipynb**: Run targeted evaluations on specific traces
-- **02-online-eval.ipynb**: Set up continuous production monitoring
+Exemplos usando o framework LangGraph:
+- **01-on-demand-eval.ipynb**: Execute avaliações direcionadas em traces específicos
+- **02-online-eval.ipynb**: Configure monitoramento contínuo em produção
 
-Both implementations demonstrate the same evaluation concepts and produce equivalent results, showcasing how AgentCore Evaluations works consistently across different agent frameworks.
+Ambas as implementações demonstram os mesmos conceitos de avaliação e produzem resultados equivalentes, mostrando como o AgentCore Evaluations funciona consistentemente em diferentes frameworks de agentes.
 
-## What's Next
+## Próximos Passos
 
-After completing this tutorial:
-- Proceed to [Tutorial 03: Advanced](../03-advanced) to explore advanced capabilities including:
-  - Using boto3 SDK to query CloudWatch logs for on-demand evaluation
-  - Creating local dashboards to visualize experiments with different agent configurations
-  - Advanced filtering and sampling strategies for online evaluations
+Após completar este tutorial:
+- Prossiga para o [Tutorial 03: Avançado](../03-advanced) para explorar capacidades avançadas incluindo:
+  - Uso do SDK boto3 para consultar logs do CloudWatch para avaliação sob demanda
+  - Criação de dashboards locais para visualizar experimentos com diferentes configurações de agente
+  - Estratégias avançadas de filtragem e amostragem para avaliações online
