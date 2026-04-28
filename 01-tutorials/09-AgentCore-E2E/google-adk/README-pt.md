@@ -1,111 +1,111 @@
-# End-to-End Customer Support Agent with AgentCore using Google ADK
+# Agente de Suporte ao Cliente End-to-End com AgentCore usando Google ADK
 
-In this tutorial we will move a customer support agent from prototype to production using Amazon Bedrock AgentCore services.
+Neste tutorial vamos mover um agente de suporte ao cliente de protótipo para produção usando os serviços Amazon Bedrock AgentCore.
 
-## What You'll Build
+## O Que Você Vai Construir
 
-A complete customer support system that starts as a simple prototype and evolves into a scalable and secure sample application.
+Um sistema completo de suporte ao cliente que começa como um protótipo simples e evolui para uma aplicação de amostra escalável e segura.
 
-Your final system will handle real customer conversations with memory, shared tools, and a web interface.
+Seu sistema final lidará com conversas reais de clientes com memória, ferramentas compartilhadas e uma interface web.
 
 > [!IMPORTANT]
-> The examples provided here is for educational purposes. It demonstrates how the different services from AgentCore are used on the process of migrating an agentic use case from prototype to production. As such, it is not intended for direct use in production environments.
+> Os exemplos fornecidos aqui são para fins educacionais. Ele demonstra como os diferentes serviços do AgentCore são usados no processo de migração de um caso de uso agêntico de protótipo para produção. Como tal, não é destinado para uso direto em ambientes de produção.
 
-**Journey Overview:**
+**Visão Geral da Jornada:**
 
-- Start with a basic agent prototype (20 mins)
-- Add conversation memory across sessions (20 mins)
-- Share tools securely across multiple agents (30 mins)
-- Deploy to production with observability (30 mins)
-- Set up continuous quality evaluation (10 mins)
-- Build a customer-facing web app (20 mins)
+- Comece com um protótipo básico de agente (20 min)
+- Adicione memória de conversa através de sessões (20 min)
+- Compartilhe ferramentas de forma segura entre múltiplos agentes (30 min)
+- Implante em produção com observabilidade (30 min)
+- Configure avaliação contínua de qualidade (10 min)
+- Construa um aplicativo web voltado para o cliente (20 min)
 
-## Architecture Overview
+## Visão Geral da Arquitetura
 
-By the end of the 6 labs of this tutorial you will have created the following architecture
+Ao final dos 6 laboratórios deste tutorial você terá criado a seguinte arquitetura
 
 <div style="text-align:left">
     <img src="images/architecture_lab6_streamlit.png" width="100%"/>
 </div>
 
-## Prerequisites
+## Pré-requisitos
 
-- AWS account with Bedrock access
+- Conta AWS com acesso ao Bedrock
 - Python 3.10+
-- AWS CLI configured
-- Claude 3.7 Sonnet enabled in Bedrock
+- AWS CLI configurado
+- Claude 3.7 Sonnet habilitado no Bedrock
 
-## Labs
+## Laboratórios
 
-### Lab 1: Create Agent Prototype
+### Lab 1: Criar Protótipo de Agente
 
-Build a prototype of a customer support agent with three core tools:
+Construa um protótipo de um agente de suporte ao cliente com três ferramentas principais:
 
-- Return policy lookup
-- Product information search
-- Web search for troubleshooting
+- Consulta de política de devolução
+- Busca de informações de produtos
+- Busca web para troubleshooting
 
-**What you'll learn:** Basic agent creation with Strands Agents and tool integration
+**O que você vai aprender:** Criação básica de agente com Strands Agents e integração de ferramentas
 
-### Lab 2: Add Memory
+### Lab 2: Adicionar Memória
 
-Transform your "goldfish agent" into one that remembers customers across conversations.
+Transforme seu "agente peixinho-dourado" em um que lembra dos clientes através de conversas.
 
-- Persistent conversation history
-- Customer preference extraction
-- Cross-session context awareness
+- Histórico de conversa persistente
+- Extração de preferências de clientes
+- Consciência de contexto entre sessões
 
-**What you'll learn:** AgentCore Memory for both short-term and long-term persistence
+**O que você vai aprender:** AgentCore Memory para persistência de curto e longo prazo
 
-### Lab 3: Scale with Gateway & Identity
+### Lab 3: Escalar com Gateway & Identity
 
-Move from local tools to shared, enterprise-ready services.
+Migre de ferramentas locais para serviços compartilhados prontos para empresa.
 
-- Centralized tool management
-- JWT-based authentication
-- Integration with existing AWS Lambda functions
-- (Optional) Fine-grained access control with Cedar policies (e.g., deny web search for "iPhone 8" keywords)
+- Gerenciamento centralizado de ferramentas
+- Autenticação baseada em JWT
+- Integração com funções AWS Lambda existentes
+- (Opcional) Controle de acesso refinado com políticas Cedar
 
-**What you'll learn:** AgentCore Gateway and AgentCore Identity for secure tool sharing
+**O que você vai aprender:** AgentCore Gateway e AgentCore Identity para compartilhamento seguro de ferramentas
 
-### Lab 4: Deploy to Production
+### Lab 4: Implantar em Produção
 
-Deploy your agent to handle real traffic with full observability.
+Implante seu agente para lidar com tráfego real com observabilidade completa.
 
-- Fully managed deployment
-- Session Continuity and Session Isolation
-- CloudWatch Observability integration
+- Implantação totalmente gerenciada
+- Continuidade de Sessão e Isolamento de Sessão
+- Integração com CloudWatch Observability
 
-**What you'll learn:** AgentCore Runtime with production-grade observability
+**O que você vai aprender:** AgentCore Runtime com observabilidade de nível de produção
 
-### Lab 5: Build Customer Interface
+### Lab 5: Construir Interface do Cliente
 
-Create a web app customers can actually use.
+Crie um aplicativo web que os clientes possam realmente usar.
 
-- Streamlit-based chat interface
-- Real-time response streaming
-- Session management and authentication
+- Interface de chat baseada em Streamlit
+- Streaming de resposta em tempo real
+- Gerenciamento de sessão e autenticação
 
-**What you'll learn:** Frontend integration with secure agent endpoints
+**O que você vai aprender:** Integração de frontend com endpoints seguros do agente
 
-## Getting Started
+## Primeiros Passos
 
-1. Clone this repository
-2. Install dependencies: `pip install -r requirements.txt`
-3. Configure AWS credentials
-4. Start with [Lab 1](lab-01-create-an-agent.ipynb)
+1. Clone este repositório
+2. Instale dependências: `pip install -r requirements.txt`
+3. Configure credenciais AWS
+4. Comece com [Lab 1](lab-01-create-an-agent-pt.ipynb)
 
-Each lab builds on the previous one, but you can jump ahead if you understand the concepts.
+Cada laboratório constrói sobre o anterior, mas você pode pular à frente se entender os conceitos.
 
-## Architecture Evolution
+## Evolução da Arquitetura
 
-Watch your architecture grow from a simple local agent to a production system:
+Observe sua arquitetura crescer de um agente local simples para um sistema de produção:
 
-**Lab 1:** Local agent with embedded tools
-**Lab 2:** Agent + AgentCore Memory for persistence  
-**Lab 3:** Agent + AgentCore Memory + AgentCore Gateway and AgentCore Identity for shared tools  
-**Lab 4:** Deployment to AgentCore Runtime and observability with AgentCore Observability
-**Lab 5:** Production quality monitoring with AgentCore Evaluations
-**Lab 6:** Customer-facing application with authentication
+**Lab 1:** Agente local com ferramentas incorporadas  
+**Lab 2:** Agente + AgentCore Memory para persistência  
+**Lab 3:** Agente + AgentCore Memory + AgentCore Gateway e AgentCore Identity para ferramentas compartilhadas  
+**Lab 4:** Implantação no AgentCore Runtime e observabilidade com AgentCore Observability  
+**Lab 5:** Monitoramento de qualidade de produção com AgentCore Evaluations  
+**Lab 6:** Aplicação voltada para o cliente com autenticação
 
-Ready to build? [Start with Lab 1 →](lab-01-create-an-agent.ipynb)
+Pronto para construir? [Comece com Lab 1 →](lab-01-create-an-agent-pt.ipynb)
